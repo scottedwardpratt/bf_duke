@@ -62,10 +62,11 @@ public:
 	void WriteFinalCF();
 	void Reset();
 	bool ReadOSCAR(CHBHydroMesh *hydromesh);
+	bool ReadDuke(CHBHydroMesh *hydromesh);
 	bool FakeReadOSCAR(CHBHydroMesh *hydromesh);
 	double SpectraFromHyper(double mass,double px,double py);
-	FILE *fptr_oscar;
-	string oscar_filename;
+	FILE *fptr_oscar,*fptr_duke;
+	string oscar_filename,duke_filename;
 	double tau0readcheck;
 	int itauread;
 	vector<Eigen::Matrix3d> source;

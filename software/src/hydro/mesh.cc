@@ -7,18 +7,18 @@ using namespace std;
 using namespace NMSUPratt;
 
 
-int CHydroMesh::NX=0;
-int CHydroMesh::NY=0;
-double CHydroMesh::DX=0.0;
-double CHydroMesh::DY=0.0;
-double CHydroMesh::XMIN=0.0;
-double CHydroMesh::XMAX=0.0;
-double CHydroMesh::YMIN=0.0;
-double CHydroMesh::YMAX=0.0;
-double CHydroMesh::DELTAU=0.0;
-double CHydroMesh::TAU0=0.0;
+int CHBHydroMesh::NX=0;
+int CHBHydroMesh::NY=0;
+double CHBHydroMesh::DX=0.0;
+double CHBHydroMesh::DY=0.0;
+double CHBHydroMesh::XMIN=0.0;
+double CHBHydroMesh::XMAX=0.0;
+double CHBHydroMesh::YMIN=0.0;
+double CHBHydroMesh::YMAX=0.0;
+double CHBHydroMesh::DELTAU=0.0;
+double CHBHydroMesh::TAU0=0.0;
 
-CHydroMesh::CHydroMesh(){
+CHBHydroMesh::CHBHydroMesh(){
 	int ix,iy;
 	T=new double*[NX];
 	DQ=new double*[NX];
@@ -43,17 +43,17 @@ CHydroMesh::CHydroMesh(){
 	tau=TAU0;
 }
 
-void CHydroMesh::GetXY(int ix,int iy,double &x,double &y){
+void CHBHydroMesh::GetXY(int ix,int iy,double &x,double &y){
 	x=XMIN+ix*DX;
 	y=YMIN+iy*DY;
 }
 
-void CHydroMesh::GetIXIY(double x,double y,int &ix,int &iy){
+void CHBHydroMesh::GetIXIY(double x,double y,int &ix,int &iy){
 	ix=lrint((x-XMIN)/DX);
 	iy=lrint((y-YMIN)/DY);
 }
 
-void CHydroMesh::GetIXIY_lower(double x,double y,int &ix,int &iy){
+void CHBHydroMesh::GetIXIY_lower(double x,double y,int &ix,int &iy){
 	ix=floorl((x-XMIN)/DX);
 	iy=floorl((y-YMIN)/DY);
 }

@@ -8,7 +8,7 @@
 using namespace std;
 using namespace NMSUPratt;
 
-CHydroBalance *CHydroMesh::hb=NULL;
+CHydroBalance *CHBHydroMesh::hb=NULL;
 
 CHydroBalance::CHydroBalance(){
 };
@@ -25,24 +25,34 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	eos->GetChiOverS_Claudia();
 	eos->FillOutdDdT();
 	//eos->PrintChi();
-	CHydroMesh::DELTAU=parmap.getD("MESH_DELTAU",0.02);
-	CHydroMesh::TAU0=parmap.getD("MESH_TAU0",0.6);
-	CHydroMesh::XMIN=parmap.getD("MESH_XMIN",-13.0);
-	CHydroMesh::XMAX=parmap.getD("MESH_XMAX",13.0);
-	CHydroMesh::YMIN=parmap.getD("MESH_YMIN",-13.0);
-	CHydroMesh::YMAX=parmap.getD("MESH_YMAX",13.0);
-	CHydroMesh::NX=parmap.getI("MESH_NX",261);
-	CHydroMesh::NY=parmap.getI("MESH_NY",261);
-	CHydroMesh::DX=(CHydroMesh::XMAX-CHydroMesh::XMIN)/double(CHydroMesh::NX-1);
-	CHydroMesh::DY=(CHydroMesh::YMAX-CHydroMesh::YMIN)/double(CHydroMesh::NY-1);
-	CHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
+	CHBHydroMesh::DELTAU=parmap.getD("MESH_DELTAU",0.02);
+	CHBHydroMesh::TAU0=parmap.getD("MESH_TAU0",0.6);
+	CHBHydroMesh::XMIN=parmap.getD("MESH_XMIN",-13.0);
+	CHBHydroMesh::XMAX=parmap.getD("MESH_XMAX",13.0);
+	CHBHydroMesh::YMIN=parmap.getD("MESH_YMIN",-13.0);
+	CHBHydroMesh::YMAX=parmap.getD("MESH_YMAX",13.0);
+	CHBHydroMesh::NX=parmap.getI("MESH_NX",261);
+	CHBHydroMesh::NY=parmap.getI("MESH_NY",261);
+	CHBHydroMesh::DX=(CHBHydroMesh::XMAX-CHBHydroMesh::XMIN)/double(CHBHydroMesh::NX-1);
+	CHBHydroMesh::DY=(CHBHydroMesh::YMAX-CHBHydroMesh::YMIN)/double(CHBHydroMesh::NY-1);
+	
+	DELTAU=CHBHydroMesh::DELTAU;
+	TAU0=CHBHydroMesh::TAU0;
+	XMIN=CHBHydroMesh::XMIN;
+	XMAX=CHBHydroMesh::XMAX;
+	YMIN=CHBHydroMesh::YMIN;
+	YMAX=CHBHydroMesh::YMAX;
+	DX=CHBHydroMesh::DX;
+	DY=CHBHydroMesh::DY;
+	
+	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
 	WRITE_TRAJ=parmap.getB("HB_WRITE_TRAJ",false);
 	
 	NSAMPLE_HYDRO2UDS=parmap.getD("NSAMPLE_HYDRO2UDS",4);
 	randy=new Crandy(ranseed);
 	mesh=newmesh=oldmesh=NULL;
 	Ncollisions=0;
-	CHydroMesh::hb=this;
+	CHBHydroMesh::hb=this;
 	CHBCharge::hb=this;
 	tau0check=true;
 	tau0readcheck=true;
@@ -72,9 +82,9 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 }
 
 void CHydroBalance::MakeMeshes(){
-	mesh=new CHydroMesh();
-	newmesh=new CHydroMesh();
-	oldmesh=new CHydroMesh();
+	mesh=new CHBHydroMesh();
+	newmesh=new CHBHydroMesh();
+	oldmesh=new CHBHydroMesh();
 }
 
 CHydroBalance::~CHydroBalance(){
@@ -221,7 +231,7 @@ void CHydroBalance::PropagateCharges(){
 		id=it->first;
 		charge->Propagate(newtau);
 		mesh->GetIXIY_lower(charge->x,charge->y,ix,iy);
-		if(ix<=0 || iy<=0 || ix>=CHydroMesh::NX-1 || iy>=CHydroMesh::NY-1){
+		if(ix<=0 || iy<=0 || ix>=CHBHydroMesh::NX-1 || iy>=CHBHydroMesh::NY-1){
 			snprintf(message,CLog::CHARLENGTH,"CHydroBalance::PropagateCharges() disaster, ix=%d, iy=%d\n",ix,iy);
 			CLog::Fatal(message);
 		}
@@ -291,7 +301,7 @@ double &DQud,double &DQls,double &DQss){
 	CHBEoS eos222[2][2][2];
 	int j0,jx,jy;
 	double ux[2][2][2],uy[2][2][2],u0[2][2][2];
-	CHydroMesh *mptr;
+	CHBHydroMesh *mptr;
 	
 	for(j0=0;j0<2;j0++){
 		if(j0==0)
@@ -370,7 +380,7 @@ double &DQls,double &DQss){
 }
 
 void CHydroBalance::SwapMeshes(){
-	CHydroMesh *swap;
+	CHBHydroMesh *swap;
 	swap=oldmesh;
 	oldmesh=mesh;
 	mesh=newmesh;
@@ -382,7 +392,7 @@ void CHydroBalance::Reset(){
 	itauread=0;
 	idmax=0;
 	tau0readcheck=tau0check=true;
-	oldmesh->tau=mesh->tau=newmesh->tau=CHydroMesh::TAU0;
+	oldmesh->tau=mesh->tau=newmesh->tau=CHBHydroMesh::TAU0;
 }
 
 

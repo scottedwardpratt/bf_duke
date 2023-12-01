@@ -17,7 +17,7 @@ void CHydroBalance::HyperFind(){
 	if(!tau0check){
 		for(ix=1;ix<mesh->NX-1;ix++){
 			for(iy=1;iy<mesh->NY-1;iy++){
-				if(ix<0 || iy<0 || ix==CHydroMesh::NX || iy==CHydroMesh::NY){
+				if(ix<0 || iy<0 || ix==CHBHydroMesh::NX || iy==CHBHydroMesh::NY){
 					snprintf(message,CLog::CHARLENGTH,"CHydroBalance::HyperFind() -- ix=%d, iy=%d\n",ix,iy);
 					CLog::Info(message);
 				}

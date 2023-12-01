@@ -7,12 +7,12 @@
 using namespace std;
 using namespace NMSUPratt;
 
-bool CHydroBalance::ReadDuke(CHydroMesh *hydromesh){
+bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	char message[CLog::CHARLENGTH];
-	double r,x,y,rmax=0.0,highestT,biggestU,ur;
+	double r,x,y,rmax=0.0,highestT,biggestU,ur,tau;
 	//double xbar=0.0,ybar=0.0,norm=0.0;
 	bool keepgoing=true;
-	int olditau,ix,iy,iline,flag,alpha;
+	int ix,iy,alpha;
 	char dummy[300];
 	double **pi,**pitilde;
 	FourVector u;
@@ -29,27 +29,30 @@ bool CHydroBalance::ReadDuke(CHydroMesh *hydromesh){
 		snprintf(message,CLog::CHARLENGTH,"filename=%s\n",duke_filename.c_str());
 		CLog::Info(message);
 		fptr_duke=fopen(duke_filename.c_str(),"r");
-		for(iline=0;iline<14;iline++){
-			fgets(dummy,300,fptr_duke);
-		}
+		//for(iline=0;iline<14;iline++){
+			//fgets(dummy,300,fptr_duke);
+		//}
 	}
-	
-	olditau=itauread;
+	tau0readcheck=false;
 	hydromesh->tau=TAU0+itauread*DELTAU;
+	printf("reading, itauread=%d, hydromesh->tau=%g\n",itauread,hydromesh->tau);
+	
+	
 	for(ix=0;ix<NX;ix++)
 		for(iy=0;iy<NY;iy++)
 			hydromesh->T[ix][iy]=0.0;
-	olditau=itauread;
-	hydromesh->tau=TAU0+itauread*DELTAU;
 	if(feof(fptr_duke)){
 		keepgoing=false;
 		fclose(fptr_duke);
 	}
 	else{
-		while(itauread==olditau && !feof(fptr_duke)){
-			for(ix=0;ix<NX;ix++){
-				for(iy=0;iy<NY;iy++){
-					fscanf(fptr_duke,"%lf %lf %lf %d %lf %lf",&T,&e,&s,&vx,&vy,&vz,&tau,&p);
+		for(ix=0;ix<NX;ix++){
+			for(iy=0;iy<NY;iy++){
+				fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf %lf",&t,&e,&s,&vx,&vy,&vz,&tau,&p);
+				if(!feof(fptr_duke)){
+					if(fabs(tau-hydromesh->tau)>0.00001){
+						CLog::Fatal("reading in tau0="+to_string(tau)+", but hydromesh->tau="+to_string(hydromesh->tau)+"\n");
+					}
 					//fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf %lf",
 					//&pi00,&pi01,&pi02,&pi11,&pi12,&pi22,&pi33,&Pi);
 					pi00=pi01=pi02=pi11=pi12=pi22=pi33=Pi=0.0;
@@ -85,12 +88,9 @@ bool CHydroBalance::ReadDuke(CHydroMesh *hydromesh){
 					ur=sqrt(u[1]*u[1]+u[2]*u[2]);
 					if(ur>biggestU && t>Tf)
 						biggestU=ur;
-					olditau=itauread;
-					itauread+=1;
 					if(t>highestT)
 						highestT=t;
 				}
-				tau0readcheck=false;
 				if(highestT<Tf || feof(fptr_duke)){
 					keepgoing=false;
 					fclose(fptr_duke);
@@ -111,10 +111,12 @@ bool CHydroBalance::ReadDuke(CHydroMesh *hydromesh){
 	delete pi;
 	delete pitilde;
 	
+	itauread+=1;
+	
 	return keepgoing;
 }
 
-bool CHydroBalance::ReadOSCAR(CHydroMesh *hydromesh){
+bool CHydroBalance::ReadOSCAR(CHBHydroMesh *hydromesh){
 	char message[CLog::CHARLENGTH];
 	double r,x,y,rmax=0.0,highestT,biggestU,ur;
 	//double xbar=0.0,ybar=0.0,norm=0.0;
