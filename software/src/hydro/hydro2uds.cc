@@ -25,14 +25,24 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	eos->GetChiOverS_Claudia();
 	eos->FillOutdDdT();
 	//eos->PrintChi();
-	CHBHydroMesh::DELTAU=parmap.getD("MESH_DELTAU",0.02);
+	// these are defaults from Chris's hydro
+	//CHBHydroMesh::DELTAU=parmap.getD("MESH_DELTAU",0.02);
+	//CHBHydroMesh::TAU0=parmap.getD("MESH_TAU0",0.6);
+	//CHBHydroMesh::XMIN=parmap.getD("MESH_XMIN",-13.0);
+	//CHBHydroMesh::XMAX=parmap.getD("MESH_XMAX",13.0);
+	//CHBHydroMesh::YMIN=parmap.getD("MESH_YMIN",-13.0);
+	//CHBHydroMesh::YMAX=parmap.getD("MESH_YMAX",13.0);
+	//CHBHydroMesh::NX=parmap.getI("MESH_NX",261);
+	//CHBHydroMesh::NY=parmap.getI("MESH_NY",261);
+	// These are defaults from Andrew's hydro
+	CHBHydroMesh::DELTAU=parmap.getD("MESH_DELTAU",0.05);
 	CHBHydroMesh::TAU0=parmap.getD("MESH_TAU0",0.6);
-	CHBHydroMesh::XMIN=parmap.getD("MESH_XMIN",-13.0);
-	CHBHydroMesh::XMAX=parmap.getD("MESH_XMAX",13.0);
-	CHBHydroMesh::YMIN=parmap.getD("MESH_YMIN",-13.0);
-	CHBHydroMesh::YMAX=parmap.getD("MESH_YMAX",13.0);
-	CHBHydroMesh::NX=parmap.getI("MESH_NX",261);
-	CHBHydroMesh::NY=parmap.getI("MESH_NY",261);
+	CHBHydroMesh::XMIN=parmap.getD("MESH_XMIN",-25.0);
+	CHBHydroMesh::XMAX=parmap.getD("MESH_XMAX",25.0);
+	CHBHydroMesh::YMIN=parmap.getD("MESH_YMIN",-25.0);
+	CHBHydroMesh::YMAX=parmap.getD("MESH_YMAX",25.0);
+	CHBHydroMesh::NX=parmap.getI("MESH_NX",250);
+	CHBHydroMesh::NY=parmap.getI("MESH_NY",250);
 	CHBHydroMesh::DX=(CHBHydroMesh::XMAX-CHBHydroMesh::XMIN)/double(CHBHydroMesh::NX-1);
 	CHBHydroMesh::DY=(CHBHydroMesh::YMAX-CHBHydroMesh::YMIN)/double(CHBHydroMesh::NY-1);
 	

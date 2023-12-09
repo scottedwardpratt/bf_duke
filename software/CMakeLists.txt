@@ -2,8 +2,7 @@ cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 set(GITHOME_MSU_PRATT $ENV{GITHOME_MSU_PRATT})
 project(duke_bf CXX C)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -W -Wall -std=c++17 -mfpmath=sse")
+set(CMAKE_CXX_FLAGS "-W -Wall -march=native -std=c++17 -O2")
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -15,6 +14,6 @@ include_directories(${GITHOME_MSU_PRATT}/bf_duke/software/include ${GITHOME_MSU_
 file(GLOB dukebf_src ${CMAKE_CURRENT_SOURCE_DIR}/src/hydro/*.cc)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "lib")
-add_library(dukebf STATIC ${dukebf_src})
-target_link_libraries(dukebf ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
+add_library(hydro2uds STATIC ${dukebf_src})
+target_link_libraries(hydro2uds ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY})
 message("Libraries: ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY}")
