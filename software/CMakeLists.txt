@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 set(GITHOME_MSU_PRATT $ENV{GITHOME_MSU_PRATT})
 project(duke_bf CXX C)
 
@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(GSL REQUIRED)
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR})
-include_directories(${GITHOME_MSU_PRATT}/bf_duke/software/include ${GITHOME_MSU_PRATT}/commonutils/software/include ${GITHOME_MSU_PRATT}/msu_eos/software/include ${GITHOME_MSU_PRATT}/msu_sampler/software/include)
+include_directories(include ${GITHOME_MSU_PRATT}/commonutils/software/include ${GITHOME_MSU_PRATT}/msu_eos/software/include ${GITHOME_MSU_PRATT}/msu_sampler/software/include)
 
 file(GLOB dukebf_src ${CMAKE_CURRENT_SOURCE_DIR}/src/hydro/*.cc)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "lib")
