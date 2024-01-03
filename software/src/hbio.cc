@@ -35,8 +35,6 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	}
 	tau0readcheck=false;
 	hydromesh->tau=TAU0+itauread*DELTAU;
-	printf("reading, itauread=%d, hydromesh->tau=%g\n",itauread,hydromesh->tau);
-	
 	
 	for(ix=0;ix<NX;ix++)
 		for(iy=0;iy<NY;iy++)
@@ -46,13 +44,16 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 		fclose(fptr_duke);
 	}
 	else{
-		for(ix=0;ix<NX;ix++){
-			for(iy=0;iy<NY;iy++){
+		keepgoing=true;
+		highestT=0.0;
+		for(iy=0;iy<NY;iy++){
+			for(ix=0;ix<NX;ix++){
+				
 				fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf %lf",&t,&e,&s,&vx,&vy,&vz,&tau,&p);
 				if(!feof(fptr_duke)){
-					if(fabs(tau-hydromesh->tau)>0.00001){
-						CLog::Fatal("reading in tau0="+to_string(tau)+", but hydromesh->tau="+to_string(hydromesh->tau)+"\n");
-					}
+					//if(fabs(tau-hydromesh->tau)>0.00001){
+						//CLog::Fatal("reading in tau0="+to_string(tau)+", but hydromesh->tau="+to_string(hydromesh->tau)+"\n");
+					//}
 					//fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf %lf",
 					//&pi00,&pi01,&pi02,&pi11,&pi12,&pi22,&pi33,&Pi);
 					pi00=pi01=pi02=pi11=pi12=pi22=pi33=Pi=0.0;
@@ -91,19 +92,18 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					if(t>highestT)
 						highestT=t;
 				}
-				if(highestT<Tf || feof(fptr_duke)){
-					keepgoing=false;
-					fclose(fptr_duke);
-				}
 			}
+		}
+		printf("tau=%g, highestT=%g, Tf=%g\n",hydromesh->tau,highestT,Tf);
+		if((highestT<Tf && hydromesh->tau>1.0 )|| feof(fptr_duke)){
+			keepgoing=false;
+			fclose(fptr_duke);
 		}
 	}
 	if(fabs(lrint(hydromesh->tau)-hydromesh->tau)<0.001){
 		snprintf(message,CLog::CHARLENGTH,"highestT=%g, biggestU=%g\n",highestT,biggestU);
 		CLog::Info(message);
 	}
-	if(!keepgoing)
-		CLog::Info("XXXXXXXXXX almost ready to quit\n");
 	for(alpha=0;alpha<4;alpha++){
 		delete pi[alpha];
 		delete pitilde[alpha];

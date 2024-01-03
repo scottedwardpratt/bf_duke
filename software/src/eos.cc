@@ -25,8 +25,12 @@ CHBEoS::CHBEoS(){
 CHBEoS::CHBEoS(CparameterMap *parmapset){
 	parmap=parmapset;
 	reslist=new CresList(parmap);
+	printf("check AAA\n");
 	ReadDiffusionData();
+	printf("check AAb\n");
+	printf("what???\n");
 	ReadChiData_Claudia();
+	printf("check AAc\n");
 	//FillOutdDdT();
 };
 
@@ -181,7 +185,8 @@ void CHBEoS::ReadChiData_HSC(){
 }
 
 void CHBEoS::ReadChiData_Claudia(){
-	string dirname=parmap->getS("LATTICEDATA_DIRNAME","latticedata");
+	printf("hmmmmm\n");
+	string dirname=parmap->getS("LATTICEDATA_DIRNAME","../latticedata");
 	string filename;
 	int idata;
 	const int ndata=81;
@@ -189,6 +194,7 @@ void CHBEoS::ReadChiData_Claudia(){
 	FILE *fptr;
 	// You will read in chi/s, not chi
 	filename=dirname+"/chi.dat";
+	printf("reading chi data from %s\n",filename.c_str());
 	fptr=fopen(filename.c_str(),"r");
 	T_claudia.resize(ndata);
 	chill_overs_claudia.resize(ndata);

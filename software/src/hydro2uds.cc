@@ -14,6 +14,7 @@ CHydroBalance::CHydroBalance(){
 };
 
 CHydroBalance::CHydroBalance(string parfilename,int ranseed){
+	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
 	parmap.ReadParsFromFile(parfilename);
 	Tf=0.001*parmap.getD("FREEZEOUT_TEMP",155.0);
 	SIGMA0=parmap.getD("SIGMA0",0.5);
