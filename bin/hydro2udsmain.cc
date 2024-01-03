@@ -2,11 +2,12 @@
 #include <cmath>
 #include <cstdio>
 #include <complex>
-#include "hydro2uds.h"
-#include "hyper.h"
-#include "qualifier.h"
+#include "bfduke/hydro2uds.h"
+#include "msu_sampler/hyper.h"
+#include "msu_commonutils/qualifier.h"
 
 using namespace std;
+using namespace NMSUPratt;
 
 int main(int argc,char *argv[]){
 	if (argc != 2) {
@@ -18,21 +19,23 @@ int main(int argc,char *argv[]){
 	string udsfilename="uds"+string(argv[1])+".dat";
 	CHydroBalance hb("udsdata/udsparameters.dat",run_number);
 	hb.parmap.set("CHARGESINFO_FILENAME",udsfilename);
+	hb.parmap.set("CHARGESINFO_FILENAME",udsfilename);
 	CQualifiers qualifiers;
 	qualifiers.Read("qualifiers.dat");
 	for(int iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		hb.qualifier=qualifiers.qualifier[iqual]->qualname;
 		hb.Reset();
 		printf("--------- BEGIN CALC FOR %s ---------\n",hb.qualifier.c_str());
-		oscarfile=hb.ReadOSCAR(hb.mesh);
+		oscarfile=hb.ReadDuke(hb.mesh);
+		
 		hb.HyperFind();
-		oscarfile=hb.ReadOSCAR(hb.newmesh);
+		oscarfile=hb.ReadDuke(hb.newmesh);
 		hb.HyperFind();
 		hb.MakeCharges();
 		hb.PropagateCharges();
 		do{
 			hb.SwapMeshes();
-			oscarfile=hb.ReadOSCAR(hb.newmesh);
+			oscarfile=hb.ReadDuke(hb.newmesh);
 			hb.HyperFind();
 			hb.MakeCharges();
 			hb.PropagateCharges();
@@ -44,6 +47,7 @@ int main(int argc,char *argv[]){
 		if(run_number==0)
 			hb.WriteHyper();
 		hb.ClearCharges();
+		
 	}
 	
 	return 0;
