@@ -16,12 +16,12 @@ int main(int argc,char *argv[]){
   }
 	bool oscarfile=true;
 	int run_number=atoi(argv[1]);
-	string udsfilename="uds"+string(argv[1])+".dat";
-	CHydroBalance hb("udsdata/udsparameters.dat",run_number);
+	string udsfilename="uds"+string(argv[1])+".txt";
+	CHydroBalance hb("udsdata/udsparameters.txt",run_number);
 	hb.parmap.set("CHARGESINFO_FILENAME",udsfilename);
 	hb.parmap.set("CHARGESINFO_FILENAME",udsfilename);
 	CQualifiers qualifiers;
-	qualifiers.Read("qualifiers.dat");
+	qualifiers.Read("qualifiers.txt");
 	for(int iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		hb.qualifier=qualifiers.qualifier[iqual]->qualname;
 		hb.Reset();
@@ -41,7 +41,7 @@ int main(int argc,char *argv[]){
 			hb.PropagateCharges();
 			hb.ScatterCharges();
 			if(fabs(lrint(hb.mesh->tau)-hb.mesh->tau)<0.001)
-				printf("tau=%g, cmap.size=%d, emap.size=%d\n",hb.mesh->tau,int(hb.cmap.size()),int(hb.emap.size()));
+				CLog::Info("tau="+to_string(hb.mesh->tau)+", cmap.size="+to_string(hb.cmap.size())+", emap.size="+to_string(hb.emap.size())+"\n");
 		}while(oscarfile);
 		hb.WriteCharges();
 		if(run_number==0)

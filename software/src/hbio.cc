@@ -94,7 +94,8 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 				}
 			}
 		}
-		printf("tau=%g, highestT=%g, Tf=%g\n",hydromesh->tau,highestT,Tf);
+		snprintf(message,CLog::CHARLENGTH,"tau=%g, highestT=%g, Tf=%g\n",hydromesh->tau,highestT,Tf);
+		CLog::Info(message);
 		if((highestT<Tf && hydromesh->tau>1.0 )|| feof(fptr_duke)){
 			keepgoing=false;
 			fclose(fptr_duke);

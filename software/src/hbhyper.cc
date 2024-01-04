@@ -42,12 +42,17 @@ void CHyperElement::CalcDOmegaMax(){
 }*/
 
 void CHBHyperElement::Print(){
-	printf("HyperElement Info:\n");
-	printf("tau=%g, T=%g, x=%g, y=%g, ux=%g, uy=%g, dOmega0=%g, dOmegaX=%g, dOmegaY=%g, udotdOmega=%g\n",
+	char message[CLog::CHARLENGTH];
+	CLog::Info("HyperElement Info:\n");
+	
+	snprintf(message,CLog::CHARLENGTH,
+	"tau=%g, T=%g, x=%g, y=%g, ux=%g, uy=%g, dOmega0=%g, dOmegaX=%g, dOmegaY=%g, udotdOmega=%g\n",
 	tau,T,x,y,ux,uy,dOmega0,dOmegaX,dOmegaY,udotdOmega);
-	printf("pitildexx=%g, pitildeyy=%g, pitildexy=%g\n",
+	CLog::Info(message);
+	snprintf(message,CLog::CHARLENGTH,"pitildexx=%g, pitildeyy=%g, pitildexy=%g\n",
 	pitildexx,pitildeyy,pitildexy);
-	printf("---------------------------------------------------------------\n");
+	CLog::Info(message);
+	CLog::Info("---------------------------------------------------------------\n");
 }
 
 int CHBHyperElement::MakeParts(CMSU_Boltzmann *boltzmann){
@@ -76,7 +81,6 @@ int CHBHyperElement::MakeParts(CMSU_Boltzmann *boltzmann){
 				GetP(resinfo,plab,mass,(*maxweight)[ires]);
 				part=boltzmann->GetDeadPart();	
 #ifdef __XY_REFLECT__	
-				printf("HOWDY, I am XY reflecting\n");	
 				if(randy->ran()<0.5){
 					r[1]=-r[1];
 					plab[1]=-plab[1];
@@ -92,8 +96,7 @@ int CHBHyperElement::MakeParts(CMSU_Boltzmann *boltzmann){
 				eta=(1.0-2.0*randy->ran())*ETAMAX;
 				rapidity+=eta;
 				if(fabs(eta)>ETAMAX){
-					printf("eta=%g ??, ETAMAX=%g\n",eta,ETAMAX);
-					exit(1);
+					CLog::Fatal("eta="+to_string(eta)+", ETAMAX="+to_string(ETAMAX)+"\n");
 				}
 				part->InitBalance(resinfo->pid,r[1],r[2],r[0],eta,plab[1],plab[2],mass,rapidity,bweight,-1);
 				/*
