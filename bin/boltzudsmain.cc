@@ -41,7 +41,7 @@ int main(int argc, char *argv[]){
 		b3d->SetQualifier(qualifiers.qualifier[iqual]->qualname);
 		parmap.set("HYPER_INFO_FILE","udsdata/"+qualifiers.qualifier[iqual]->qualname+"/hyper.txt");
 		qualifiers.SetPars(b3d->parmap,iqual);
-		CLog::Info("_________________ iqual="+to_string(iqual)"+, nevents="+to_string(nevents)+"\n");
+		CLog::Info("_________________ iqual="+to_string(iqual)+", nevents="+to_string(nevents)+"\n");
 		ms->ReadHyper_OSU_2D();
 		for(ievent=ievent0;ievent<=ieventf;ievent++){
 			CLog::Info("------ beginning, ievent= "+to_string(ievent)+" -------\n");
