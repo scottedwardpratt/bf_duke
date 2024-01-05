@@ -223,7 +223,6 @@ void CHBEoS::GetChiOverS_Claudia(){
 		iT0=lrint(floor(Tm/delT));
 		if(iT0>=ndata-1){
 			CLog::Fatal("iT0 out of range in CHBEoS::GetChiOverS_Claudia()\n");
-			exit(1);
 		}
 		w1=(Tm-delT*iT0)/delT;
 		w0=1.0-w1;

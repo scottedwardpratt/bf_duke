@@ -21,7 +21,7 @@ void CHBCharge::Propagate(double newtau){
 		x+=vx*(tf-t0);
 		y+=vy*(tf-t0);
 		if(x!=x)
-			exit(1);
+			CLog::Fatal("x!=x inside CHBCharge::Propagate\n");
 		tau=newtau;
 		eta=neweta;
 	}

@@ -58,8 +58,7 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	
 	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
 	WRITE_TRAJ=parmap.getB("HB_WRITE_TRAJ",false);
-	
-	NSAMPLE_HYDRO2UDS=parmap.getD("NSAMPLE_HYDRO2UDS",4);
+	NSAMPLE_HYDRO2UDS=parmap.getD("NSAMPLE_HYDRO2UDS",2);
 	randy=new Crandy(ranseed);
 	mesh=newmesh=oldmesh=NULL;
 	Ncollisions=0;
@@ -84,8 +83,8 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	chif(0,2)=chif(1,2)=chif(2,1)=chif(2,0)=eos->chils;
 	chif(2,2)=eos->chiss;
 	chifinv=chif.inverse();
-	CLog::Info("chif from EoS\n");
-	cout << chif << endl;
+	//CLog::Info("chif from EoS\n");
+	//cout << chif << endl;
 	source.resize(30);
 	for(int itau=0;itau<30;itau++)
 		source[itau].setZero();
