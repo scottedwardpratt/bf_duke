@@ -1,10 +1,10 @@
 #include "msu_commonutils/log.h"
 #include "bfduke/bfcharge.h"
 #include "msu_commonutils/misc.h"
-#include "bfduke/bfhyper.h"
 #include "bfduke/hydro2uds.h"
 #include "msu_commonutils/randy.h"
 #include "msu_commonutils/constants.h"
+#include "msu_sampler/hyper.h"
 
 using namespace std;
 using namespace NMSUPratt;

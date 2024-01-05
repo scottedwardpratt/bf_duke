@@ -3,7 +3,7 @@
 
 #include "bfduke/bfcommon.h"
 #include "msu_commonutils/commondefs.h"
-#include "bfduke/bfhyper.h"
+#include "msu_sampler/hyper.h"
 
 using namespace std;
 using namespace NMSUPratt;
@@ -25,7 +25,8 @@ namespace NMSUPratt{
 		bool active;
 		int q[3];
 		double x,y,eta,tau,weight,vx,vy,rapidity;
-		CHBHyperElement hyper;
+		//CHBHyperElement hyper;
+		Chyper hyper;
 		void Propagate(double newtau);
 		void SetV(double ux,double uy);
 		void Print();

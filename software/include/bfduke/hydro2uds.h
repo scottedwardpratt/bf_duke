@@ -4,6 +4,7 @@
 //#include <boost/math/special_functions/bessel.hpp>
 #include "bfduke/bfcommon.h"
 #include "bfduke/bfeos.h"
+#include "msu_sampler/hyper.h"
 #include "msu_commonutils/commondefs.h"
 #include "msu_commonutils/parametermap.h"
 
@@ -55,7 +56,8 @@ namespace NMSUPratt{
 		CHBHydroMesh *newmesh;
 		mapic cmap; // active particles
 		mapic emap; // emitted particles
-		list<CHBHyperElement *> hyperlist;   // list of hyper-elements
+		//list<CHBHyperElement *> hyperlist;   // list of hyper-elements
+		list<Chyper *> hyperlist;   // list of hyper-elements
 		Eigen::Matrix3d chitot,chitothyper;
 		void WriteCharges();
 		void ClearCharges();

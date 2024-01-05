@@ -1,7 +1,7 @@
 #include "msu_commonutils/log.h"
 #include "bfduke/hydro2uds.h"
 #include "bfduke/bfcharge.h"
-#include "bfduke/bfhyper.h"
+#include "msu_sampler/hyper.h"
 #include "msu_commonutils/misc.h"
 
 using namespace std;
@@ -228,7 +228,7 @@ void CHydroBalance::WriteCharges(){
 	snprintf(message,CLog::CHARLENGTH,"writing charges to %s\n",filename.c_str());
 	mapic::iterator it;
 	CHBCharge *charge;
-	CHBHyperElement *hyper;
+	Chyper *hyper;
 	int balanceID;
 	unsigned int icharge;
 	FILE *fptr=fopen(filename.c_str(),"w");
@@ -240,7 +240,7 @@ void CHydroBalance::WriteCharges(){
 		hyper=&(charge->hyper);
 		fprintf(fptr,"%6d %2d %2d %2d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e\n",
 		balanceID,charge->q[0],charge->q[1],charge->q[2],charge->weight,charge->tau,charge->eta,
-		charge->x,charge->y,hyper->ux,hyper->uy,hyper->dOmega0,hyper->dOmegaX,hyper->dOmegaY,hyper->pitildexx,hyper->pitildeyy,hyper->pitildexy);
+		charge->x,charge->y,hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
 		if(WRITE_TRAJ){
 			if(charge->trajinfo!=NULL){
 				for(icharge=0;icharge<charge->trajinfo->x.size();icharge++){
@@ -344,15 +344,15 @@ void CHydroBalance::WriteHyper(){
 	system(command.c_str());
 	string filename=dirname+"/"+parmap.getS("HYPERDATA_FILENAME","hyper.dat");
 	snprintf(message,CLog::CHARLENGTH,"writing hyper info to %s\n",filename.c_str());
-	CHBHyperElement *hyper;
+	Chyper *hyper;
 	FILE *fptr=fopen(filename.c_str(),"w");
 	fprintf(fptr,"#Tf=%g\n",Tf);
 	fprintf(fptr,"#   tau        x            y           Ux              Uy         dOmega0       dOmegaX       dOmegaY\n");
-	list<CHBHyperElement *>::iterator it;
+	list<Chyper *>::iterator it;
 	for(it=hyperlist.begin();it!=hyperlist.end();++it){
 		hyper=*it;
 		fprintf(fptr,"%13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e\n",
-		hyper->tau,hyper->x,hyper->y,hyper->ux,hyper->uy,hyper->dOmega0,hyper->dOmegaX,hyper->dOmegaY,hyper->pitildexx,hyper->pitildeyy,hyper->pitildexy);
+		hyper->tau,hyper->r[1],hyper->r[2],hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
 	}
 	snprintf(message,CLog::CHARLENGTH,"Wrote %d hyper-elements\n",int(hyperlist.size()));
 	fclose(fptr);

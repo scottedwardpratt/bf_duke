@@ -1,6 +1,6 @@
 #include "bfduke/bfcommon.h"
 #include "bfduke/hydro2uds.h"
-#include "bfduke/bfhyper.h"
+#include "msu_sampler/hyper.h"
 
 
 using namespace std;

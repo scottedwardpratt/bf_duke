@@ -380,9 +380,19 @@ void CHBEoS::GetEoSFromT_PST(double Tset){
 	mapdi::iterator iter;
 	int ie;
 	double w0,delT;
-	T=Tset;	
-	iter=etmap.lower_bound(T);
-	ie=iter->second;
+	T=Tset;
+	
+	iter=etmap.end(); --iter;
+	double Tmax=iter->first;
+	
+	if(T>=Tmax){
+		ie=etmap.size()-1;
+		//CLog::Info("T="+to_string(T)+" is outside of EoS array, max T="+to_string(Tmax)+"\n");
+	}
+	else{
+		iter=etmap.lower_bound(T);
+		ie=iter->second;
+	}
 	if(ie!=0)
 		ie-=1;
 	delT=T_PST[ie+1]-T_PST[ie];

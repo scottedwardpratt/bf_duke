@@ -3,7 +3,7 @@
 #include "msu_commonutils/randy.h"
 #include "bfduke/bfeos.h"
 #include "bfduke/bfcharge.h"
-#include "bfduke/bfhyper.h"
+#include "msu_sampler/hyper.h"
 
 using namespace std;
 using namespace NMSUPratt;
@@ -230,7 +230,7 @@ void CHydroBalance::PropagateCharges(){
 	mapic::iterator it,oldit,its;
 	double dTdt,dTdx,dTdy,u0;
 	bool GGTt,GGTx,GGTy;
-	CHBHyperElement *hyper;
+	Chyper *hyper;
 	CHBCharge *charge;
 	int ix,iy,id;
 	double newtau=newmesh->tau;
@@ -251,15 +251,16 @@ void CHydroBalance::PropagateCharges(){
 			if(WRITE_TRAJ)
 				charge->addtraj();
 			GetGradT(ix,iy,dTdt,dTdx,dTdy,GGTt,GGTx,GGTy);
-			GetUxyBar(ix,iy,hyper->ux,hyper->uy);
-			GetXYBar(ix,iy,hyper->x,hyper->y);
+			GetUxyBar(ix,iy,hyper->u[1],hyper->u[2]);
+			GetXYBar(ix,iy,hyper->r[1],hyper->r[2]);
 			hyper->tau=newmesh->tau;
-			GetPiTildeBar(ix,iy,hyper->pitildexx,hyper->pitildexy,hyper->pitildeyy);
-			hyper->dOmega0=-dTdt;
-			hyper->dOmegaX=-dTdx;
-			hyper->dOmegaY=-dTdy;
-			u0=sqrt(1.0+hyper->ux*hyper->ux+hyper->uy*hyper->uy);
-			hyper->udotdOmega=(u0*hyper->dOmega0-hyper->x*hyper->dOmegaX-hyper->uy*hyper->dOmegaY);
+			GetPiTildeBar(ix,iy,hyper->pitilde[1][1],hyper->pitilde[1][2],hyper->pitilde[2][2]);
+			hyper->dOmega[0]=-dTdt;
+			hyper->dOmega[1]=-dTdx;
+			hyper->dOmega[2]=-dTdy;
+			u0=sqrt(1.0+hyper->u[1]*hyper->u[1]+hyper->u[2]*hyper->u[2]);
+			hyper->udotdOmega=(u0*hyper->dOmega[0]
+				-hyper->u[1]*hyper->dOmega[1]-hyper->u[2]*hyper->dOmega[2]);
 			charge->active=false;
 			oldit=it;
 			++it;

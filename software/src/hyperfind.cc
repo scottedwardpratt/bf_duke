@@ -1,6 +1,6 @@
 #include "msu_commonutils/log.h"
 #include "bfduke/hydro2uds.h"
-#include "bfduke/bfhyper.h"
+#include "msu_sampler/hyper.h"
 #include "bfduke/bfeos.h"
 #include "msu_commonutils/misc.h"
 
@@ -11,8 +11,8 @@ void CHydroBalance::HyperFind(){
 	char message[CLog::CHARLENGTH];
 	int ix,iy,a,b;
 	double dTdx,dTdy,dTdt;
-	CHBHyperElement hyper;
-	CHBHyperElement *newhyper;
+	Chyper hyper;
+	Chyper *newhyper;
 	bool GGTt,GGTx,GGTy;
 	if(!tau0check){
 		for(ix=1;ix<mesh->NX-1;ix++){
@@ -24,19 +24,19 @@ void CHydroBalance::HyperFind(){
 				GetGradT(ix,iy,dTdt,dTdx,dTdy,GGTt,GGTx,GGTy);
 				if(GGTt || GGTx || GGTy){
 					hyper.tau=0.5*(newmesh->tau+mesh->tau);
-					GetXYBar(ix,iy,hyper.x,hyper.y);
-					GetUxyBar(ix,iy,hyper.ux,hyper.uy);
-					GetPiTildeBar(ix,iy,hyper.pitildexx,hyper.pitildexy,
-					hyper.pitildeyy);
-					GetTBar(ix,iy,hyper.T);
+					GetXYBar(ix,iy,hyper.r[1],hyper.r[2]);
+					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
+					GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
+					hyper.pitilde[2][2]);
+					GetTBar(ix,iy,hyper.T0);
 					if(GetDOmega(dTdt,dTdx,dTdy,
-					hyper.dOmega0,hyper.dOmegaX,hyper.dOmegaY,GGTt,GGTx,GGTy)){
+					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGTt,GGTx,GGTy)){
 						for(a=0;a<3;a++){
 							for(b=0;b<3;b++){
 								chitothyper(a,b)+=hyper.udotdOmega*chif(a,b);
 							}
 						}
-						newhyper=new CHBHyperElement;
+						newhyper=new Chyper;
 						newhyper->Copy(&hyper);
 						hyperlist.push_back(newhyper);
 					}

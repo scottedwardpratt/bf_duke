@@ -1,7 +1,7 @@
 #include "msu_commonutils/misc.h"
 #include "bfduke/bfcommon.h"
 #include "bfduke/bfcharge.h"
-#include "bfduke/bfhyper.h"
+#include "msu_sampler/hyper.h"
 #include "bfduke/bfeos.h"
 #include "bfduke/hydro2uds.h"
 #include "msu_commonutils/randy.h"
