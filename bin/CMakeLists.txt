@@ -42,10 +42,10 @@ add_executable(hydro2uds ${SOURCE_FILES})
 add_dependencies(hydro2uds extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
 target_link_libraries(hydro2uds ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
 ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
-${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
+${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
 ###########################################################
 set(SOURCE_FILES ./boltzmain.cc)
 SET_SOURCE_FILES_PROPERTIES(boltzmain.cc
@@ -64,10 +64,11 @@ add_executable(boltz ${SOURCE_FILES})
 add_dependencies(boltz extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
 target_link_libraries(boltz ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
 ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
-${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
+${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+)
 ###########################################################
 set(SOURCE_FILES ./boltzudsmain.cc)
 SET_SOURCE_FILES_PROPERTIES(boltzudsmain.cc
@@ -86,10 +87,11 @@ add_executable(boltzuds ${SOURCE_FILES})
 add_dependencies(boltzuds extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
 target_link_libraries(boltzuds ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
 ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
-${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
+${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+)
 ###########################################################
 set(SOURCE_FILES ./besstester.cc)
 SET_SOURCE_FILES_PROPERTIES(besstester.cc
@@ -108,8 +110,9 @@ add_executable(besstester ${SOURCE_FILES})
 add_dependencies(besstester extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
 target_link_libraries(besstester ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
 ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
-${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
+${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+)
 ###########################################################
