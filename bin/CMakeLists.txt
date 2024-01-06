@@ -22,7 +22,7 @@ link_directories(${GITHOME_MSU_PRATT}/bf_duke/software/lib ${GITHOME_MSU_PRATT}/
 find_library(${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib msu_boltzmann)
 find_library(${GITHOME_MSU_PRATT}/bf_duke/software/lib hydro2uds)
 find_library(${GITHOME_MSU_PRATT}/commonutils/software/lib msu_commonutils)
-find_library(${GITHOME_MSU_PRATT}/msu_eos/software/lib msu_sampler)
+find_library(${GITHOME_MSU_PRATT}/msu_sampler/software/lib msu_sampler)
 find_library(${GITHOME_MSU_PRATT}/msu_eos/software/lib msu_eos)
 
 ###########################################################
