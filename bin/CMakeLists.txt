@@ -79,8 +79,6 @@ SET_SOURCE_FILES_PROPERTIES(boltzudsmain.cc
 SET_SOURCE_FILES_PROPERTIES(boltzudsmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a)
 SET_SOURCE_FILES_PROPERTIES(boltzudsmain.cc
-	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
-SET_SOURCE_FILES_PROPERTIES(boltzudsmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
 SET_SOURCE_FILES_PROPERTIES(boltzudsmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a)
