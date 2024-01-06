@@ -32,8 +32,6 @@ SET_SOURCE_FILES_PROPERTIES(hydro2udsmain.cc
 SET_SOURCE_FILES_PROPERTIES(hydro2udsmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a)
 SET_SOURCE_FILES_PROPERTIES(hydro2udsmain.cc
-	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
-SET_SOURCE_FILES_PROPERTIES(hydro2udsmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
 SET_SOURCE_FILES_PROPERTIES(hydro2udsmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a)
@@ -54,8 +52,6 @@ SET_SOURCE_FILES_PROPERTIES(boltzmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
 SET_SOURCE_FILES_PROPERTIES(boltzmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a)
-SET_SOURCE_FILES_PROPERTIES(boltzmain.cc
-	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
 SET_SOURCE_FILES_PROPERTIES(boltzmain.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
 SET_SOURCE_FILES_PROPERTIES(boltzmain.cc
@@ -89,6 +85,28 @@ SET_SOURCE_FILES_PROPERTIES(boltzudsmain.cc
 add_executable(boltzuds ${SOURCE_FILES})
 add_dependencies(boltzuds extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
 target_link_libraries(boltzuds ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
+${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
+${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
+${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
+###########################################################
+set(SOURCE_FILES ./besstester.cc)
+SET_SOURCE_FILES_PROPERTIES(besstester.cc
+	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
+SET_SOURCE_FILES_PROPERTIES(besstester.cc
+	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a)
+SET_SOURCE_FILES_PROPERTIES(besstester.cc
+	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
+SET_SOURCE_FILES_PROPERTIES(besstester.cc
+	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a)
+SET_SOURCE_FILES_PROPERTIES(besstester.cc
+	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a)
+SET_SOURCE_FILES_PROPERTIES(besstester.cc
+	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
+add_executable(besstester ${SOURCE_FILES})
+add_dependencies(besstester extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
+target_link_libraries(besstester ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
 ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
 ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
