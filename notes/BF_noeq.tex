@@ -1,0 +1,177 @@
+\documentclass[12pt]{article}
+%#Scott Pratt, Eren Erdogan, Ekaksh Kataria 2023
+\usepackage{subfiles}
+%\usepackage{indentfirst}
+\usepackage{graphicx}
+\usepackage[
+        pdfencoding=auto,%
+        pdftitle={Smooth Emulator and Simplex Sampler}
+        pdfauthor={Scott Pratt},%
+        pdfstartview=FitV,%
+        colorlinks=true,%
+        linkcolor=blue,%
+        citecolor=blue, %
+        urlcolor=blue,
+				breaklinks=true]{hyperref}
+%\usepackage[anythingbreaks,hyphenbreaks]{breakurl}
+\usepackage{xurl}
+\usepackage{comment}
+%\usepackage{pdfsync}
+\usepackage{amssymb}
+\usepackage{amsmath}
+%\usepackage{nopageno}
+\usepackage{bm}
+\usepackage{dsfont}
+%\usepackage[utf8]{inputenc}
+\usepackage[small,bf]{caption}
+%\usepackage{fontspec}
+%\usepackage{textcomp}
+%\usepackage{color}
+%\usepackage{fancyhdr}
+\usepackage[titletoc]{appendix}
+%\usepackage[headheight=110pt]{geometry}
+\usepackage{bm}
+
+\numberwithin{equation}{section} 
+\numberwithin{figure}{section} 
+
+%\usepackage[most]{tcolorbox}
+%\tcbset{
+%frame code={}
+%center title,
+%left=0pt,
+%right=0pt,
+%top=0pt,
+%bottom=0pt,
+%colback=gray!25,
+%colframe=white,
+%width=\dimexpr\textwidth\relax,
+%enlarge left by=0mm,
+%boxsep=5pt,
+%arc=0pt,outer arc=0pt,
+%}
+%\newcounter{examplecounter}
+%\counterwithin{examplecounter}{section}
+%\setcounter{examplecounter}{0}
+%\newcommand{\example}[2]{\begin{tcolorbox}[breakable,enhanced]
+%\refstepcounter{examplecounter}{
+%\bf Example \arabic{section}.\arabic{examplecounter}:}~~{\bf #1}\\
+%{#2}
+%\end{tcolorbox}
+%}
+
+%\newcommand{\exampleend}{
+%\begin{samepage}
+%\nopagebreak\noindent\rule{\textwidth}{1pt}
+%\end{samepage}
+%}
+
+%\usepackage{silence}
+%\WarningFilter{hyperref}{Token not allowed in a PDF String}
+
+\newcommand\eqnumber{\addtocounter{equation}{1}\tag{\theequation}}
+%\newcommand{\solution}[1]{ }
+\newcommand\identity{\mathds{1}}
+
+\setlength{\headheight}{16pt}
+\parskip 6pt
+\parindent 0pt
+\textwidth 7.0in
+\hoffset -0.8in
+\textheight 9.2in
+\voffset -1in
+
+%\newcommand{\bm}{\boldmath}
+\boldmath
+%
+\begin{document}
+
+The two section includes the consideration of non-zero baryon number. The last section considers the enormous simplification for $\mu=0$.
+
+\section{The General Case, including non-zero net charge}
+
+Instead of 3 charges, let's consider 5 charges, with the last two ``charges'' being the number of light and strange quarks. First, imagine that we have the $5\times 5$ correlation function,
+\begin{align*}\eqnumber
+C_{ab}(\vec{x}_1,\vec{x}_2)&=\langle \delta\rho_a(x_1)\delta\rho_b(x_2)\rangle.
+\end{align*}
+Here $\rho_a=Q_a/V$ where $Q_a$ refers to the charge in a small volume $V$. Because we want to fix the quark numbers, not just the charges, the index $a$ runs from 1-5, with the last two indices referencing the up,down and strange quark numbers. The averaging is over events, and is not meant to be an equilibrium averaging. 
+
+Compared to the average a small fluctuation of the chemical potential inspires a small fluctuation in the number of a given hadron species $h$,
+\begin{align*}\eqnumber
+\delta N_h&=q_{ha}\delta\mu_a \bar{N}_h.
+\end{align*}
+Here, $\bar{N}_h$ is the average (not equilibrium average) number of that species, and $q_{ha}$ is the charge of the species $a$. For example, a $\Sigma^+$ baryon ($uus$) has $q_1=q_u=2$, $q_2=q_d=0$, $q_3=q_s=1$, $q_4=2$ and $q_5=1$. If there is a charge fluctuation $\delta Q_a$, one can solve for the required chemical potentials,
+\begin{align*}\eqnumber
+\delta Q_a&=\sum_h\delta N_hq_{ha},\\
+q_{hb}\delta\mu_aq_{ha}\bar{N}_h&=\delta Q_b,\\
+\chi_{ba}\delta\mu_b&=\delta Q_b/V,\\
+\delta\mu_a&=\chi^{-1}_{ab}\delta Q_b/V.
+\end{align*}
+Here, we have made use of the fact that if the gas is made of independent hadrons,
+\begin{align*}\eqnumber
+\chi_{ab}&=\sum_hN_hq_{ha}q_{hb}.
+\end{align*}
+Now, one can use the expression for $\delta\mu$ to find $\delta N_h$,
+\begin{align*}\eqnumber\label{eq:deltaNvsdeltaQ}
+\delta N_h&=\bar{n}_hq_{ha}\chi^{-1}_{ab}\delta Q_b.
+\end{align*}
+Here, $\bar{n}$ is the average density of hadron species $h$. If we have our correlation function represented by a bunch of charge pairs with charges $a$ and $b$ and with weights $w_{ab}$, we simply project those weights onto species $h$ and $h'$ with weight
+\begin{align*}\eqnumber
+w_{hh';ab}&=w_{ab}(\chi^{-1}_{ac}\bar{n}_hq_{hc})(\chi^{-1}_{bd}\bar{n}_{h'}q_{h'd}),\\
+\label{eq:dNdN}
+\langle\delta N_h\delta N_{h'}\rangle&=w_{hh';ab}\langle \delta Q_a\delta Q_b\rangle.
+\end{align*}
+The current BF code works in this manner, but with $3\times 3$ matrices. These same equations are repeated in several of our BF papers.
+
+Thus far, this seems rather straight-forward, but one sees that even if it is easy to find the $5\times 5$ matrix $\chi$, one also needs to have the $5\times 5$ correlation matrix. This next section shows how that is created. For correlation functions in coordinate space one can separate the CFs into a local and non-local piece,
+\begin{align*}\eqnumber
+C_{ab}(x_1,x_2)&=\langle\delta\rho_a(x_1)\delta\rho_b(x_2)\rangle\\
+&=\chi_{ab}\delta(x_1-x_2)+C'_{ab}(x_1,x_2).
+\end{align*}
+When the quark numbers are not equilibrated, the function $\chi$ is not the equilibrium susceptibility. Instead, this is the function that decays toward the equilibrium susceptibility. 
+
+If charge were absolutely conserved, one would have
+\begin{align*}\eqnumber\label{eq:sumrule}
+\int dx_1 C_{ab}(x_1,x_2)=0. 
+\end{align*}
+This would require $C'_{ab}$ to integrate to $-\chi_{ab}$. The current codes monitor the rate at which $\chi_{ab}$ changes, or more accurately the rate of change of $\chi_{ab}$ times the local co-moving subvolume, to generate a source function for $C'_{ab}$. Because $C'$ is assumed to spread diffusively, one can generate pairs of sample charges according to the source function, then propagate them as random walks. Once the sample charges traverse the hadronization hyper-surface, the charge pairs, and their weights, are translated into hadron pairs with the corresponding weights described above. This is quite efficient numerically.
+
+However, this is where things significantly differ from how we proceeded before. Because quark number is not strictly conserved, there is no reason to justify Eq. (\ref{eq:sumrule}). For example, imagine one is a QGP, where the quasi-particles are quarks. To equilibrate, the system might create $u\bar{u}$ pairs. The creation of the quark and the anti-quark provide a source function into $C'_{uu}$ of -1. This represents the correlation related to the necessity of having an anti-quark nearby the point where a quark just appeared. For quark number, the increment to $C'_{44}$ would be +1, because the overall quark number increased by 2. However, if a $\pi_0$ was created, there would be no increment to $C'_{uu}$, and no contribution to $C'_{44}$ because there are no pairs of quasi-particles created, just a single quasi-particle, but there would be contribution to the local quark number, which increased by 2. Thus, assigning a source function for the correlations for $C'_{ab}$ where either $a$ or $b$ equals 4 or 5, becomes contingent on some picture of knowing whether the pair creation was creating quark pairs where the quark pairs stayed local, vs. whether they separated. Secondly, if the source function did create pairs, the evolution of $\delta Q_4$ or $\delta Q_5$ would not proceed via a diffusion equation because the charge is not conserved. Instead the sample charges would decay according to some relaxation time. For example if one created a sample pair of charges $4$, each charge might decay with time. If the charges decayed completely, the related hadron production in Eq. (\ref{eq:deltaNvsdeltaQ}) would only involve the $3\times 3$ submatrix of $\chi^{-1}$.
+
+In summary, introducing quark-number conservation into the expressions causes significant challenges. The source functions for $C'_{ab}$ with $a$ or $b$ being 4 or 5 requires some assumption as to how the quarks are being created. Second, one should decay $C'_{ab}$ for those indices according to quark-number equilibration rates. Finally, if one assumes that the system becomes chemically equilibrated at hadronization, the other additional elements become mute. Instead, one simply evolves the $3\times 3$ correlations using the non-equilibrated value of $\chi$, and ignore the other components. This should be fine as long as $\chi$ somehow finds itself at equilibrium at the hadronization hyper-surface.
+
+
+\section{Simplification for Zero Chemical Potential}
+
+All these complications largely disappear for $\mu=0$. In that case the off-diagonal elements of $\chi_{ab}$ where $1\le a\le 3$ and $4\le b\le 5$ all disappear due to particle-antiparticle symmetry. If one looks at Eq. (\ref{eq:deltaNvsdeltaQ}), and considers $\delta N_h-\delta N_{\bar h}$, i.e the difference between a particle and an anti-particle, one can see that the contribution from the $a$ or $b$= 4 or 5 indices cancels out.
+
+Balance functions involve subtractions of terms involving particles vs. antiparticles, e.g.
+\begin{align*}\eqnumber
+B_{\pi\pi}(p_2|p_1)&=\frac{1}{N_{\pi}(p_1)}\left\{
+\langle \delta N_{\pi^+}(p_1)\delta N_{\pi^-}(p_2)+\delta N_{\pi^-}(p_1)\delta N_{\pi^+}(p_2)\right.\\
+&\left.-\delta N_{\pi^+}(p_1)\delta N_{\pi}(p_2)-\delta N_{\pi^-}(p_1)\delta N_{\pi^-}(p_2)\right\}.
+\end{align*}
+all the terms in Eq. (\ref{eq:dNdN}) with indices of 4 or 5 vanish! 
+
+Thus, in this case, one can simply go back to the original treatment, where one follows only the $3\times 3$ correlation. Because the densities of hadrons change due to quark-number non-equilibrium, $\chi_{ab}$ does change for $a,b=1-3$. But, once given that reality, it is rather straight-forward to perform the calculation. The changes to our BF codes are then:
+\begin{enumerate}
+\item The EoS, energy density, breakup, etc., must all behave consistently as functions of $f$.
+\item We replace $\chi_{ab}$ in the codes that evolve correlations through the hydro with some non-equilibrium values of $\chi$.
+\item At hadronization, we use whatever value of $\chi$ is present at the hadronization hyper surface.
+\end{enumerate}
+
+(2) is rather easy to implement, (3) would take a bit of time, but we can look at your particlization routine. I think we rather easily fix our routines as well. Most of this the work is in (1), which is mostly on Andrew's shoulders. You need an EoS that is consistent with $f\ne 1$, and you need to consistently generate $\chi_{ab}$, including the off-diagonal elements. The only pitfall is in the corona, or if there is some element with $f\sim 0$. This can be somewhat overcome by constraining $f(\tau=0)$. Then, the corona, which is always somewhat ad-hoc, also needs to be addressed. Fortunately, the corona is only a percent or two of the emission for central collisions at the LHC.
+
+
+
+ 
+
+
+
+
+
+ 
+
+
+\end{document}
+
