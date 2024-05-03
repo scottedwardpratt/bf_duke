@@ -26,6 +26,7 @@ namespace NMSUPratt{
 		CparameterMap parmap;
 		double ransum,ranthresh;
 		int Ncollisions,idmax,tau0check;
+		double GAMMA_0,TAU_EQ;
 		double Tf;
 		double DiffusionRatio;
 		Eigen::Matrix3d chif,chifinv;
@@ -51,6 +52,7 @@ namespace NMSUPratt{
 		void ScatterCharges();
 		void CalcDQ(int ix,int iy,double &DQll,double &DQud,double &DQls,double &DQss);
 		void CalcDQ0(int ix,int iy,double &DQll,double &DQud,double &DQls,double &DQss);
+		void GetGammaQFQ(double tau,double &gamma_q,double &fugacity_l,double &fugacity_s);
 		CHBHydroMesh *oldmesh;
 		CHBHydroMesh *mesh;
 		CHBHydroMesh *newmesh;
@@ -58,7 +60,7 @@ namespace NMSUPratt{
 		mapic emap; // emitted particles
 		//list<CHBHyperElement *> hyperlist;   // list of hyper-elements
 		list<Chyper *> hyperlist;   // list of hyper-elements
-		Eigen::Matrix3d chitot,chitothyper;
+		Eigen::Matrix3d chitothyper;
 		void WriteCharges();
 		void ClearCharges();
 		void WriteSource();
@@ -87,6 +89,7 @@ namespace NMSUPratt{
 		void GetXY(int ix,int iy,double &x,double &y);
 		void GetIXIY(double x,double y,int &ix,int &iy);
 		void GetIXIY_lower(double x,double y,int &ix,int &iy);
+		static double GAMMA_0,TAU_EQ;
 		static CHydroBalance *hb;
 		static int NX,NY;
 		static double DX,DY,DELTAU,TAU0;

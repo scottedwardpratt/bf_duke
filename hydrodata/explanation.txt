@@ -9,7 +9,7 @@ goes from
 
       T(GeV)  epsilon   s.    vx.    vy.    vz.     tau.     P
 
-gamma_q = 1-exp((tau0-tau)/tau_eq) 
+gamma_q = 1-(1.0-gamma_0)*exp((tau0-tau)/tau_eq) 
 
 lambda_meson = 0.85 * gamma_q + 0.15
 lambda_baryon = lambda_mesonn^1.5

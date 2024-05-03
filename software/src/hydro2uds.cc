@@ -46,6 +46,10 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	CHBHydroMesh::NY=parmap.getI("MESH_NY",250);
 	CHBHydroMesh::DX=(CHBHydroMesh::XMAX-CHBHydroMesh::XMIN)/double(CHBHydroMesh::NX-1);
 	CHBHydroMesh::DY=(CHBHydroMesh::YMAX-CHBHydroMesh::YMIN)/double(CHBHydroMesh::NY-1);
+	TAU_EQ=parmap.getD("TAU_EQ",0.5);
+	GAMMA_0=parmap.getD("GAMMA_0",1.0);
+	CHBHydroMesh::TAU_EQ=TAU_EQ;
+	CHBHydroMesh::GAMMA_0=GAMMA_0;
 	
 	DELTAU=CHBHydroMesh::DELTAU;
 	TAU0=CHBHydroMesh::TAU0;
@@ -76,7 +80,6 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	eos->GetChiOverS_Claudia();
 	chif.setZero();
 	chifinv.setZero();
-	chitot.setZero();
 	chitothyper.setZero();
 	chif(0,0)=chif(1,1)=eos->chill;
 	chif(0,1)=chif(1,0)=eos->chiud;
@@ -168,7 +171,6 @@ void CHydroBalance::MakeCharges(){
 				for(a=0;a<3;a++){
 					for(b=0;b<3;b++){
 						ransum+=NSAMPLE_HYDRO2UDS*fabs(DQ(a,b));
-						chitot(a,b)+=DQ(a,b);
 						while(ransum>ranthresh){
 							ranthresh+=randy->ran_exp();
 							charge1=new CHBCharge;
@@ -196,8 +198,6 @@ void CHydroBalance::MakeCharges(){
 							if(DQ(a,b)>0.0)
 								sign=-sign;
 							charge2->q[b]=sign;
-							//chitot(a,b)+=charge1->q[a]*charge2->q[b]
-								//	+charge2->q[a]*charge1->q[b];
 							cmap.insert(pairic(idmax,charge1));
 							idmax+=1;
 							cmap.insert(pairic(idmax,charge2));
@@ -309,6 +309,7 @@ void CHydroBalance::ScatterCharges(){
 void CHydroBalance::CalcDQ(int ix,int iy,double &DQll,
 double &DQud,double &DQls,double &DQss){
 	double d4x,s0,sx,sy;
+	double gamma_q,f_l,f_s;
 	CHBEoS eos222[2][2][2];
 	int j0,jx,jy;
 	double ux[2][2][2],uy[2][2][2],u0[2][2][2];
@@ -335,10 +336,12 @@ double &DQud,double &DQls,double &DQss){
 		if(j0==0){
 			s0=-0.25;
 			d4x=DELTAU*DX*DY*mesh->tau;
+			GetGammaQFQ(mesh->tau,gamma_q,f_l,f_s);
 		}
 		else{
 			s0=0.25;
 			d4x=DELTAU*DX*DY*newmesh->tau;
+			GetGammaQFQ(newmesh->tau,gamma_q,f_l,f_s);
 		}
 		for(jx=0;jx<2;jx++){
 			if(jx==0)
@@ -351,20 +354,20 @@ double &DQud,double &DQls,double &DQss){
 				else
 					sy=0.25;
 				
-				DQll+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chill/DELTAU;
-				DQud+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chiud/DELTAU;
-				DQls+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chils/DELTAU;
-				DQss+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chiss/DELTAU;
+				DQll+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chill*f_l*f_l/DELTAU;
+				DQud+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chiud*f_l*f_l/DELTAU;
+				DQls+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chils*f_l*f_s/DELTAU;
+				DQss+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chiss*f_s*f_s/DELTAU;
 				
-				DQll+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chill/DX;
-				DQud+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chiud/DX;
-				DQls+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chils/DX;
-				DQss+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chiss/DX;
+				DQll+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chill*f_l*f_l/DX;
+				DQud+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chiud*f_l*f_l/DX;
+				DQls+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chils*f_l*f_s/DX;
+				DQss+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chiss*f_s*f_s/DX;
 				
-				DQll+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chill/DY;
-				DQud+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chiud/DY;
-				DQls+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chils/DY;
-				DQss+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chiss/DY;
+				DQll+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chill*f_l*f_l/DY;
+				DQud+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chiud*f_l*f_l/DY;
+				DQls+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chils*f_l*f_s/DY;
+				DQss+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chiss*f_s*f_s/DY;
 								
 			}
 		}
@@ -404,6 +407,13 @@ void CHydroBalance::Reset(){
 	idmax=0;
 	tau0readcheck=tau0check=true;
 	oldmesh->tau=mesh->tau=newmesh->tau=CHBHydroMesh::TAU0;
+}
+
+void CHydroBalance::GetGammaQFQ(double tau,double &gamma_q,double &fugacity_l,double &fugacity_s){
+	double fugacity_meson;
+	gamma_q=1.0-(1.0-GAMMA_0)*exp((TAU0-tau)/TAU_EQ);
+	fugacity_meson=0.85*gamma_q+0.15;
+	fugacity_l=fugacity_s=sqrt(fugacity_meson);	
 }
 
 
