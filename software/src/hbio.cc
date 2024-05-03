@@ -220,6 +220,7 @@ bool CHydroBalance::ReadOSCAR(CHBHydroMesh *hydromesh){
 }
 
 void CHydroBalance::WriteCharges(){
+	double f_l,f_s;
 	char message[CLog::CHARLENGTH];
 	string dirname="udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
@@ -238,9 +239,10 @@ void CHydroBalance::WriteCharges(){
 		balanceID=it->first;
 		charge=it->second;
 		hyper=&(charge->hyper);
-		fprintf(fptr,"%6d %2d %2d %2d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e\n",
+		GetGammaFQ(hyper->tau,f_l,f_s);
+		fprintf(fptr,"%6d %2d %2d %2d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e\n",
 		balanceID,charge->q[0],charge->q[1],charge->q[2],charge->weight,charge->tau,charge->eta,
-		charge->x,charge->y,hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
+		charge->x,charge->y,hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2],f_l,f_s);
 		if(WRITE_TRAJ){
 			if(charge->trajinfo!=NULL){
 				for(icharge=0;icharge<charge->trajinfo->x.size();icharge++){
