@@ -52,7 +52,7 @@ namespace NMSUPratt{
 		void ScatterCharges();
 		void CalcDQ(int ix,int iy,double &DQll,double &DQud,double &DQls,double &DQss);
 		void CalcDQ0(int ix,int iy,double &DQll,double &DQud,double &DQls,double &DQss);
-		void GetGammaQFQ(double tau,double &gamma_q,double &fugacity_l,double &fugacity_s);
+		void GetGammaFQ(double tau,double &fugacity_l,double &fugacity_s);
 		CHBHydroMesh *oldmesh;
 		CHBHydroMesh *mesh;
 		CHBHydroMesh *newmesh;
