@@ -46,8 +46,8 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	CHBHydroMesh::NY=parmap.getI("MESH_NY",250);
 	CHBHydroMesh::DX=(CHBHydroMesh::XMAX-CHBHydroMesh::XMIN)/double(CHBHydroMesh::NX-1);
 	CHBHydroMesh::DY=(CHBHydroMesh::YMAX-CHBHydroMesh::YMIN)/double(CHBHydroMesh::NY-1);
-	TAU_EQ=parmap.getD("TAU_EQ",0.5);
-	GAMMA_0=parmap.getD("GAMMA_0",1.0);
+	TAU_EQ=parmap.getD("FUGACITY_TAU_EQ",0.5);
+	GAMMA_0=parmap.getD("FUGACITY_GAMMA_0",1.0);
 	CHBHydroMesh::TAU_EQ=TAU_EQ;
 	CHBHydroMesh::GAMMA_0=GAMMA_0;
 	
