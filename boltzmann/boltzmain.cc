@@ -24,12 +24,12 @@ int main(int argc, char *argv[]){
 	filename="model_output/"+run_name+"/parameters.txt";
 	parmap.ReadParsFromFile(filename);
 	
-	CmasterSampler ms(&parmap);
-	CpartList *pl=new CpartList(&parmap,ms.reslist);
-	ms.partlist=pl;
-	ms.randy->reset(1234);
-	ms.ReadHyper_Duke_2D();
-	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_name,&parmap,ms.reslist);
+	CmasterSampler *ms=new CmasterSampler(&parmap);
+	CpartList *pl=new CpartList(&parmap,ms->reslist);
+	ms->partlist=pl;
+	ms->randy->reset(1234);
+	ms->ReadHyper_Duke_2D();
+	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_name,&parmap,ms->reslist);
 	msuboltz->InitCascade();
 	
 	//CBalanceArrays *barray=msuboltz->balancearrays;
@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
 
 	for(ievent=0;ievent<nevents;ievent++){
 		msuboltz->Reset();
-		nparts=ms.MakeEvent();
+		nparts=ms->MakeEvent();
 		npartstot+=nparts;
 		msuboltz->InputPartList(pl);
 		pl->Clear();
@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
 		nannihilate+=msuboltz->nannihilate;
 		ncancel_annihilate+=msuboltz->ncancel_annihilate;
 		ndecay+=msuboltz->ndecay;
-		snprintf(message,CLog::CHARLENGTH,"ievent=%lld nparts=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
+		snprintf(message,CLog::CHARLENGTH,"ievent=%lld nparts=%lld, nparts/event=%g\n",ms->NEVENTS,nparts,double(npartstot)/double(ms->NEVENTS));
 		CLog::Info(message);
 		//barray->ProcessPartMap();
 	}
