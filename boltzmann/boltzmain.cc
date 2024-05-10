@@ -8,11 +8,12 @@ using namespace NMSUPratt;
 
 int main(int argc, char *argv[]){
 	if (argc != 2) {
-		CLog::Info("Usage: msuboltz run_name\n");
+		CLog::Info("Usage: msuboltz run_number\n");
 		exit(-1);
   }
 	CparameterMap parmap;
-	string run_name=argv[1];
+	int run_number=atoi(argv[1]);
+	string run_name="run"+to_string(run_number);
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
 	//char logfilename[100];
@@ -27,7 +28,7 @@ int main(int argc, char *argv[]){
 	CmasterSampler *ms=new CmasterSampler(&parmap);
 	CpartList *pl=new CpartList(&parmap,ms->reslist);
 	ms->partlist=pl;
-	ms->randy->reset(1234);
+	ms->randy->reset(run_number);
 	ms->ReadHyper_Duke_2D();
 	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_name,&parmap,ms->reslist);
 	msuboltz->InitCascade();
@@ -49,6 +50,7 @@ int main(int argc, char *argv[]){
 
 	for(ievent=0;ievent<nevents;ievent++){
 		msuboltz->Reset();
+		msuboltz->randy->reset(run_number+10000*run_number);
 		nparts=ms->MakeEvent();
 		npartstot+=nparts;
 		msuboltz->InputPartList(pl);
