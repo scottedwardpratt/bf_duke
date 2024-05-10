@@ -38,7 +38,7 @@ int main(int argc, char *argv[]){
 	nevents=parmap.getI("MSU_BOLTZMANN_NEVENTSMAX",10);
 
 	nmerge=nscatter=nannihilate=ncancel_annihilate=ndecay=0;
-	msuboltz->ReadMuTInfo();
+	//msuboltz->ReadMuTInfo();
 	msuboltz->nevents=0;
 
 	CQualifiers qualifiers;
