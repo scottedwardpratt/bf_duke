@@ -17,6 +17,7 @@ namespace NMSUPratt{
 		CparameterMap *parmap;
 		double T,P,epsilon,s;
 		double chill,chiud,chils,chiss;
+		double f_l,f_u,f_d,gamma_q;
 		CHBEoS(CparameterMap *parmapset);
 		CHBEoS();
 		void ReadDiffusionData();
@@ -31,6 +32,7 @@ namespace NMSUPratt{
 		void ReadChiData_HSC();
 		void ReadChiData_Claudia();
 		void GetChiOverS_Claudia();
+		void GetChiOverS(double gamma_q);
 		void ReadEoS_Claudia();
 		void Print();
 		void PrintChi();

@@ -82,7 +82,7 @@ namespace NMSUPratt{
 	class CHBHydroMesh{
 	public:
 		CHBHydroMesh();
-		double **T,**DQ,**UX,**UY;
+		double **T,**DQ,**UX,**UY,**epsilon;
 		double **pitildexx,**pitildexy,**pitildeyy;
 		double tau;
 		int itau;
