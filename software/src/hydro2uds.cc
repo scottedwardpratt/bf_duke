@@ -310,7 +310,7 @@ void CHydroBalance::ScatterCharges(){
 void CHydroBalance::CalcDQ(int ix,int iy,double &DQll,
 double &DQud,double &DQls,double &DQss){
 	double d4x,s0,sx,sy;
-	double f_l,f_s; // fugacities for light and strange quarks
+	double f_l,f_s,gamma_q; // fugacities for light and strange quarks
 	CHBEoS eos222[2][2][2];
 	int j0,jx,jy;
 	double ux[2][2][2],uy[2][2][2],u0[2][2][2];
@@ -337,12 +337,12 @@ double &DQud,double &DQls,double &DQss){
 		if(j0==0){
 			s0=-0.25;
 			d4x=DELTAU*DX*DY*mesh->tau;
-			GetGammaFQ(mesh->tau,f_l,f_s);
+			GetGammaFQ(mesh->tau,gamma_q,f_l,f_s);
 		}
 		else{
 			s0=0.25;
 			d4x=DELTAU*DX*DY*newmesh->tau;
-			GetGammaFQ(newmesh->tau,f_l,f_s);
+			GetGammaFQ(newmesh->tau,gamma_q,f_l,f_s);
 		}
 		for(jx=0;jx<2;jx++){
 			if(jx==0)
@@ -410,8 +410,8 @@ void CHydroBalance::Reset(){
 	oldmesh->tau=mesh->tau=newmesh->tau=CHBHydroMesh::TAU0;
 }
 
-void CHydroBalance::GetGammaFQ(double tau,double &fugacity_l,double &fugacity_s){
-	double fugacity_meson,gamma_q;
+void CHydroBalance::GetGammaFQ(double tau,double &gamma_q,double &fugacity_l,double &fugacity_s){
+	double fugacity_meson;
 	gamma_q=1.0-(1.0-GAMMA_0)*exp((TAU0-tau)/TAU_EQ);
 	fugacity_meson=0.85*gamma_q+0.15;
 	fugacity_l=fugacity_s=sqrt(fugacity_meson);	

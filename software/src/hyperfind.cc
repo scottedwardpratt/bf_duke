@@ -7,7 +7,54 @@
 using namespace std;
 using namespace NMSUPratt;
 
-void CHydroBalance::HyperFind(){
+void CHydroBalance::HyperFindEpsilon(){
+	char message[CLog::CHARLENGTH];
+	int ix,iy,a,b;
+	double dEdx,dEdy,dEdt,fugacity_l,fugacity_s,gamma_q;
+	Chyper hyper;
+	Chyper *newhyper;
+	bool GGEt,GGEx,GGEy;
+	if(!tau0check){
+		for(ix=1;ix<mesh->NX-1;ix++){
+			for(iy=1;iy<mesh->NY-1;iy++){
+				if(ix<0 || iy<0 || ix==CHBHydroMesh::NX || iy==CHBHydroMesh::NY){
+					snprintf(message,CLog::CHARLENGTH,"CHydroBalance::HyperFindEpsilon() -- ix=%d, iy=%d\n",ix,iy);
+					CLog::Info(message);
+				}
+				GetGradEpsilon(ix,iy,dEdt,dEdx,dEdy,GGEt,GGEx,GGEy);
+				if(GGEt || GGEx || GGEy){
+					hyper.tau=0.5*(newmesh->tau+mesh->tau);
+					GetXYBar(ix,iy,hyper.r[1],hyper.r[2]);
+					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
+					GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
+					hyper.pitilde[2][2]);
+					GetTBar(ix,iy,hyper.T0);
+					if(GetDOmega(dEdt,dEdx,dEdy,
+					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGEt,GGEx,GGEy)){
+						GetGammaFQ(hyper.tau,gamma_q,fugacity_l,fugacity_s);
+						eos->T=hyper.T0;
+						eos->GetChiOverS(gamma_q);
+						hyper.chi(0,0)=hyper.chi(1,1)=eos->chill;
+						hyper.chi(0,1)=hyper.chi(1,0)=eos->chiud;
+						hyper.chi(0,2)=hyper.chi(1,2)=hyper.chi(2,0)=hyper.chi(2,1)=eos->chils;
+						hyper.chi(2,2)=eos->chiss;
+						hyper.chiinv=hyper.chi.inverse();
+						for(a=0;a<3;a++){
+							for(b=0;b<3;b++){
+								chitothyper(a,b)+=hyper.udotdOmega*hyper.chi(a,b);
+							}
+						}
+						newhyper=new Chyper;
+						newhyper->Copy(&hyper);
+						hyperlist.push_back(newhyper);
+					}
+				}
+			}
+		}
+	}
+}
+
+void CHydroBalance::HyperFindT(){
 	char message[CLog::CHARLENGTH];
 	int ix,iy,a,b;
 	double dTdx,dTdy,dTdt;
@@ -18,7 +65,7 @@ void CHydroBalance::HyperFind(){
 		for(ix=1;ix<mesh->NX-1;ix++){
 			for(iy=1;iy<mesh->NY-1;iy++){
 				if(ix<0 || iy<0 || ix==CHBHydroMesh::NX || iy==CHBHydroMesh::NY){
-					snprintf(message,CLog::CHARLENGTH,"CHydroBalance::HyperFind() -- ix=%d, iy=%d\n",ix,iy);
+					snprintf(message,CLog::CHARLENGTH,"CHydroBalance::HyperFindT() -- ix=%d, iy=%d\n",ix,iy);
 					CLog::Info(message);
 				}
 				GetGradT(ix,iy,dTdt,dTdx,dTdy,GGTt,GGTx,GGTy);
@@ -44,6 +91,43 @@ void CHydroBalance::HyperFind(){
 			}
 		}
 	}
+}
+
+bool CHydroBalance::GetGradEpsilon(int ix,int iy,
+double &dEdt,double &dEdx,double &dEdy,bool &GGEt,bool &GGEx,bool &GGEy){
+	bool hypercheck=false;
+	double Explus,Exminus,Eyplus,Eyminus,Etplus,Etminus;
+	mesh->GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
+	
+	Exminus=0.25*(mesh->epsilon[ix][iy]+newmesh->epsilon[ix][iy]
+		+mesh->epsilon[ix][iy+1]+newmesh->epsilon[ix][iy+1]);
+	Explus=0.25*(mesh->epsilon[ix+1][iy]+newmesh->epsilon[ix+1][iy]
+		+mesh->epsilon[ix+1][iy+1]+newmesh->epsilon[ix+1][iy+1]);
+	
+	Eyminus=0.25*(mesh->epsilon[ix][iy]+newmesh->epsilon[ix][iy]
+		+mesh->epsilon[ix+1][iy]+newmesh->epsilon[ix+1][iy]);
+	Eyplus=0.25*(mesh->epsilon[ix][iy+1]+newmesh->epsilon[ix][iy+1]
+		+mesh->epsilon[ix+1][iy+1]+newmesh->epsilon[ix+1][iy+1]);
+	
+	Etminus=0.25*(mesh->epsilon[ix][iy]+mesh->epsilon[ix][iy+1]
+		+mesh->epsilon[ix+1][iy]+mesh->epsilon[ix+1][iy+1]);
+	Etplus=0.25*(newmesh->epsilon[ix][iy]+newmesh->epsilon[ix][iy+1]
+		+newmesh->epsilon[ix+1][iy]+newmesh->epsilon[ix+1][iy+1]);
+	
+	dEdx=-(Explus-Exminus)/DX;
+	dEdy=-(Eyplus-Eyminus)/DY;
+	dEdt=(Etplus-Etminus)/DELTAU;
+	
+	GGEt=GGEx=GGEy=false;
+	if((Etplus-epsilon_f)*(Etminus-epsilon_f)<0.0)
+		GGEt=true;
+	if((Explus-epsilon_f)*(Exminus-epsilon_f)<0.0)
+		GGEx=true;
+	if((Eyplus-epsilon_f)*(Eyminus-epsilon_f)<0.0)
+		GGEy=true;
+	if(GGEt || GGEx || GGEy)
+		hypercheck=true;
+	return hypercheck;
 }
 
 bool CHydroBalance::GetGradT(int ix,int iy,
@@ -119,4 +203,3 @@ bool GGTy){
 	}
 	return success;
 }
-

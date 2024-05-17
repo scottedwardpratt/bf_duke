@@ -27,7 +27,7 @@ namespace NMSUPratt{
 		double ransum,ranthresh;
 		int Ncollisions,idmax,tau0check;
 		double GAMMA_0,TAU_EQ;
-		double Tf;
+		double Tf,epsilon_f;
 		double DiffusionRatio;
 		Eigen::Matrix3d chif,chifinv;
 		CHydroBalance();
@@ -37,7 +37,8 @@ namespace NMSUPratt{
 		void MakeMeshes();
 		void SwapMeshes();
 		void MakeCharges();
-		void HyperFind();
+		void HyperFindT();
+		void HyperFindEpsilon();
 		void GetUxyBar(int ix,int iy,double &uxbar,double &uybar); // ux,uy for cell ix,iy between mesh and newmesh
 		void GetXYBar(int ix,int iy,double &xbar,double &ybar);
 		void GetTBar(int ix,int iy,double &Tbar); // ux,uy for cell ix,iy between mesh and newmesh
@@ -45,6 +46,8 @@ namespace NMSUPratt{
 		double &pitildeyybar);
 		bool GetGradT(int ix,int iy,double &dTdt,double &dTdx,double &dTdy,
 		bool &GGTt,bool &GGTx,bool &GGTy); // GradT for same cell
+		bool GetGradEpsilon(int ix,int iy,double &dEdt,double &dEdx,double &dEdy,
+		bool &GGEt,bool &GGEx,bool &GGEy);
 		// returns true if cell has hypersurface, if(forcecalc=false) only calculates if on hypersurface
 		bool GetDOmega(double dTdt,double dTdx,double dTdy,double &dOmega0,double &dOmegaX,double &dOmegaY,bool GGTt,bool GGTx,bool GGTy); //Hyper surface element for times between mesh and newmesh
 		bool WRITE_TRAJ;
@@ -52,7 +55,7 @@ namespace NMSUPratt{
 		void ScatterCharges();
 		void CalcDQ(int ix,int iy,double &DQll,double &DQud,double &DQls,double &DQss);
 		void CalcDQ0(int ix,int iy,double &DQll,double &DQud,double &DQls,double &DQss);
-		void GetGammaFQ(double tau,double &fugacity_l,double &fugacity_s);
+		void GetGammaFQ(double tau,double &gamma_q,double &fugacity_l,double &fugacity_s);
 		CHBHydroMesh *oldmesh;
 		CHBHydroMesh *mesh;
 		CHBHydroMesh *newmesh;
