@@ -28,15 +28,15 @@ int main(int argc,char *argv[]){
 		printf("--------- BEGIN CALC FOR %s ---------\n",hb.qualifier.c_str());
 		oscarfile=hb.ReadDuke(hb.mesh);
 		
-		hb.HyperFind();
+		hb.HyperFindEpsilon();
 		oscarfile=hb.ReadDuke(hb.newmesh);
-		hb.HyperFind();
+		hb.HyperFindEpsilon();
 		hb.MakeCharges();
 		hb.PropagateCharges();
 		do{
 			hb.SwapMeshes();
 			oscarfile=hb.ReadDuke(hb.newmesh);
-			hb.HyperFind();
+			hb.HyperFindEpsilon();
 			hb.MakeCharges();
 			hb.PropagateCharges();
 			hb.ScatterCharges();

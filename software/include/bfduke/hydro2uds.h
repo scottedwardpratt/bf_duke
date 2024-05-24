@@ -16,6 +16,8 @@ namespace NMSUPratt{
 	class CHydroBalance{
 	public:
 		CHBEoS *eos;
+		bool HYPERT;  // Use T to define hypersurface
+		bool HYPEREPSILON; // Use epsilon to define hypersurface
 		double DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX,DX,DY;
 		int NX,NY,ntraj;
 		double NSAMPLE_HYDRO2UDS;

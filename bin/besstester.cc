@@ -10,8 +10,8 @@
 using namespace std;
 using namespace NMSUPratt;
 
-int main(int argc,char *argv[]){
-	double z,k0,k1;
+int main(){
+	double z,k0;
 	z=1.23456;
 	k0=Bessel::K0(z);
 	printf("k0=%g\n",k0);

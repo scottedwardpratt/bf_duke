@@ -47,7 +47,9 @@ int main(int argc, char *argv[]){
 			
 			ms->randy->reset(ievent);
 			ms->partlist->Clear();
+			printf("check a\n");
 			nparts0=ms->MakeEvent();
+			printf("check nparts0=%lld\n",nparts0);
 			
 			b3d->Reset();
 			b3d->randy->reset(ievent);

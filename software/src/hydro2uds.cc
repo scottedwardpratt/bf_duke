@@ -17,7 +17,7 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
 	parmap.ReadParsFromFile(parfilename);
 	Tf=0.001*parmap.getD("FREEZEOUT_TEMP",155.0);
-	SIGMA0=parmap.getD("SIGMA0",0.5);
+	SIGMA0=parmap.getD("BF_SIGMA0",0.5);
 	DiffusionRatio=parmap.getD("DIFFUSION_RATIO",1.0);
 	eos=new CHBEoS(&parmap);
 	eos->ReadEoS_PST();
@@ -25,6 +25,18 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	eos->GetEoSFromT_PST(Tf);
 	eos->GetChiOverS_Claudia();
 	eos->FillOutdDdT();
+	string hyperdef=parmap.getS("HYPERDEF","HYPERDEF_T");
+	if(hyperdef=="HYPERDEF_T"){
+		HYPERT=true;
+		HYPEREPSILON=false;
+	}
+	else if(hyperdef=="HYPERDEF_EPSILON"){
+		HYPERT=false;
+		HYPEREPSILON=true;
+	}
+	else{
+		CLog::Fatal("parameter HYPERDEF not recognized = "+hyperdef+"\n");
+	}
 	//eos->PrintChi();
 	// these are defaults from Chris's hydro
 	//CHBHydroMesh::DELTAU=parmap.getD("MESH_DELTAU",0.02);
@@ -36,14 +48,14 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	//CHBHydroMesh::NX=parmap.getI("MESH_NX",261);
 	//CHBHydroMesh::NY=parmap.getI("MESH_NY",261);
 	// These are defaults from Andrew's hydro
-	CHBHydroMesh::DELTAU=parmap.getD("MESH_DELTAU",0.05);
-	CHBHydroMesh::TAU0=parmap.getD("MESH_TAU0",0.6);
-	CHBHydroMesh::XMIN=parmap.getD("MESH_XMIN",-25.0);
-	CHBHydroMesh::XMAX=parmap.getD("MESH_XMAX",25.0);
-	CHBHydroMesh::YMIN=parmap.getD("MESH_YMIN",-25.0);
-	CHBHydroMesh::YMAX=parmap.getD("MESH_YMAX",25.0);
-	CHBHydroMesh::NX=parmap.getI("MESH_NX",250);
-	CHBHydroMesh::NY=parmap.getI("MESH_NY",250);
+	CHBHydroMesh::DELTAU=parmap.getD("HYDRO_MESH_DELTAU",0.05);
+	CHBHydroMesh::TAU0=parmap.getD("HYDRO_MESH_TAU0",0.6);
+	CHBHydroMesh::XMIN=parmap.getD("HYDRO_MESH_XMIN",-25.0);
+	CHBHydroMesh::XMAX=parmap.getD("HYDRO_MESH_XMAX",25.0);
+	CHBHydroMesh::YMIN=parmap.getD("HYDRO_MESH_YMIN",-25.0);
+	CHBHydroMesh::YMAX=parmap.getD("HYDRO_MESH_YMAX",25.0);
+	CHBHydroMesh::NX=parmap.getI("HYDRO_MESH_NX",250);
+	CHBHydroMesh::NY=parmap.getI("HYDRO_MESH_NY",250);
 	CHBHydroMesh::DX=(CHBHydroMesh::XMAX-CHBHydroMesh::XMIN)/double(CHBHydroMesh::NX-1);
 	CHBHydroMesh::DY=(CHBHydroMesh::YMAX-CHBHydroMesh::YMIN)/double(CHBHydroMesh::NY-1);
 	TAU_EQ=parmap.getD("FUGACITY_TAU_EQ",0.5);
@@ -61,8 +73,8 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	DY=CHBHydroMesh::DY;
 	
 	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
-	WRITE_TRAJ=parmap.getB("HB_WRITE_TRAJ",false);
-	NSAMPLE_HYDRO2UDS=parmap.getD("NSAMPLE_HYDRO2UDS",2);
+	WRITE_TRAJ=parmap.getB("BF_WRITE_TRAJ",false);
+	NSAMPLE_HYDRO2UDS=parmap.getD("BF_NSAMPLE_HYDRO2UDS",2);
 	randy=new Crandy(ranseed);
 	mesh=newmesh=oldmesh=NULL;
 	Ncollisions=0;
@@ -139,16 +151,16 @@ void CHydroBalance::GetPiTildeBar(int ix,int iy,double &pitildexxbar,double &pit
 double &pitildeyybar){
 	pitildexxbar=0.125*(mesh->pitildexx[ix][iy]+mesh->pitildexx[ix+1][iy+1]
 		+mesh->pitildexx[ix+1][iy]+mesh->pitildexx[ix][iy+1]
-		+newmesh->pitildexx[ix][iy]+newmesh->pitildexx[ix+1][iy+1]
-			+newmesh->pitildexx[ix+1][iy]+newmesh->pitildexx[ix][iy+1]);
+			+newmesh->pitildexx[ix][iy]+newmesh->pitildexx[ix+1][iy+1]
+				+newmesh->pitildexx[ix+1][iy]+newmesh->pitildexx[ix][iy+1]);
 	pitildexybar=0.125*(mesh->pitildexy[ix][iy]+mesh->pitildexy[ix+1][iy+1]
 		+mesh->pitildexy[ix+1][iy]+mesh->pitildexy[ix][iy+1]
-		+newmesh->pitildexy[ix][iy]+newmesh->pitildexy[ix+1][iy+1]
-			+newmesh->pitildexy[ix+1][iy]+newmesh->pitildexy[ix][iy+1]);
+			+newmesh->pitildexy[ix][iy]+newmesh->pitildexy[ix+1][iy+1]
+				+newmesh->pitildexy[ix+1][iy]+newmesh->pitildexy[ix][iy+1]);
 	pitildeyybar=0.125*(mesh->pitildeyy[ix][iy]+mesh->pitildeyy[ix+1][iy+1]
 		+mesh->pitildeyy[ix+1][iy]+mesh->pitildeyy[ix][iy+1]
-		+newmesh->pitildeyy[ix][iy]+newmesh->pitildeyy[ix+1][iy+1]
-			+newmesh->pitildeyy[ix+1][iy]+newmesh->pitildeyy[ix][iy+1]);
+			+newmesh->pitildeyy[ix][iy]+newmesh->pitildeyy[ix+1][iy+1]
+				+newmesh->pitildeyy[ix+1][iy]+newmesh->pitildeyy[ix][iy+1]);
 }
 
 void CHydroBalance::MakeCharges(){
@@ -229,8 +241,8 @@ void CHydroBalance::MakeCharges(){
 void CHydroBalance::PropagateCharges(){
 	char message[CLog::CHARLENGTH];
 	mapic::iterator it,oldit,its;
-	double dTdt,dTdx,dTdy,u0;
-	bool GGTt,GGTx,GGTy;
+	double dTdt,dTdx,dTdy,dEdt,dEdx,dEdy,u0;
+	bool GGTt,GGTx,GGTy,GGEt,GGEx,GGEy;
 	Chyper *hyper;
 	CHBCharge *charge;
 	int ix,iy,id;
@@ -246,31 +258,63 @@ void CHydroBalance::PropagateCharges(){
 			snprintf(message,CLog::CHARLENGTH,"CHydroBalance::PropagateCharges() disaster, ix=%d, iy=%d\n",ix,iy);
 			CLog::Fatal(message);
 		}
-		if(!(charge->active) || (charge->active && newmesh->T[ix][iy]<Tf)){
-			emap.insert(pairic(id,charge));
-			hyper=&(charge->hyper);
-			if(WRITE_TRAJ)
-				charge->addtraj();
-			GetGradT(ix,iy,dTdt,dTdx,dTdy,GGTt,GGTx,GGTy);
-			GetUxyBar(ix,iy,hyper->u[1],hyper->u[2]);
-			GetXYBar(ix,iy,hyper->r[1],hyper->r[2]);
-			hyper->tau=newmesh->tau;
-			GetPiTildeBar(ix,iy,hyper->pitilde[1][1],hyper->pitilde[1][2],hyper->pitilde[2][2]);
-			hyper->dOmega[0]=-dTdt;
-			hyper->dOmega[1]=-dTdx;
-			hyper->dOmega[2]=-dTdy;
-			u0=sqrt(1.0+hyper->u[1]*hyper->u[1]+hyper->u[2]*hyper->u[2]);
-			hyper->udotdOmega=(u0*hyper->dOmega[0]
-				-hyper->u[1]*hyper->dOmega[1]-hyper->u[2]*hyper->dOmega[2]);
-			charge->active=false;
-			oldit=it;
-			++it;
-			cmap.erase(oldit);	
+		if(HYPERT){
+			if(!(charge->active) || (charge->active && newmesh->T[ix][iy]<Tf)){
+				emap.insert(pairic(id,charge));
+				hyper=&(charge->hyper);
+				if(WRITE_TRAJ)
+					charge->addtraj();
+				GetGradT(ix,iy,dTdt,dTdx,dTdy,GGTt,GGTx,GGTy);
+				GetUxyBar(ix,iy,hyper->u[1],hyper->u[2]);
+				GetXYBar(ix,iy,hyper->r[1],hyper->r[2]);
+				hyper->tau=newmesh->tau;
+				GetPiTildeBar(ix,iy,hyper->pitilde[1][1],hyper->pitilde[1][2],hyper->pitilde[2][2]);
+				hyper->dOmega[0]=-dTdt;
+				hyper->dOmega[1]=-dTdx;
+				hyper->dOmega[2]=-dTdy;
+				u0=sqrt(1.0+hyper->u[1]*hyper->u[1]+hyper->u[2]*hyper->u[2]);
+				hyper->udotdOmega=(u0*hyper->dOmega[0]
+					-hyper->u[1]*hyper->dOmega[1]-hyper->u[2]*hyper->dOmega[2]);
+				charge->active=false;
+				oldit=it;
+				++it;
+				cmap.erase(oldit);	
+			}
+			else{
+				++it;
+			}
+		}
+		else if(HYPEREPSILON){
+			if(!(charge->active) || (charge->active && newmesh->epsilon[ix][iy]<epsilon_f)){
+				emap.insert(pairic(id,charge));
+				hyper=&(charge->hyper);
+				if(WRITE_TRAJ)
+					charge->addtraj();
+				GetGradEpsilon(ix,iy,dEdt,dEdx,dEdy,GGEt,GGEx,GGEy);
+				GetUxyBar(ix,iy,hyper->u[1],hyper->u[2]);
+				GetXYBar(ix,iy,hyper->r[1],hyper->r[2]);
+				hyper->tau=newmesh->tau;
+				GetPiTildeBar(ix,iy,hyper->pitilde[1][1],hyper->pitilde[1][2],hyper->pitilde[2][2]);
+				hyper->dOmega[0]=-dEdt;
+				hyper->dOmega[1]=-dEdx;
+				hyper->dOmega[2]=-dEdy;
+				u0=sqrt(1.0+hyper->u[1]*hyper->u[1]+hyper->u[2]*hyper->u[2]);
+				hyper->udotdOmega=(u0*hyper->dOmega[0]
+					-hyper->u[1]*hyper->dOmega[1]-hyper->u[2]*hyper->dOmega[2]);
+				charge->active=false;
+				oldit=it;
+				++it;
+				cmap.erase(oldit);	
+			}
+			else{
+				++it;
+			}
 		}
 		else{
-			++it;
+			CLog::Fatal("HYPERT or HYPEREPSILON must be set true\n");
 		}
 	}
+
 	it=cmap.begin();
 	while(it!=cmap.end()){
 		charge=it->second;
@@ -300,7 +344,7 @@ void CHydroBalance::ScatterCharges(){
 			ranthresh+=randy->ran_exp();
 			charge->SetV(ux,uy);
 			if(WRITE_TRAJ)
-					charge->addtraj();
+				charge->addtraj();
 			Ncollisions+=1;
 		}
 		++it;

@@ -17,6 +17,8 @@ double CHBHydroMesh::YMIN=0.0;
 double CHBHydroMesh::YMAX=0.0;
 double CHBHydroMesh::DELTAU=0.0;
 double CHBHydroMesh::TAU0=0.0;
+double CHBHydroMesh::TAU_EQ=0.0;
+double CHBHydroMesh::GAMMA_0=0.0;
 
 CHBHydroMesh::CHBHydroMesh(){
 	int ix,iy;
