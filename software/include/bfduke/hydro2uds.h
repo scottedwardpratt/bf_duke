@@ -22,6 +22,9 @@ namespace NMSUPratt{
 		int NX,NY,ntraj;
 		double NSAMPLE_HYDRO2UDS;
 		double biggestomega;
+		double highestEpsilon,highestT,biggestU;
+		vector<CHBCharge> hbcharges;
+		unsigned int nhbcharges;
 		string qualifier;
 		double SIGMA0;  //initial movement of one particle at birth
 		Crandy *randy;
@@ -44,6 +47,7 @@ namespace NMSUPratt{
 		void GetUxyBar(int ix,int iy,double &uxbar,double &uybar); // ux,uy for cell ix,iy between mesh and newmesh
 		void GetXYBar(int ix,int iy,double &xbar,double &ybar);
 		void GetTBar(int ix,int iy,double &Tbar); // ux,uy for cell ix,iy between mesh and newmesh
+		void GetEpsilonBar(int ix,int iy,double &EpsilonBar); // ux,uy for cell ix,iy between mesh and newmesh
 		void GetPiTildeBar(int ix,int iy,double &pitildexxbar,double &pitildexybar,
 		double &pitildeyybar);
 		bool GetGradT(int ix,int iy,double &dTdt,double &dTdx,double &dTdy,

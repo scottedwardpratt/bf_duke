@@ -9,7 +9,7 @@ using namespace NMSUPratt;
 
 bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	char message[CLog::CHARLENGTH];
-	double r,x,y,rmax=0.0,highestT,biggestU,ur,tau;
+	double r,x,y,rmax=0.0,ur,tau;
 	//double xbar=0.0,ybar=0.0,norm=0.0;
 	bool keepgoing=true;
 	int ix,iy,alpha;
@@ -23,7 +23,6 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 		pi[alpha]=new double[4];
 		pitilde[alpha]=new double[4];
 	}
-	highestT=biggestU=0.0;
 	if(tau0readcheck){
 		duke_filename="../hydrodata/"+qualifier+"/"+parmap.getS("HYDRODATA_FILENAME","evolution_xyeta.txt");
 		snprintf(message,CLog::CHARLENGTH,"filename=%s\n",duke_filename.c_str());
@@ -36,23 +35,32 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	tau0readcheck=false;
 	hydromesh->tau=TAU0+itauread*DELTAU;
 	
-	for(ix=0;ix<NX;ix++)
-		for(iy=0;iy<NY;iy++)
+	for(ix=0;ix<NX;ix++){
+		for(iy=0;iy<NY;iy++){
 			hydromesh->T[ix][iy]=0.0;
+			hydromesh->epsilon[ix][iy]=0.0;
+		}
+	}
+	//if(feof(fptr_duke)){
+	//	keepgoing=false;
+	//	fclose(fptr_duke);
+	//}
+	//else{
 	if(feof(fptr_duke)){
 		keepgoing=false;
-		fclose(fptr_duke);
 	}
 	else{
 		keepgoing=true;
-		highestT=0.0;
-		for(iy=0;iy<NY;iy++){
-			for(ix=0;ix<NX;ix++){
-				
-				fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf %lf",&t,&e,&s,&vx,&vy,&vz,&tau,&p);
-				if(!feof(fptr_duke)){
+		fscanf(fptr_duke,"%lf",&t);
+		if(!feof(fptr_duke)){
+			highestT=biggestU=highestEpsilon=0.0;
+			for(iy=0;iy<NY;iy++){
+				for(ix=0;ix<NX;ix++){
+					if(ix!=0 && iy!=0)	
+						fscanf(fptr_duke,"%lf",&t);
+					fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf",&e,&s,&vx,&vy,&vz,&tau,&p);
 					//if(fabs(tau-hydromesh->tau)>0.00001){
-						//CLog::Fatal("reading in tau0="+to_string(tau)+", but hydromesh->tau="+to_string(hydromesh->tau)+"\n");
+					//CLog::Fatal("reading in tau0="+to_string(tau)+", but hydromesh->tau="+to_string(hydromesh->tau)+"\n");
 					//}
 					//fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf %lf",
 					//&pi00,&pi01,&pi02,&pi11,&pi12,&pi22,&pi33,&Pi);
@@ -92,26 +100,48 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 						biggestU=ur;
 					if(t>highestT)
 						highestT=t;
+					if(e>highestEpsilon)
+						highestEpsilon=e;
+
 				}
 			}
 		}
+		else
+			keepgoing=false;
+		//}
 		//snprintf(message,CLog::CHARLENGTH,"tau=%g, highestT=%g, Tf=%g\n",hydromesh->tau,highestT,Tf);
 		//CLog::Info(message);
-		if((highestT<Tf && hydromesh->tau>1.0 )|| feof(fptr_duke)){
-			keepgoing=false;
-			fclose(fptr_duke);
+		if(HYPERT){
+			if(!keepgoing && highestT>Tf){
+				CLog::Info("Highest T="+to_string(highestT)+"\n");
+				CLog::Fatal("Must increase HYPER_FREEZEOUT_TEMP, hydro doesn't go long enough to reach this\n");
+			}
+			if(highestT<Tf && hydromesh->tau>1.0){
+				keepgoing=false;
+				fclose(fptr_duke);
+			}
 		}
-	}
-	if(fabs(lrint(hydromesh->tau)-hydromesh->tau)<0.001){
-		snprintf(message,CLog::CHARLENGTH,"highestT=%g, biggestU=%g\n",highestT,biggestU);
-		CLog::Info(message);
+		else if(HYPEREPSILON){
+			if(!keepgoing && highestEpsilon>epsilon_f){
+				CLog::Info("Highest Epsilon="+to_string(highestEpsilon)+"\n");
+				CLog::Fatal("Must increase HYPER_FREEZEOUT_EPSILON, hydro doesn't go long enough to reach this\n");
+			}
+			if(highestEpsilon<epsilon_f && hydromesh->tau>1.0){
+				keepgoing=false;
+				fclose(fptr_duke);
+			}
+		}
 	}
 	for(alpha=0;alpha<4;alpha++){
 		delete pi[alpha];
+		pi[alpha]=NULL;
 		delete pitilde[alpha];
+		pitilde[alpha]=NULL;
 	}
 	delete pi;
+	pi=NULL;
 	delete pitilde;
+	pitilde=NULL;
 	
 	itauread+=1;
 	
@@ -152,10 +182,10 @@ bool CHydroBalance::ReadOSCAR(CHBHydroMesh *hydromesh){
 	hydromesh->tau=TAU0+itauread*DELTAU;
 	if(tau0readcheck)
 		fscanf(fptr_oscar,"%d",&itauread);
-	if(feof(fptr_oscar)){
-		keepgoing=false;
-		fclose(fptr_oscar);
-	}
+	//if(feof(fptr_oscar)){
+		//keepgoing=false;
+		//fclose(fptr_oscar);
+	//}
 	else{
 		while(itauread==olditau && !feof(fptr_oscar)){
 			fscanf(fptr_oscar,"%d %d %lf %lf %lf %d %lf %lf",&ix,&iy,&e,&p,&t,&flag,&vx,&vy);
@@ -199,9 +229,17 @@ bool CHydroBalance::ReadOSCAR(CHBHydroMesh *hydromesh){
 				highestT=t;
 		}
 		tau0readcheck=false;
-		if(highestT<Tf || feof(fptr_oscar)){
-			keepgoing=false;
-			fclose(fptr_oscar);
+		if(HYPERT){
+			if(highestT<Tf && feof(fptr_oscar)){
+				keepgoing=false;
+				fclose(fptr_oscar);
+			}
+		}
+		else if(HYPEREPSILON){
+			if(highestEpsilon<epsilon_f && feof(fptr_oscar)){
+				keepgoing=false;
+				fclose(fptr_oscar);
+			}
 		}
 	}
 	if(fabs(lrint(hydromesh->tau)-hydromesh->tau)<0.001){
@@ -255,6 +293,7 @@ void CHydroBalance::WriteCharges(){
 				fclose(charge->trajinfo->fptr);
 			}
 		}
+		
 	}
 	fclose(fptr);
 	snprintf(message,CLog::CHARLENGTH,"Ncolls/charge=%g\n",2.0*double(Ncollisions)/emap.size());
@@ -262,18 +301,9 @@ void CHydroBalance::WriteCharges(){
 }
 
 void CHydroBalance::ClearCharges(){
-	mapic::iterator it;
-	it=emap.begin();
-	CHBCharge *charge1,*charge2;
-	while(it!=emap.end()){
-		charge1=it->second;
-		++it;
-		charge2=it->second;
-		delete charge1;
-		delete charge2;
-		++it;
-	}
+	cmap.clear();
 	emap.clear();
+	nhbcharges=0;
 }
 
 void CHydroBalance::WriteSource(){
@@ -338,6 +368,7 @@ void CHydroBalance::WriteFinalCF(){
 	}
 	fclose(fptr);
 	delete [] cf;
+	cf=NULL;
 }
 
 void CHydroBalance::WriteHyper(){

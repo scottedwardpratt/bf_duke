@@ -20,6 +20,7 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	epsilon_f=parmap.getD("HYPER_FREEZEOUT_EPSILON",0.4);
 	SIGMA0=parmap.getD("BF_SIGMA0",0.5);
 	DiffusionRatio=parmap.getD("BF_DIFFUSION_RATIO",1.0);
+	nhbcharges=0;
 	eos=new CHBEoS(&parmap);
 	eos->ReadEoS_PST();
 	eos->BuildMap();
@@ -104,6 +105,10 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	chifinv=chif.inverse();*/
 	//CLog::Info("chif from EoS\n");
 	//cout << chif << endl;
+	
+	hbcharges.resize(10000);
+	nhbcharges=0;
+	
 	source.resize(30);
 	for(int itau=0;itau<30;itau++)
 		source[itau].setZero();
@@ -150,6 +155,13 @@ void CHydroBalance::GetTBar(int ix,int iy,double &Tbar){
 		+newmesh->T[ix+1][iy]+newmesh->T[ix][iy+1]);
 }
 
+void CHydroBalance::GetEpsilonBar(int ix,int iy,double &EpsilonBar){
+	EpsilonBar=0.125*(mesh->epsilon[ix][iy]+mesh->epsilon[ix+1][iy+1]
+		+mesh->epsilon[ix+1][iy]+mesh->epsilon[ix][iy+1]);
+	EpsilonBar+=0.125*(newmesh->epsilon[ix][iy]+newmesh->epsilon[ix+1][iy+1]
+		+newmesh->epsilon[ix+1][iy]+newmesh->epsilon[ix][iy+1]);
+}
+
 void CHydroBalance::GetPiTildeBar(int ix,int iy,double &pitildexxbar,double &pitildexybar,
 double &pitildeyybar){
 	pitildexxbar=0.125*(mesh->pitildexx[ix][iy]+mesh->pitildexx[ix+1][iy+1]
@@ -189,8 +201,12 @@ void CHydroBalance::MakeCharges(){
 						ransum+=NSAMPLE_HYDRO2UDS*fabs(DQ(a,b));
 						while(ransum>ranthresh){
 							ranthresh+=randy->ran_exp();
-							charge1=new CHBCharge;
-							charge2=new CHBCharge;
+							if(nhbcharges>hbcharges.size()-2)
+								hbcharges.resize(hbcharges.size()+10000);
+							charge1=&hbcharges[nhbcharges];
+							nhbcharges+=1;
+							charge2=&hbcharges[nhbcharges];
+							nhbcharges+=1;
 							mesh->GetXY(ix,iy,charge1->x,charge1->y);
 							charge1->x=charge2->x=XMIN+(ix+randy->ran())*DX;
 							charge1->y=charge2->y=YMIN+(iy+randy->ran())*DY;
@@ -424,17 +440,20 @@ double &DQud,double &DQls,double &DQss){
 
 void CHydroBalance::CalcDQ0(int ix,int iy,double &DQll,double &DQud,
 double &DQls,double &DQss){
-	double u0,ux,uy,d3x=DX*DY*newmesh->tau,T;
+	double u0,ux,uy,d3x=DX*DY*newmesh->tau,T,epsilon;
+	double gamma_q,f_l,f_s;
 	GetUxyBar(ix,iy,ux,uy);
 	u0=sqrt(1.0+ux*ux+uy*uy);
 	GetTBar(ix,iy,T);
-	if(T>Tf){
+	GetEpsilonBar(ix,iy,epsilon);
+	if((HYPERT && T>Tf) || (HYPEREPSILON && epsilon>epsilon_f)){
+		GetGammaFQ(newmesh->tau,gamma_q,f_l,f_s);
 		eos->GetEoSFromT_PST(T);
 		eos->GetChiOverS_Claudia();
-		DQll=d3x*u0*eos->chill;
-		DQud=d3x*u0*eos->chiud;
-		DQls=d3x*u0*eos->chils;
-		DQss=d3x*u0*eos->chiss;
+		DQll=d3x*u0*eos->chill*f_l*f_l;
+		DQud=d3x*u0*eos->chiud*f_l*f_l;
+		DQls=d3x*u0*eos->chils*f_l*f_s;
+		DQss=d3x*u0*eos->chiss*f_s*f_s;
 	}
 	else{
 		DQll=DQud=DQls=DQss=0.0;

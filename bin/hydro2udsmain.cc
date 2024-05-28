@@ -14,6 +14,7 @@ int main(int argc,char *argv[]){
 		printf("Usage: hydro2uds run_number\n");
 		exit(-1);
   }
+	char message[CLog::CHARLENGTH];
 	bool oscarfile=true;
 	int run_number=atoi(argv[1]);
 	string udsfilename="uds"+string(argv[1])+".txt";
@@ -36,12 +37,24 @@ int main(int argc,char *argv[]){
 			hb.SwapMeshes();
 			oscarfile=hb.ReadDuke(hb.newmesh);
 			hb.HyperFindEpsilon();
-			hb.MakeCharges();
-			hb.PropagateCharges();
-			hb.ScatterCharges();
-			if(fabs(lrint(hb.mesh->tau)-hb.mesh->tau)<0.001)
-				CLog::Info("tau="+to_string(hb.mesh->tau)+", cmap.size="+to_string(hb.cmap.size())+", emap.size="+to_string(hb.emap.size())+"\n");
-		}while(oscarfile);
+		hb.MakeCharges();
+		hb.PropagateCharges();
+		hb.ScatterCharges();
+		if(fabs(lrint(hb.mesh->tau)-hb.mesh->tau)<0.001){
+			snprintf(message,CLog::CHARLENGTH,"tau=%g, cmap.size=%lu, emap.size=%lu\n",hb.mesh->tau,
+			hb.cmap.size(),hb.emap.size());
+			CLog::Info(message);
+			snprintf(message,CLog::CHARLENGTH,"highestT=%g, highestEpsilon=%g, biggestU=%g\n",hb.highestT,hb.highestEpsilon,hb.biggestU);
+			CLog::Info(message);
+		}
+	}while(oscarfile);
+	
+	snprintf(message,CLog::CHARLENGTH,"tau=%g, cmap.size=%lu, emap.size=%lu\n",hb.mesh->tau,
+	hb.cmap.size(),hb.emap.size());
+	CLog::Info(message);
+	snprintf(message,CLog::CHARLENGTH,"highestT=%g, highestEpsilon=%g, biggestU=%g\n",hb.highestT,hb.highestEpsilon,hb.biggestU);
+	CLog::Info(message);
+	
 		hb.WriteCharges();
 		if(run_number==0)
 			hb.WriteHyper();
