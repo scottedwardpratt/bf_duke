@@ -25,7 +25,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	}
 	highestT=biggestU=0.0;
 	if(tau0readcheck){
-		duke_filename="../hydrodata/"+qualifier+"/"+parmap.getS("HYDRODATA_FILENAME","evolution_xyeta.dat");
+		duke_filename="../hydrodata/"+qualifier+"/"+parmap.getS("HYDRODATA_FILENAME","evolution_xyeta.txt");
 		snprintf(message,CLog::CHARLENGTH,"filename=%s\n",duke_filename.c_str());
 		CLog::Info(message);
 		fptr_duke=fopen(duke_filename.c_str(),"r");
@@ -136,7 +136,7 @@ bool CHydroBalance::ReadOSCAR(CHBHydroMesh *hydromesh){
 	}
 	highestT=biggestU=0.0;
 	if(tau0readcheck){
-		oscar_filename="../hydrodata/"+qualifier+"/"+parmap.getS("HYDRODATA_FILENAME","OSCAR2008H.dat");
+		oscar_filename="../hydrodata/"+qualifier+"/"+parmap.getS("HYDRODATA_FILENAME","OSCAR2008H.txt");
 		snprintf(message,CLog::CHARLENGTH,"filename=%s\n",oscar_filename.c_str());
 		CLog::Info(message);
 		fptr_oscar=fopen(oscar_filename.c_str(),"r");
@@ -226,7 +226,7 @@ void CHydroBalance::WriteCharges(){
 	string dirname="udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
-	string filename=dirname+"/"+parmap.getS("CHARGESINFO_FILENAME","uds.dat");
+	string filename=dirname+"/"+parmap.getS("CHARGESINFO_FILENAME","uds.txt");
 	snprintf(message,CLog::CHARLENGTH,"writing charges to %s\n",filename.c_str());
 	mapic::iterator it;
 	CHBCharge *charge;
@@ -282,7 +282,7 @@ void CHydroBalance::WriteSource(){
 	string dirname="udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
-	string filename=dirname+"/udssource.dat";
+	string filename=dirname+"/udssource.txt";
 	FILE *fptr=fopen(filename.c_str(),"w");
 	for(itau=0;itau<30;itau++){
 		fprintf(fptr,"%5.2f ",(0.5+itau)*0.5);
@@ -329,7 +329,7 @@ void CHydroBalance::WriteFinalCF(){
 	string dirname="udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
-	string filename=dirname+"/cf_uds.dat";
+	string filename=dirname+"/cf_uds.txt";
 	FILE *fptr=fopen(filename.c_str(),"w");
 	fprintf(fptr,"#Deta       uu            ud          us            ss\n");
 	for(ieta=0;ieta<Netabins;ieta++){
@@ -345,7 +345,7 @@ void CHydroBalance::WriteHyper(){
 	string dirname="udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
-	string filename=dirname+"/"+parmap.getS("HYPERDATA_FILENAME","hyper.dat");
+	string filename=dirname+"/"+parmap.getS("HYPERDATA_FILENAME","hyper.txt");
 	snprintf(message,CLog::CHARLENGTH,"writing hyper info to %s\n",filename.c_str());
 	Chyper *hyper;
 	FILE *fptr=fopen(filename.c_str(),"w");

@@ -30,10 +30,12 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	if(hyperdef=="TEMPERATURE"){
 		HYPERT=true;
 		HYPEREPSILON=false;
+		CLog::Info("Freezeout T = "+to_string(1000*Tf)+" MeV\n ");
 	}
 	else if(hyperdef=="EPSILON"){
 		HYPERT=false;
 		HYPEREPSILON=true;
+		CLog::Info("Freezeout epsilon = "+to_string(epsilon_f)+" GeV/fm^3\n");
 	}
 	else{
 		CLog::Fatal("parameter HYPERDEF not recognized = "+hyperdef+"\n");
@@ -74,8 +76,8 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	DY=CHBHydroMesh::DY;
 	
 	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
-	WRITE_TRAJ=parmap.getB("BF_WRITE_TRAJ",false);
-	NSAMPLE_HYDRO2UDS=parmap.getD("BF_NSAMPLE_HYDRO2UDS",2);
+	WRITE_TRAJ=parmap.getB("HYDRO2UDS_WRITE_TRAJ",false);
+	NSAMPLE_HYDRO2UDS=parmap.getD("HYDRO2UDS_NSAMPLE",2);
 	randy=new Crandy(ranseed);
 	mesh=newmesh=oldmesh=NULL;
 	Ncollisions=0;

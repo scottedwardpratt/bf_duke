@@ -19,7 +19,6 @@ int main(int argc,char *argv[]){
 	string udsfilename="uds"+string(argv[1])+".txt";
 	CHydroBalance hb("udsdata/udsparameters.txt",run_number);
 	hb.parmap.set("CHARGESINFO_FILENAME",udsfilename);
-	hb.parmap.set("CHARGESINFO_FILENAME",udsfilename);
 	CQualifiers qualifiers;
 	qualifiers.Read("qualifiers.txt");
 	for(int iqual=0;iqual<qualifiers.nqualifiers;iqual++){
