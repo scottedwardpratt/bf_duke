@@ -16,21 +16,22 @@ CHydroBalance::CHydroBalance(){
 CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
 	parmap.ReadParsFromFile(parfilename);
-	Tf=0.001*parmap.getD("FREEZEOUT_TEMP",155.0);
+	Tf=0.001*parmap.getD("HYPER_FREEZEOUT_TEMP",155.0);
+	epsilon_f=parmap.getD("HYPER_FREEZEOUT_EPSILON",0.4);
 	SIGMA0=parmap.getD("BF_SIGMA0",0.5);
-	DiffusionRatio=parmap.getD("DIFFUSION_RATIO",1.0);
+	DiffusionRatio=parmap.getD("BF_DIFFUSION_RATIO",1.0);
 	eos=new CHBEoS(&parmap);
 	eos->ReadEoS_PST();
 	eos->BuildMap();
 	eos->GetEoSFromT_PST(Tf);
 	eos->GetChiOverS_Claudia();
 	eos->FillOutdDdT();
-	string hyperdef=parmap.getS("HYPERDEF","HYPERDEF_T");
-	if(hyperdef=="HYPERDEF_T"){
+	string hyperdef=parmap.getS("HYPER_DEF","TEMPERATURE");
+	if(hyperdef=="TEMPERATURE"){
 		HYPERT=true;
 		HYPEREPSILON=false;
 	}
-	else if(hyperdef=="HYPERDEF_EPSILON"){
+	else if(hyperdef=="EPSILON"){
 		HYPERT=false;
 		HYPEREPSILON=true;
 	}
