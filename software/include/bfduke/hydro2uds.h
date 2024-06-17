@@ -74,6 +74,7 @@ namespace NMSUPratt{
 		void ClearCharges();
 		void WriteSource();
 		void WriteHyper();
+		void WriteHyper_Duke_2D();
 		void WriteFinalCF();
 		void Reset();
 		bool ReadOSCAR(CHBHydroMesh *hydromesh);

@@ -9,7 +9,7 @@ using namespace NMSUPratt;
 
 void CHydroBalance::HyperFindEpsilon(){
 	char message[CLog::CHARLENGTH];
-	int ix,iy,a,b;
+	int ix,iy;//,a,b;
 	double dEdx,dEdy,dEdt,fugacity_l,fugacity_s,gamma_q;
 	Chyper hyper;
 	Chyper *newhyper;
@@ -32,6 +32,9 @@ void CHydroBalance::HyperFindEpsilon(){
 					if(GetDOmega(dEdt,dEdx,dEdy,
 					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGEt,GGEx,GGEy)){
 						GetGammaFQ(hyper.tau,gamma_q,fugacity_l,fugacity_s);
+						hyper.fugacity_u=hyper.fugacity_d=fugacity_l;
+						hyper.fugacity_s=fugacity_s;
+						/*
 						eos->T=hyper.T0;
 						eos->GetChiOverS(gamma_q);
 						hyper.chi(0,0)=hyper.chi(1,1)=eos->chill;
@@ -44,6 +47,7 @@ void CHydroBalance::HyperFindEpsilon(){
 								chitothyper(a,b)+=hyper.udotdOmega*hyper.chi(a,b);
 							}
 						}
+						*/
 						newhyper=new Chyper;
 						newhyper->Copy(&hyper);
 						hyperlist.push_back(newhyper);

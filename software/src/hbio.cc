@@ -279,9 +279,9 @@ void CHydroBalance::WriteCharges(){
 		charge=it->second;
 		hyper=&(charge->hyper);
 		GetGammaFQ(hyper->tau,gamma_q,f_l,f_s);
-		fprintf(fptr,"%6d %2d %2d %2d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e\n",
+		fprintf(fptr,"%6d %2d %2d %2d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e\n",
 		balanceID,charge->q[0],charge->q[1],charge->q[2],charge->weight,charge->tau,charge->eta,
-		charge->x,charge->y,hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2],f_l,f_s);
+		charge->x,charge->y,hyper->T0,hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2],f_l,f_l,f_s);
 		if(WRITE_TRAJ){
 			if(charge->trajinfo!=NULL){
 				for(icharge=0;icharge<charge->trajinfo->x.size();icharge++){
@@ -387,6 +387,27 @@ void CHydroBalance::WriteHyper(){
 		hyper=*it;
 		fprintf(fptr,"%13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e\n",
 		hyper->tau,hyper->r[1],hyper->r[2],hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
+	}
+	snprintf(message,CLog::CHARLENGTH,"Wrote %d hyper-elements\n",int(hyperlist.size()));
+	fclose(fptr);
+}
+
+void CHydroBalance::WriteHyper_Duke_2D(){
+	char message[CLog::CHARLENGTH];
+	string dirname="udsdata/"+qualifier;
+	string command="mkdir -p "+dirname;
+	system(command.c_str());
+	string filename=dirname+"/"+parmap.getS("HYPERDATA_FILENAME","hyper.txt");
+	snprintf(message,CLog::CHARLENGTH,"writing hyper info to %s\n",filename.c_str());
+	Chyper *hyper;
+	FILE *fptr=fopen(filename.c_str(),"w");
+	//fprintf(fptr,"#Tf=%g\n",Tf);
+	fprintf(fptr,"#   tau        T        f_u      f_d       f_s      x            y           Ux              Uy         dOmega0       dOmegaX       dOmegaY       pi_xx          pi_yy        pi_xy\n");
+	list<Chyper *>::iterator it;
+	for(it=hyperlist.begin();it!=hyperlist.end();++it){
+		hyper=*it;
+		fprintf(fptr,"%13.7e %13.7f %13.7f %13.7f %13.7f %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e\n",
+		hyper->tau,hyper->T0,hyper->fugacity_u,hyper->fugacity_d,hyper->fugacity_s,hyper->r[1],hyper->r[2],hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
 	}
 	snprintf(message,CLog::CHARLENGTH,"Wrote %d hyper-elements\n",int(hyperlist.size()));
 	fclose(fptr);

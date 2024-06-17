@@ -313,7 +313,7 @@ void CHBEoS::ReadEoS_PST(){
 	int nres=reslist->resmap.size();
 	vector<double> density;
 	vector<double> maxweight;
-	Eigen::Matrix3d chi;
+	//Eigen::Matrix3d chi;
 	density.resize(nres);
 	maxweight.resize(nres);
 	fclose(fptr);
