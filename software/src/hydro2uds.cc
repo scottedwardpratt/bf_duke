@@ -307,6 +307,7 @@ void CHydroBalance::PropagateCharges(){
 			if(!(charge->active) || (charge->active && newmesh->epsilon[ix][iy]<epsilon_f)){
 				emap.insert(pairic(id,charge));
 				hyper=&(charge->hyper);
+				GetTBar(ix,iy,hyper->T0);
 				if(WRITE_TRAJ)
 					charge->addtraj();
 				GetGradEpsilon(ix,iy,dEdt,dEdx,dEdy,GGEt,GGEx,GGEy);

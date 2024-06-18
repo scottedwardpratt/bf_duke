@@ -28,12 +28,15 @@ void CHydroBalance::HyperFindEpsilon(){
 					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
 					GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
 					hyper.pitilde[2][2]);
-					GetTBar(ix,iy,hyper.T0);
+					double T0;
+					GetTBar(ix,iy,T0);
+					hyper.T0=T0;
 					if(GetDOmega(dEdt,dEdx,dEdy,
 					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGEt,GGEx,GGEy)){
 						GetGammaFQ(hyper.tau,gamma_q,fugacity_l,fugacity_s);
 						hyper.fugacity_u=hyper.fugacity_d=fugacity_l;
 						hyper.fugacity_s=fugacity_s;
+
 						/*
 						eos->T=hyper.T0;
 						eos->GetChiOverS(gamma_q);
@@ -79,7 +82,9 @@ void CHydroBalance::HyperFindT(){
 					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
 					GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
 					hyper.pitilde[2][2]);
-					GetTBar(ix,iy,hyper.T0);
+					double T0;
+					GetTBar(ix,iy,T0);
+					hyper.T0=T0;
 					if(GetDOmega(dTdt,dTdx,dTdy,
 					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGTt,GGTx,GGTy)){
 						for(a=0;a<3;a++){
