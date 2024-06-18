@@ -57,7 +57,7 @@ int main(int argc,char *argv[]){
 	
 		hb.WriteCharges();
 		if(run_number==0)
-			hb.WriteHyper();
+			hb.WriteHyper_Duke_2D();
 		hb.ClearCharges();
 		
 	}
