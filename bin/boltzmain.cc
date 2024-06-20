@@ -12,7 +12,7 @@ using namespace NMSUPratt;
 
 int main(int argc, char *argv[]){
 	if (argc != 4) {
-		CLog::Fatal("Usage: b3d run_name ievent0 ieventf\n");
+		CLog::Fatal("Usage: b3d run_number ievent0 ieventf\n");
   }
 	CparameterMap parmap;
 	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
@@ -21,8 +21,9 @@ int main(int argc, char *argv[]){
 	CBalanceArrays *barray;
 	long long int npartstot,nparts0;
 	long long int norm;
-	int ievent,iqual,nevents;
-	string run_name=argv[1];
+	int ievent,iqual,nevents,run_number;
+	run_number=atoi(argv[1]);
+	string run_name="run"+to_string(run_number);
 	int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	nevents=1+ieventf-ievent0;
 	CMSU_Boltzmann *b3d=new CMSU_Boltzmann(run_name,&parmap,&reslist);
@@ -35,11 +36,14 @@ int main(int argc, char *argv[]){
 
 	CQualifiers qualifiers;
 	qualifiers.Read("qualifiers.txt");
+	
 	for(iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		npartstot=0;
 		b3d->SetQualifier(qualifiers.qualifier[iqual]->qualname);
-		parmap.set("HYPER_INFO_FILE","udsdata/"+qualifiers.qualifier[iqual]->qualname+"/hyper.txt");
 		qualifiers.SetPars(b3d->parmap,iqual);
+		parmap.ReadParsFromFile("model_output/"+run_name+"/"+qualifiers.qualifier[iqual]->qualname+"/parameters.txt");
+		parmap.set("HYPER_INFO_FILE","model_output/"+run_name+"/"+qualifiers.qualifier[iqual]->qualname+"/udsdata/hyper.txt");
+		
 		CLog::Info("_________________ iqual="+to_string(iqual)+", nevents="+to_string(nevents)+"\n");
 		ms->ReadHyper_OSU_2D();
 		for(ievent=ievent0;ievent<=ieventf;ievent++){

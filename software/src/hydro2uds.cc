@@ -13,7 +13,8 @@ CHydroBalance *CHBHydroMesh::hb=NULL;
 CHydroBalance::CHydroBalance(){
 };
 
-CHydroBalance::CHydroBalance(string parfilename,int ranseed){
+CHydroBalance::CHydroBalance(string parfilename,int run_number_set){
+	run_number=run_number_set;
 	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
 	parmap.ReadParsFromFile(parfilename);
 	Tf=0.001*parmap.getD("HYPER_FREEZEOUT_TEMP",155.0);
@@ -79,7 +80,7 @@ CHydroBalance::CHydroBalance(string parfilename,int ranseed){
 	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
 	WRITE_TRAJ=parmap.getB("HYDRO2UDS_WRITE_TRAJ",false);
 	NSAMPLE_HYDRO2UDS=parmap.getD("HYDRO2UDS_NSAMPLE",2);
-	randy=new Crandy(ranseed);
+	randy=new Crandy(run_number);
 	mesh=newmesh=oldmesh=NULL;
 	Ncollisions=0;
 	CHBHydroMesh::hb=this;

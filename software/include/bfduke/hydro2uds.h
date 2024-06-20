@@ -25,6 +25,7 @@ namespace NMSUPratt{
 		double highestEpsilon,highestT,biggestU;
 		vector<CHBCharge> hbcharges;
 		unsigned int nhbcharges;
+		int run_number;
 		string qualifier;
 		double SIGMA0;  //initial movement of one particle at birth
 		Crandy *randy;
@@ -70,7 +71,7 @@ namespace NMSUPratt{
 		//list<CHBHyperElement *> hyperlist;   // list of hyper-elements
 		list<Chyper *> hyperlist;   // list of hyper-elements
 		Eigen::Matrix3d chitothyper;
-		void WriteCharges();
+		void WriteCharges(int ichargefile);
 		void ClearCharges();
 		void WriteSource();
 		void WriteHyper();

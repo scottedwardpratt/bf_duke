@@ -258,13 +258,13 @@ bool CHydroBalance::ReadOSCAR(CHBHydroMesh *hydromesh){
 	return keepgoing;
 }
 
-void CHydroBalance::WriteCharges(){
+void CHydroBalance::WriteCharges(int ichargefile){
 	double f_l,f_s,gamma_q;
 	char message[CLog::CHARLENGTH];
-	string dirname="udsdata/"+qualifier;
+	string dirname="model_output/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
-	string filename=dirname+"/"+parmap.getS("CHARGESINFO_FILENAME","uds.txt");
+	string filename=dirname+"/uds"+to_string(ichargefile)+".txt";
 	snprintf(message,CLog::CHARLENGTH,"writing charges to %s\n",filename.c_str());
 	mapic::iterator it;
 	CHBCharge *charge;
@@ -309,7 +309,7 @@ void CHydroBalance::ClearCharges(){
 void CHydroBalance::WriteSource(){
 	// Note: DTAU for source mesh was 0.5 fm/c
 	int a,b,itau;
-	string dirname="udsdata/"+qualifier;
+	string dirname="model_output/run"+to_string(run_number)+"/udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/udssource.txt";
@@ -356,7 +356,7 @@ void CHydroBalance::WriteFinalCF(){
 		}
 	}
 	
-	string dirname="udsdata/"+qualifier;
+	string dirname="model_output/run"+to_string(run_number)+"/udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/cf_uds.txt";
@@ -373,7 +373,7 @@ void CHydroBalance::WriteFinalCF(){
 
 void CHydroBalance::WriteHyper(){
 	char message[CLog::CHARLENGTH];
-	string dirname="udsdata/"+qualifier;
+	string dirname="model_output/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/"+parmap.getS("HYPERDATA_FILENAME","hyper.txt");
@@ -394,7 +394,7 @@ void CHydroBalance::WriteHyper(){
 
 void CHydroBalance::WriteHyper_Duke_2D(){
 	char message[CLog::CHARLENGTH];
-	string dirname="udsdata/"+qualifier;
+	string dirname="model_output/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/"+parmap.getS("HYPERDATA_FILENAME","hyper.txt");
