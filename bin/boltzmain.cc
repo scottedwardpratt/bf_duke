@@ -23,10 +23,9 @@ int main(int argc, char *argv[]){
 	long long int norm;
 	int ievent,iqual,nevents,run_number;
 	run_number=atoi(argv[1]);
-	string run_name="run"+to_string(run_number);
 	int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	nevents=1+ieventf-ievent0;
-	CMSU_Boltzmann *b3d=new CMSU_Boltzmann(run_name,&parmap,&reslist);
+	CMSU_Boltzmann *b3d=new CMSU_Boltzmann(run_number,&reslist);
 	CmasterSampler *ms=new CmasterSampler(&parmap);
 	ms->ClearHyperList();
 	
@@ -40,9 +39,8 @@ int main(int argc, char *argv[]){
 	for(iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		npartstot=0;
 		b3d->SetQualifier(qualifiers.qualifier[iqual]->qualname);
-		qualifiers.SetPars(b3d->parmap,iqual);
-		parmap.ReadParsFromFile("model_output/"+run_name+"/"+qualifiers.qualifier[iqual]->qualname+"/parameters.txt");
-		parmap.set("HYPER_INFO_FILE","model_output/"+run_name+"/"+qualifiers.qualifier[iqual]->qualname+"/udsdata/hyper.txt");
+		qualifiers.SetPars(&(b3d->parmap),iqual);
+		parmap.set("HYPER_INFO_FILE","model_output/run"+to_string(run_number)+"/"+qualifiers.qualifier[iqual]->qualname+"/udsdata/hyper.txt");
 		
 		CLog::Info("_________________ iqual="+to_string(iqual)+", nevents="+to_string(nevents)+"\n");
 		ms->ReadHyper_OSU_2D();

@@ -17,10 +17,8 @@ int main(int argc,char *argv[]){
 	char message[CLog::CHARLENGTH];
 	bool oscarfile=true;
 	int ievent,nevents,run_number=atoi(argv[1]);
-	string udsfilename="uds"+string(argv[1])+".txt";
-	CHydroBalance hb("model_output/fixed_parameters.txt",run_number);
+	CHydroBalance hb(run_number);
 	nevents=hb.parmap.getI("HYDRO_NEVENTS",10);
-	hb.parmap.set("CHARGESINFO_FILENAME",udsfilename);
 	CQualifiers qualifiers;
 	qualifiers.Read("qualifiers.txt");
 	for(int iqual=0;iqual<qualifiers.nqualifiers;iqual++){

@@ -19,16 +19,16 @@ int main(int argc, char *argv[]){
 	//sprintf(logfilename,"msuboltz_log.txt");
 	//CLog::Init(logfilename);
 	CLog::INTERACTIVE=true;
-	string filename="model_output/fixed_parameters.txt";
-	parmap.ReadParsFromFile(filename);
+	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
 	CmasterSampler ms(&parmap);
 	CMSU_Boltzmann::mastersampler=&ms;
 	CpartList *pl=new CpartList(&parmap,ms.reslist);
 	ms.partlist=pl;
-	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann("run"+to_string(run_number),&parmap,ms.reslist);
+	//CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann("run"+to_string(run_number),&parmap,ms.reslist);
+	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,ms.reslist);
 	msuboltz->InitCascade();
 	CBalanceArrays *barray=msuboltz->balancearrays;
-	nevents=parmap.getI("MSU_BOLTZMANN_NEVENTSMAX",10);
+	nevents=msuboltz->parmap.getI("MSU_BOLTZMANN_NEVENTSMAX",10);
 	//msuboltz->ReadMuTInfo();
 	msuboltz->nevents=0;
 	ms.randy->reset(run_number);
@@ -38,13 +38,9 @@ int main(int argc, char *argv[]){
 	for(iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		npartstot=0;
 		nmerge=nscatter=nannihilate=ncancel_annihilate=ndecay=0;
-		filename="model_output/run"+to_string(run_number)+"/"+qualifiers.qualifier[iqual]->qualname+"/parameters.txt";
-		parmap.ReadParsFromFile(filename);
 		msuboltz->SetQualifier(qualifiers.qualifier[iqual]->qualname);
-		qualifiers.SetPars(msuboltz->parmap,iqual);
+		qualifiers.SetPars(&(msuboltz->parmap),iqual);
 		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
-		
-	
 
 		for(ievent=0;ievent<nevents;ievent++){
 			printf("--- begin for ievent=%lld\n",ievent);

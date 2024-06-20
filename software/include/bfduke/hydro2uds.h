@@ -37,7 +37,7 @@ namespace NMSUPratt{
 		double DiffusionRatio;
 		Eigen::Matrix3d chif,chifinv;
 		CHydroBalance();
-		CHydroBalance(string parfilename,int ranseed);
+		CHydroBalance(int run_number);
 		~CHydroBalance();
 		void SetPars();
 		void MakeMeshes();
