@@ -1,12 +1,8 @@
-#include "msu_boltzmann/msu_boltzmann.h"
-#include "msu_eos/resonances.h"
-#include "msu_sampler/sampler.h"
-#include "msu_commonutils/log.h"
-#include "msu_boltzmann/balancearrays.h"
+#include "msu_sampler/master.h"
 #include "msu_commonutils/qualifier.h"
-#include "msu_commonutils/randy.h"
-#include "msu_commonutils/misc.h"
-
+#include "msu_boltzmann/msu_boltzmann.h"
+#include "msu_commonutils/log.h"
+#include <cstring>
 using namespace std;
 using namespace NMSUPratt;
 
@@ -15,61 +11,79 @@ int main(int argc, char *argv[]){
 		CLog::Fatal("Usage: b3d run_number ievent0 ieventf\n");
   }
 	CparameterMap parmap;
-	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
-	CresList reslist(&parmap);
-	
-	CBalanceArrays *barray;
-	long long int npartstot,nparts0;
-	long long int norm;
-	int ievent,iqual,nevents,run_number;
-	run_number=atoi(argv[1]);
+	int run_number=atoi(argv[1]);
 	int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
-	nevents=1+ieventf-ievent0;
-	CMSU_Boltzmann *b3d=new CMSU_Boltzmann(run_number,&reslist);
-	CmasterSampler *ms=new CmasterSampler(&parmap);
-	ms->ClearHyperList();
-	
-	
-	b3d->InitCascade();
-	barray=b3d->balancearrays;
-
+	long long int nevents=1+ieventf-ievent0;
+	char message[CLog::CHARLENGTH];
+	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nparts,npartstot,ievent,ndecay;
+	//char logfilename[100];
+	//sprintf(logfilename,"msuboltz_log.txt");
+	//CLog::Init(logfilename);
+	CLog::INTERACTIVE=true;
+	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
+	CmasterSampler ms(&parmap);
+	CMSU_Boltzmann::mastersampler=&ms;
+	CpartList *pl=new CpartList(&parmap,ms.reslist);
+	ms.partlist=pl;
+	//CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann("run"+to_string(run_number),&parmap,ms.reslist);
+	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,ms.reslist);
+	msuboltz->InitCascade();
+	CBalanceArrays *barray;
+	if(msuboltz->BFCALC){
+		barray=msuboltz->balancearrays;
+		barray->FROM_UDS=false;
+	}
+	//msuboltz->ReadMuTInfo();
+	msuboltz->nevents=0;
 	CQualifiers qualifiers;
+	int iqual;
 	qualifiers.Read("qualifiers.txt");
-	
 	for(iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		npartstot=0;
-		b3d->SetQualifier(qualifiers.qualifier[iqual]->qualname);
-		qualifiers.SetPars(&(b3d->parmap),iqual);
-		parmap.set("HYPER_INFO_FILE","model_output/run"+to_string(run_number)+"/"+qualifiers.qualifier[iqual]->qualname+"/udsdata/hyper.txt");
-		
-		CLog::Info("_________________ iqual="+to_string(iqual)+", nevents="+to_string(nevents)+"\n");
-		ms->ReadHyper_OSU_2D();
+		nmerge=nscatter=nannihilate=ncancel_annihilate=ndecay=0;
+		msuboltz->SetQualifier(qualifiers.qualifier[iqual]->qualname);
+		qualifiers.SetPars(&(msuboltz->parmap),iqual);
+		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
+
 		for(ievent=ievent0;ievent<=ieventf;ievent++){
-			CLog::Info("------ beginning, ievent="+to_string(ievent)+" -------\n");
-			
-			ms->randy->reset(ievent);
-			ms->partlist->Clear();
-			printf("check a\n");
-			nparts0=ms->MakeEvent();
-			printf("check nparts0=%lld\n",nparts0);
-			
-			b3d->Reset();
-			b3d->randy->reset(ievent);
-			b3d->InputPartList(ms->partlist);
-			
-			b3d->PerformAllActions();
-			CLog::Info("N initial parts = "+to_string(nparts0)+", N final parts = "+to_string(b3d->PartMap.size())+"\n");
-			npartstot+=b3d->PartMap.size();
-			barray->ProcessPartMap();
-			
+			printf("--- begin for ievent=%lld\n",ievent);
+			ms.randy->reset(ievent);
+			msuboltz->Reset();
+			nparts=ms.MakeEvent();
+			npartstot+=nparts;
+			msuboltz->InputPartList(pl);
+			pl->Clear();
+		
+			msuboltz->PerformAllActions();
+			msuboltz->IncrementHadronCount();
+		
+			nmerge+=msuboltz->nmerge;
+			nscatter+=msuboltz->nscatter;
+			nannihilate+=msuboltz->nannihilate;
+			ncancel_annihilate+=msuboltz->ncancel_annihilate;
+			ndecay+=msuboltz->ndecay;
+			snprintf(message,CLog::CHARLENGTH,"ievent=%lld nparts=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
+			CLog::Info(message);
+			if(msuboltz->BFCALC)
+				barray->ProcessPartMap();
+			msuboltz->KillAllParts();
 		}
-		norm=nevents*b3d->NSAMPLE;
-		CLog::Info("<Nparts>="+to_string(double(npartstot)/norm)+"\n");
-		barray->ConstructBFs();
-		barray->WriteBFs();
-		barray->WriteDenoms();
-		barray->WriteGammaP();
+		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",
+		double(ndecay)/double(nevents),double(nmerge)/double(nevents),double(nscatter)/double(nevents));
+		CLog::Info(message);
+		snprintf(message,CLog::CHARLENGTH,"nannihilate/event=%g, ncancel_annihilate/event=%g\n",
+		double(nannihilate)/double(nevents),double(ncancel_annihilate)/double(nevents));
+		CLog::Info(message);
+		//msuboltz->WriteMuTInfo();
+		msuboltz->WriteHadronCount();
+		if(msuboltz->BFCALC){
+			barray->ConstructBFs();
+			barray->WriteBFs();
+			barray->WriteDenoms();
+			//barray->WriteGammaP();
+		}
 	}
-	
+
+	CLog::Info("YIPPEE!!!!! We made it all the way through!\n");
 	return 0;
 }

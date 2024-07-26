@@ -81,7 +81,8 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	
 	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
 	WRITE_TRAJ=parmap.getB("HYDRO2UDS_WRITE_TRAJ",false);
-	NSAMPLE_HYDRO2UDS=parmap.getD("HYDRO2UDS_NSAMPLE",2);
+	NSAMPLE_HYDRO2UDS=parmap.getD("HYDRO2UDS_NSAMPLE",1);
+	printf("NSAMPLE_HYDRO2UDS=%g\n",NSAMPLE_HYDRO2UDS);
 	randy=new Crandy(run_number);
 	mesh=newmesh=oldmesh=NULL;
 	Ncollisions=0;

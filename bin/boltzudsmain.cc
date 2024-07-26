@@ -13,6 +13,7 @@ int main(int argc, char *argv[]){
   }
 	CparameterMap parmap;
 	int run_number=atoi(argv[1]);
+	int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
 	//char logfilename[100];
@@ -28,10 +29,10 @@ int main(int argc, char *argv[]){
 	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,ms.reslist);
 	msuboltz->InitCascade();
 	CBalanceArrays *barray=msuboltz->balancearrays;
+	barray->FROM_UDS=true;
 	nevents=msuboltz->parmap.getI("MSU_BOLTZMANN_NEVENTSMAX",10);
 	//msuboltz->ReadMuTInfo();
 	msuboltz->nevents=0;
-	ms.randy->reset(run_number);
 	CQualifiers qualifiers;
 	int iqual;
 	qualifiers.Read("qualifiers.txt");
@@ -44,6 +45,7 @@ int main(int argc, char *argv[]){
 
 		for(ievent=0;ievent<nevents;ievent++){
 			printf("--- begin for ievent=%lld\n",ievent);
+			ms.randy->reset(ievent);
 			msuboltz->Reset();
 			nparts=ms.MakeEvent();
 			npartstot+=nparts;
