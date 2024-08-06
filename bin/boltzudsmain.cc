@@ -13,7 +13,7 @@ int main(int argc, char *argv[]){
   }
 	CparameterMap parmap;
 	int run_number=atoi(argv[1]);
-	int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
+	//int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
 	//char logfilename[100];

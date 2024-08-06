@@ -14,6 +14,7 @@ CHydroBalance::CHydroBalance(){
 };
 
 CHydroBalance::CHydroBalance(int run_number_set){
+	Omega0tot=OmegaXtot=OmegaYtot=netUdotOmega=0.0;
 	run_number=run_number_set;
 	string parfilename="model_output/fixed_parameters.txt";
 	parmap.ReadParsFromFile(parfilename);
@@ -78,6 +79,7 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	YMAX=CHBHydroMesh::YMAX;
 	DX=CHBHydroMesh::DX;
 	DY=CHBHydroMesh::DY;
+	printf("DX=%g, DY=%g, XMAX=%g, XMIN=%g, NX=%d\n",DX,DY,CHBHydroMesh::XMAX,CHBHydroMesh::XMIN,CHBHydroMesh::NX);
 	
 	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
 	WRITE_TRAJ=parmap.getB("HYDRO2UDS_WRITE_TRAJ",false);

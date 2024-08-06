@@ -25,6 +25,7 @@ int main(int argc,char *argv[]){
 		hb.qualifier=qualifiers.qualifier[iqual]->qualname;
 		printf("--------- BEGIN CALC FOR %s ---------\n",hb.qualifier.c_str());
 		for(ievent=0;ievent<nevents;ievent++){
+			hb.Omega0tot=hb.OmegaXtot=hb.OmegaYtot=0.0;
 			hb.Reset();
 			oscarfile=hb.ReadDuke(hb.mesh);
 		
@@ -48,6 +49,7 @@ int main(int argc,char *argv[]){
 					CLog::Info(message);
 				}
 			}while(oscarfile);
+			printf("netUdotOmega=%g, Omega0tot=%g, OmegaXtot=%g, OmegaYtot=%g\n",hb.netUdotOmega,hb.Omega0tot,hb.OmegaXtot,hb.OmegaYtot);
 	
 			snprintf(message,CLog::CHARLENGTH,"tau=%g, cmap.size=%lu, emap.size=%lu\n",hb.mesh->tau,
 			hb.cmap.size(),hb.emap.size());

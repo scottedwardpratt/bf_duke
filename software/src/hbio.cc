@@ -46,6 +46,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	//	fclose(fptr_duke);
 	//}
 	//else{
+	
 	if(feof(fptr_duke)){
 		keepgoing=false;
 	}
@@ -59,6 +60,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					if(ix!=0 && iy!=0)	
 						fscanf(fptr_duke,"%lf",&t);
 					fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf",&e,&s,&vx,&vy,&vz,&tau,&p);
+					tau=TAU0+itauread*DELTAU;
 					//if(fabs(tau-hydromesh->tau)>0.00001){
 					//CLog::Fatal("reading in tau0="+to_string(tau)+", but hydromesh->tau="+to_string(hydromesh->tau)+"\n");
 					//}

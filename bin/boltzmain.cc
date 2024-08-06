@@ -13,7 +13,7 @@ int main(int argc, char *argv[]){
 	CparameterMap parmap;
 	int run_number=atoi(argv[1]);
 	int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
-	long long int nevents=1+ieventf-ievent0;
+	long long int neventstot=1+ieventf-ievent0;
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nparts,npartstot,ievent,ndecay;
 	//char logfilename[100];
@@ -47,7 +47,7 @@ int main(int argc, char *argv[]){
 
 		for(ievent=ievent0;ievent<=ieventf;ievent++){
 			printf("--- begin for ievent=%lld\n",ievent);
-			ms.randy->reset(ievent);
+			ms.randy->reset(100000*run_number+ievent);
 			msuboltz->Reset();
 			nparts=ms.MakeEvent();
 			npartstot+=nparts;
@@ -56,23 +56,25 @@ int main(int argc, char *argv[]){
 		
 			msuboltz->PerformAllActions();
 			msuboltz->IncrementHadronCount();
+			printf("Nparts final=%lu\n",msuboltz->PartMap.size());
 		
 			nmerge+=msuboltz->nmerge;
 			nscatter+=msuboltz->nscatter;
 			nannihilate+=msuboltz->nannihilate;
 			ncancel_annihilate+=msuboltz->ncancel_annihilate;
 			ndecay+=msuboltz->ndecay;
-			snprintf(message,CLog::CHARLENGTH,"ievent=%lld nparts=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
+			snprintf(message,CLog::CHARLENGTH,"---- nevents=%lld nparts=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
 			CLog::Info(message);
 			if(msuboltz->BFCALC)
 				barray->ProcessPartMap();
 			msuboltz->KillAllParts();
 		}
 		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",
-		double(ndecay)/double(nevents),double(nmerge)/double(nevents),double(nscatter)/double(nevents));
+		double(ndecay)/double(neventstot),double(nmerge)/double(neventstot),
+		double(nscatter)/double(neventstot));
 		CLog::Info(message);
 		snprintf(message,CLog::CHARLENGTH,"nannihilate/event=%g, ncancel_annihilate/event=%g\n",
-		double(nannihilate)/double(nevents),double(ncancel_annihilate)/double(nevents));
+		double(nannihilate)/double(neventstot),double(ncancel_annihilate)/double(neventstot));
 		CLog::Info(message);
 		//msuboltz->WriteMuTInfo();
 		msuboltz->WriteHadronCount();
