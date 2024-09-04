@@ -54,7 +54,9 @@ int main(int argc, char *argv[]){
 			msuboltz->InputPartList(pl);
 			pl->Clear();
 		
+			printf("---- begin PerformAllActions\n");
 			msuboltz->PerformAllActions();
+			printf("---- actions performed\n");
 			msuboltz->IncrementHadronCount();
 			printf("Nparts final=%lu\n",msuboltz->PartMap.size());
 		
@@ -65,8 +67,10 @@ int main(int argc, char *argv[]){
 			ndecay+=msuboltz->ndecay;
 			snprintf(message,CLog::CHARLENGTH,"---- nevents=%lld nparts=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
 			CLog::Info(message);
-			if(msuboltz->BFCALC)
+			if(msuboltz->BFCALC){
 				barray->ProcessPartMap();
+				printf("----- partmap processed\n");
+			}
 			msuboltz->KillAllParts();
 		}
 		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",

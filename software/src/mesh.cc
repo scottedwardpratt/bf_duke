@@ -6,7 +6,6 @@
 using namespace std;
 using namespace NMSUPratt;
 
-
 int CHBHydroMesh::NX=0;
 int CHBHydroMesh::NY=0;
 double CHBHydroMesh::DX=0.0;

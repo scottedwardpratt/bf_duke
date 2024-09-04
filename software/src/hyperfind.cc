@@ -21,8 +21,7 @@ void CHydroBalance::HyperFindEpsilon(){
 					snprintf(message,CLog::CHARLENGTH,"CHydroBalance::HyperFindEpsilon() -- ix=%d, iy=%d\n",ix,iy);
 					CLog::Info(message);
 				}
-				GetGradEpsilon(ix,iy,dEdt,dEdx,dEdy,GGEt,GGEx,GGEy);
-				if(GGEt || GGEx || GGEy){
+				if(GetGradEpsilon(ix,iy,dEdt,dEdx,dEdy,GGEt,GGEx,GGEy)){
 					hyper.tau=0.5*(newmesh->tau+mesh->tau);
 					GetXYBar(ix,iy,hyper.r[1],hyper.r[2]);
 					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
@@ -30,37 +29,29 @@ void CHydroBalance::HyperFindEpsilon(){
 					hyper.u[0]=sqrt(1.0+hyper.u[1]*hyper.u[1]+hyper.u[2]*hyper.u[2]);
 					GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
 					hyper.pitilde[2][2]);
-					double T0;
+					double T0,epsilon0;
 					GetTBar(ix,iy,T0);
+					GetEpsilonBar(ix,iy,epsilon0);
 					hyper.T0=T0;
+					hyper.epsilon=epsilon0;
 					if(GetDOmega(dEdt,dEdx,dEdy,
 					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGEt,GGEx,GGEy)){
 						GetGammaFQ(hyper.tau,gamma_q,fugacity_l,fugacity_s);
 						hyper.fugacity_u=hyper.fugacity_d=fugacity_l;
 						hyper.fugacity_s=fugacity_s;
-
-						/*
-						eos->T=hyper.T0;
-						eos->GetChiOverS(gamma_q);
-						hyper.chi(0,0)=hyper.chi(1,1)=eos->chill;
-						hyper.chi(0,1)=hyper.chi(1,0)=eos->chiud;
-						hyper.chi(0,2)=hyper.chi(1,2)=hyper.chi(2,0)=hyper.chi(2,1)=eos->chils;
-						hyper.chi(2,2)=eos->chiss;
-						hyper.chiinv=hyper.chi.inverse();
-						for(a=0;a<3;a++){
-							for(b=0;b<3;b++){
-								chitothyper(a,b)+=hyper.udotdOmega*hyper.chi(a,b);
-							}
-						}
-						*/
 						newhyper=new Chyper;
 						newhyper->Copy(&hyper);
 						hyperlist.push_back(newhyper);
-						netUdotOmega+=hyper.u[0]*hyper.dOmega[0]-hyper.u[1]*hyper.dOmega[1]-hyper.u[2]*hyper.dOmega[2];
-						if(netUdotOmega!=netUdotOmega){
-							hyper.Print();
-							exit(1);
-						}
+						double UdotdOmega=hyper.u[0]*hyper.dOmega[0]-hyper.u[1]*hyper.dOmega[1]-hyper.u[2]*hyper.dOmega[2];
+						netUdotOmega+=UdotdOmega;
+						//printf("%4.2f %g: udotdOmega/tau=%g, u[0]=%g\n",hyper.tau,sqrt(hyper.r[1]*hyper.r[1]+hyper.r[2]*hyper.r[2]),
+						//UdotdOmega/hyper.tau,hyper.u[0]);
+						/*if(iy==NY/2 && hyper.tau>10 && hyper.epsilon<0.35){
+							printf("tau=%g, ix=%d, iy=%d, T0=%g, epsilon=%g, NX=%d, NY=%d\n",
+							hyper.tau,ix,iy,T0,hyper.epsilon,NX,NY);
+							Misc::Pause();
+						}*/
+						
 					}
 				}
 			}
@@ -68,6 +59,86 @@ void CHydroBalance::HyperFindEpsilon(){
 	}
 }
 
+void CHydroBalance::HyperFindF(){
+	char message[CLog::CHARLENGTH];
+	int ix,iy;//,a,b;
+	double dFdx,dFdy,dFdt,fugacity_l,fugacity_s,gamma_q;
+	double RMAX=0.0,UMAX=0.0;
+	Chyper hyper;
+	Chyper *newhyper;
+	bool GGFt,GGFx,GGFy;
+	if(!tau0check){
+		for(ix=1;ix<mesh->NX-1;ix++){
+			for(iy=1;iy<mesh->NY-1;iy++){
+				if(ix<0 || iy<0 || ix==CHBHydroMesh::NX || iy==CHBHydroMesh::NY){
+					snprintf(message,CLog::CHARLENGTH,"CHydroBalance::HyperFindEpsilon() -- ix=%d, iy=%d\n",ix,iy);
+					CLog::Info(message);
+				}
+				if(GetGradF(ix,iy,dFdt,dFdx,dFdy,GGFt,GGFx,GGFy)){
+					
+					hyper.tau=0.5*(newmesh->tau+mesh->tau);
+					GetXYBar(ix,iy,hyper.r[1],hyper.r[2]);
+					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
+					hyper.u[0]=sqrt(1.0+hyper.u[1]*hyper.u[1]+hyper.u[2]*hyper.u[2]);
+					GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
+					hyper.pitilde[2][2]);
+					double T0,epsilon0;
+					GetTBar(ix,iy,T0);
+					GetEpsilonBar(ix,iy,epsilon0);
+					hyper.T0=T0;
+					hyper.epsilon=epsilon0;
+					
+					if(GetDOmega(dFdt,dFdx,dFdy,
+					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy)){
+						
+						GetGammaFQ(hyper.tau,gamma_q,fugacity_l,fugacity_s);
+						hyper.fugacity_u=hyper.fugacity_d=fugacity_l;
+						hyper.fugacity_s=fugacity_s;
+						double r=sqrt(hyper.r[1]*hyper.r[1]+hyper.r[2]*hyper.r[2]);
+						if(r>RMAX)
+							RMAX=r;
+						double umag=sqrt(hyper.u[1]*hyper.u[1]+hyper.u[2]*hyper.u[2]);
+						if(umag>UMAX)
+							UMAX=umag;
+					
+						newhyper=new Chyper;
+						newhyper->Copy(&hyper);
+						hyperlist.push_back(newhyper);
+						double UdotdOmega=hyper.u[0]*hyper.dOmega[0]-hyper.u[1]*hyper.dOmega[1]-hyper.u[2]*hyper.dOmega[2];
+						netUdotOmega+=UdotdOmega;
+						//printf("%4.2f %g: udotdOmega/tau=%g, u[0]=%g\n",hyper.tau,sqrt(hyper.r[1]*hyper.r[1]+hyper.r[2]*hyper.r[2]),
+						//UdotdOmega/hyper.tau,hyper.u[0]);
+						/*if(iy==NY/2 && hyper.tau>10 && hyper.epsilon<0.35){
+							printf("tau=%g, ix=%d, iy=%d, T0=%g, epsilon=%g, NX=%d, NY=%d\n",
+							hyper.tau,ix,iy,T0,hyper.epsilon,NX,NY);
+							Misc::Pause();
+						}*/
+						
+					}
+				}
+			}
+		}
+	}
+	printf("tau=%g, RMAX=%g, UMAX=%g\n",0.5*(newmesh->tau+mesh->tau),RMAX,UMAX);
+}
+
+bool CHydroBalance::GetGradF(int ix,int iy,
+double &dFdt,double &dFdx,double &dFdy,bool &GGFt,bool &GGFx,bool &GGFy){
+	bool gg=false;
+	if(HYPEREPSILON){
+		gg=GetGradEpsilon(ix,iy,dFdt,dFdx,dFdy,GGFt,GGFx,GGFy);
+	}
+	else if(HYPERT){
+		gg=GetGradT(ix,iy,dFdt,dFdx,dFdy,GGFt,GGFx,GGFy);
+	}
+	else{
+		CLog::Fatal("HYPEREPSILON or HYPERT must be true\n");
+	}
+	return gg;
+}
+
+
+/*
 void CHydroBalance::HyperFindT(){
 	char message[CLog::CHARLENGTH];
 	int ix,iy,a,b;
@@ -89,9 +160,11 @@ void CHydroBalance::HyperFindT(){
 					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
 					GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
 					hyper.pitilde[2][2]);
-					double T0;
+					double T0,epsilon0;
 					GetTBar(ix,iy,T0);
+					GetEpsilonBar(ix,iy,epsilon0);
 					hyper.T0=T0;
+					hyper.epsilon=epsilon0;
 					if(GetDOmega(dTdt,dTdx,dTdy,
 					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGTt,GGTx,GGTy)){
 						for(a=0;a<3;a++){
@@ -102,18 +175,30 @@ void CHydroBalance::HyperFindT(){
 						newhyper=new Chyper;
 						newhyper->Copy(&hyper);
 						hyperlist.push_back(newhyper);
+						double UdotdOmega=hyper.u[0]*hyper.dOmega[0]-hyper.u[1]*hyper.dOmega[1]-hyper.u[2]*hyper.dOmega[2];
+						netUdotOmega+=UdotdOmega;
 					}
 				}
 			}
 		}
 	}
 }
+*/
 
 bool CHydroBalance::GetGradEpsilon(int ix,int iy,
 double &dEdt,double &dEdx,double &dEdy,bool &GGEt,bool &GGEx,bool &GGEy){
 	bool hypercheck=false;
 	double Explus,Exminus,Eyplus,Eyminus,Etplus,Etminus;
 	mesh->GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
+	
+	if(mesh->T[ix][iy]<0.13 && mesh->T[ix+1][iy]<0.13 && mesh->T[ix][iy+1]<0.13 && mesh->T[ix+1][iy+1]<0.13
+	&& newmesh->T[ix][iy]<0.13 && newmesh->T[ix+1][iy]<0.13 && newmesh->T[ix][iy+1]<0.13 && newmesh->T[ix+1][iy+1]<0.13){
+		return hypercheck;
+	}
+	Etminus=0.25*(mesh->epsilon[ix][iy]+mesh->epsilon[ix][iy+1]
+		+mesh->epsilon[ix+1][iy]+mesh->epsilon[ix+1][iy+1]);
+	Etplus=0.25*(newmesh->epsilon[ix][iy]+newmesh->epsilon[ix][iy+1]
+		+newmesh->epsilon[ix+1][iy]+newmesh->epsilon[ix+1][iy+1]);
 	
 	Exminus=0.25*(mesh->epsilon[ix][iy]+newmesh->epsilon[ix][iy]
 		+mesh->epsilon[ix][iy+1]+newmesh->epsilon[ix][iy+1]);
@@ -125,14 +210,10 @@ double &dEdt,double &dEdx,double &dEdy,bool &GGEt,bool &GGEx,bool &GGEy){
 	Eyplus=0.25*(mesh->epsilon[ix][iy+1]+newmesh->epsilon[ix][iy+1]
 		+mesh->epsilon[ix+1][iy+1]+newmesh->epsilon[ix+1][iy+1]);
 	
-	Etminus=0.25*(mesh->epsilon[ix][iy]+mesh->epsilon[ix][iy+1]
-		+mesh->epsilon[ix+1][iy]+mesh->epsilon[ix+1][iy+1]);
-	Etplus=0.25*(newmesh->epsilon[ix][iy]+newmesh->epsilon[ix][iy+1]
-		+newmesh->epsilon[ix+1][iy]+newmesh->epsilon[ix+1][iy+1]);
 	
+	dEdt=(Etplus-Etminus)/DELTAU;
 	dEdx=-(Explus-Exminus)/DX;
 	dEdy=-(Eyplus-Eyminus)/DY;
-	dEdt=(Etplus-Etminus)/DELTAU;
 	
 	GGEt=GGEx=GGEy=false;
 	if((Etplus-epsilon_f)*(Etminus-epsilon_f)<0.0)
@@ -183,42 +264,65 @@ double &dTdt,double &dTdx,double &dTdy,bool &GGTt,bool &GGTx,bool &GGTy){
 	return hypercheck;
 }
 
-bool CHydroBalance::GetDOmega(double dTdt,double dTdx,double dTdy,
-double &dOmega0,double &dOmegaX,double &dOmegaY,bool GGTt,bool GGTx,bool GGTy){
+bool CHydroBalance::GetDOmega(double dFdt,double dFdx,double dFdy,
+double &dOmega0,double &dOmegaX,double &dOmegaY,bool GGFt,bool GGFx,bool GGFy){
 	double dV,tau=0.5*(newmesh->tau+mesh->tau);
-	double dTdr=sqrt(dTdx*dTdx+dTdy*dTdy);
+	double dFdr=sqrt(dFdx*dFdx+dFdy*dFdy);
 	bool success=false;
 	dOmega0=dOmegaX=dOmegaY=0.0;
-	if(fabs(dTdt)>(DX/DELTAU)*dTdr){
-	//if(fabs(dTdt)>dTdr){
-		if(GGTt){
+	
+
+	if(GGFt){
+		dV=tau*DX*DY;
+		dOmega0=-dV*dFdt/fabs(dFdt);
+		dOmegaX=-dV*dFdx/fabs(dFdt);
+		dOmegaY=-dV*dFdy/fabs(dFdt);
+		success=true;
+		Omega0tot+=fabs(dOmega0);
+		OmegaXtot+=fabs(dOmegaX);
+		OmegaYtot+=fabs(dOmegaY);
+	}
+
+	
+	/*
+	if(fabs(dFdt*DELTAU)>(DX*dFdr)){
+		//if(fabs(dTdt)>dTdr){
+		if(GGFt){
 			dV=tau*DX*DY;
-			dOmega0=-dV*dTdt/fabs(dTdt);
-			dOmegaX=-dV*dTdx/fabs(dTdt);
-			dOmegaY=-dV*dTdy/fabs(dTdt);
+			dOmega0=-dV*dFdt/fabs(dFdt);
+			dOmegaX=-dV*dFdx/fabs(dFdt);
+			dOmegaY=-dV*dFdy/fabs(dFdt);
 			success=true;
-			Omega0tot+=dOmega0;
+		Omega0tot+=fabs(dOmega0);
+		OmegaXtot+=fabs(dOmegaX);
+		OmegaYtot+=fabs(dOmegaY);
 		}
 	}
-	else if(fabs(dTdx)>fabs(dTdy)){
-		if(GGTx){
+	else if(fabs(dFdx)>fabs(dFdy)){
+		if(GGFx){
 			dV=tau*DELTAU*DY;
-			dOmega0=-dV*dTdt/fabs(dTdx);
-			dOmegaX=-dV*dTdx/fabs(dTdx);
-			dOmegaY=-dV*dTdy/fabs(dTdx);
+			dOmega0=-dV*dFdt/fabs(dFdx);
+			dOmegaX=-dV*dFdx/fabs(dFdx);
+			dOmegaY=-dV*dFdy/fabs(dFdx);
 			success=true;
-			OmegaXtot+=fabs(dOmegaX);
+		Omega0tot+=fabs(dOmega0);
+		OmegaXtot+=fabs(dOmegaX);
+		OmegaYtot+=fabs(dOmegaY);
 		}
 	}
 	else{
-		if(GGTy){
+		if(GGFy){
 			dV=tau*DELTAU*DX;
-			dOmega0=-dV*dTdt/fabs(dTdy);
-			dOmegaX=-dV*dTdx/fabs(dTdy);
-			dOmegaY=-dV*dTdy/fabs(dTdy);
+			dOmega0=-dV*dFdt/fabs(dFdy);
+			dOmegaX=-dV*dFdx/fabs(dFdy);
+			dOmegaY=-dV*dFdy/fabs(dFdy);
 			success=true;
-			OmegaYtot+=fabs(dOmegaY);
+		Omega0tot+=fabs(dOmega0);
+		OmegaXtot+=fabs(dOmegaX);
+		OmegaYtot+=fabs(dOmegaY);
 		}
 	}
+	*/
+
 	return success;
 }

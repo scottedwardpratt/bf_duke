@@ -44,6 +44,7 @@ namespace NMSUPratt{
 		void MakeMeshes();
 		void SwapMeshes();
 		void MakeCharges();
+		void HyperFindF();
 		void HyperFindT();
 		void HyperFindEpsilon();
 		void GetUxyBar(int ix,int iy,double &uxbar,double &uybar); // ux,uy for cell ix,iy between mesh and newmesh
@@ -56,6 +57,8 @@ namespace NMSUPratt{
 		bool &GGTt,bool &GGTx,bool &GGTy); // GradT for same cell
 		bool GetGradEpsilon(int ix,int iy,double &dEdt,double &dEdx,double &dEdy,
 		bool &GGEt,bool &GGEx,bool &GGEy);
+		bool GetGradF(int ix,int iy,
+		double &dFdt,double &dFdx,double &dFdy,bool &GGFt,bool &GGFx,bool &GGFy);
 		// returns true if cell has hypersurface, if(forcecalc=false) only calculates if on hypersurface
 		bool GetDOmega(double dTdt,double dTdx,double dTdy,double &dOmega0,double &dOmegaX,double &dOmegaY,bool GGTt,bool GGTx,bool GGTy); //Hyper surface element for times between mesh and newmesh
 		bool WRITE_TRAJ;

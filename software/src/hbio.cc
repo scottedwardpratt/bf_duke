@@ -35,6 +35,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	tau0readcheck=false;
 	hydromesh->tau=TAU0+itauread*DELTAU;
 	
+	
 	for(ix=0;ix<NX;ix++){
 		for(iy=0;iy<NY;iy++){
 			hydromesh->T[ix][iy]=0.0;
@@ -60,6 +61,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					if(ix!=0 && iy!=0)	
 						fscanf(fptr_duke,"%lf",&t);
 					fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf",&e,&s,&vx,&vy,&vz,&tau,&p);
+					
 					tau=TAU0+itauread*DELTAU;
 					//if(fabs(tau-hydromesh->tau)>0.00001){
 					//CLog::Fatal("reading in tau0="+to_string(tau)+", but hydromesh->tau="+to_string(hydromesh->tau)+"\n");
@@ -104,6 +106,12 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 						highestT=t;
 					if(e>highestEpsilon)
 						highestEpsilon=e;
+					
+					/*
+					if(iy==NY/2  && tau>10.01 && tau<10.09){
+						printf("tau=%g: %d %d: ux=%g, uy=%g, epsilon=%g, T=%g\n",tau,
+						ix,iy,hydromesh->UX[ix][iy],hydromesh->UY[ix][iy],hydromesh->epsilon[ix][iy],hydromesh->T[ix][iy]);
+					}*/
 
 				}
 			}
@@ -145,8 +153,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	delete pitilde;
 	pitilde=NULL;
 	
-	itauread+=1;
-	
+	itauread+=1;	
 	return keepgoing;
 }
 
@@ -408,8 +415,8 @@ void CHydroBalance::WriteHyper_Duke_2D(){
 	list<Chyper *>::iterator it;
 	for(it=hyperlist.begin();it!=hyperlist.end();++it){
 		hyper=*it;
-		fprintf(fptr,"%13.7e %13.7f %13.7f %13.7f %13.7f %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e\n",
-		hyper->tau,hyper->T0,hyper->fugacity_u,hyper->fugacity_d,hyper->fugacity_s,hyper->r[1],hyper->r[2],hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
+		fprintf(fptr,"%13.7e %13.7f %13.7f %13.7f %13.7f %13.7f %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e\n",
+		hyper->tau,hyper->T0,hyper->epsilon,hyper->fugacity_u,hyper->fugacity_d,hyper->fugacity_s,hyper->r[1],hyper->r[2],hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
 	}
 	snprintf(message,CLog::CHARLENGTH,"Wrote %d hyper-elements\n",int(hyperlist.size()));
 	fclose(fptr);

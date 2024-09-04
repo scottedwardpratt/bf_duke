@@ -79,12 +79,12 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	YMAX=CHBHydroMesh::YMAX;
 	DX=CHBHydroMesh::DX;
 	DY=CHBHydroMesh::DY;
-	printf("DX=%g, DY=%g, XMAX=%g, XMIN=%g, NX=%d\n",DX,DY,CHBHydroMesh::XMAX,CHBHydroMesh::XMIN,CHBHydroMesh::NX);
+	//printf("DX=%g, DY=%g, XMAX=%g, XMIN=%g, NX=%d\n",DX,DY,CHBHydroMesh::XMAX,CHBHydroMesh::XMIN,CHBHydroMesh::NX);
 	
 	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
 	WRITE_TRAJ=parmap.getB("HYDRO2UDS_WRITE_TRAJ",false);
 	NSAMPLE_HYDRO2UDS=parmap.getD("HYDRO2UDS_NSAMPLE",1);
-	printf("NSAMPLE_HYDRO2UDS=%g\n",NSAMPLE_HYDRO2UDS);
+	//printf("NSAMPLE_HYDRO2UDS=%g\n",NSAMPLE_HYDRO2UDS);
 	randy=new Crandy(run_number);
 	mesh=newmesh=oldmesh=NULL;
 	Ncollisions=0;

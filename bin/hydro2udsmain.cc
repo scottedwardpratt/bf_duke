@@ -29,15 +29,18 @@ int main(int argc,char *argv[]){
 			hb.Reset();
 			oscarfile=hb.ReadDuke(hb.mesh);
 		
-			hb.HyperFindEpsilon();
+			//hb.HyperFindEpsilon();
+			hb.HyperFindF();
 			oscarfile=hb.ReadDuke(hb.newmesh);
-			hb.HyperFindEpsilon();
+			//hb.HyperFindEpsilon();
+			hb.HyperFindF();
 			hb.MakeCharges();
 			hb.PropagateCharges();
 			do{
 				hb.SwapMeshes();
 				oscarfile=hb.ReadDuke(hb.newmesh);
-				hb.HyperFindEpsilon();
+				//hb.HyperFindEpsilon();
+				hb.HyperFindF();
 				hb.MakeCharges();
 				hb.PropagateCharges();
 				hb.ScatterCharges();
@@ -49,13 +52,12 @@ int main(int argc,char *argv[]){
 					CLog::Info(message);
 				}
 			}while(oscarfile);
-			printf("netUdotOmega=%g, Omega0tot=%g, OmegaXtot=%g, OmegaYtot=%g\n",hb.netUdotOmega,hb.Omega0tot,hb.OmegaXtot,hb.OmegaYtot);
-	
 			snprintf(message,CLog::CHARLENGTH,"tau=%g, cmap.size=%lu, emap.size=%lu\n",hb.mesh->tau,
 			hb.cmap.size(),hb.emap.size());
 			CLog::Info(message);
 			snprintf(message,CLog::CHARLENGTH,"highestT=%g, highestEpsilon=%g, biggestU=%g\n",hb.highestT,hb.highestEpsilon,hb.biggestU);
 			CLog::Info(message);
+			printf("netUdotOmega=%g, Omega0tot=%g, OmegaXtot=%g, OmegaYtot=%g\n",hb.netUdotOmega,hb.Omega0tot,hb.OmegaXtot,hb.OmegaYtot);
 	
 			hb.WriteCharges(ievent);
 			if(run_number==0 && ievent==0)
