@@ -66,6 +66,7 @@ void CHydroBalance::HyperFindF(){
 	double RMAX=0.0,UMAX=0.0;
 	Chyper hyper;
 	Chyper *newhyper;
+	
 	bool GGFt,GGFx,GGFy;
 	if(!tau0check){
 		for(ix=1;ix<mesh->NX-1;ix++){
@@ -88,7 +89,7 @@ void CHydroBalance::HyperFindF(){
 					hyper.T0=T0;
 					hyper.epsilon=epsilon0;
 					
-					if(GetDOmega(dFdt,dFdx,dFdy,
+					if(epsilon0<2.0*epsilon_f && GetDOmega(dFdt,dFdx,dFdy,
 					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy)){
 						
 						GetGammaFQ(hyper.tau,gamma_q,fugacity_l,fugacity_s);

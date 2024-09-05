@@ -20,7 +20,7 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	parmap.ReadParsFromFile(parfilename);
 	parfilename="model_output/run"+to_string(run_number)+"/parameters.txt";
 	parmap.ReadParsFromFile(parfilename);
-	Tf=0.001*parmap.getD("HYPER_FREEZEOUT_TEMP",155.0);
+	Tf=0.001*parmap.getD("HYPER_FREEZEOUT_TEMP",160.0);
 	epsilon_f=parmap.getD("HYPER_FREEZEOUT_EPSILON",0.4);
 	SIGMA0=parmap.getD("BF_SIGMA0",0.5);
 	DiffusionRatio=parmap.getD("BF_DIFFUSION_RATIO",1.0);
@@ -280,7 +280,7 @@ void CHydroBalance::PropagateCharges(){
 		charge->Propagate(newtau);
 		mesh->GetIXIY_lower(charge->x,charge->y,ix,iy);
 		if(ix<=0 || iy<=0 || ix>=CHBHydroMesh::NX-1 || iy>=CHBHydroMesh::NY-1){
-			snprintf(message,CLog::CHARLENGTH,"CHydroBalance::PropagateCharges() disaster, ix=%d, iy=%d\n",ix,iy);
+			snprintf(message,CLog::CHARLENGTH,"CHydroBalance::PropagateCharges() disaster, ix=%d, iy=%d, NX=%d, NY=%d\n  epsilon=%g, epsilon_f=%g, T=%g\n",ix,iy,NX,NY,mesh->epsilon[ix][iy],epsilon_f,mesh->T[ix][iy]);
 			CLog::Fatal(message);
 		}
 		if(HYPERT){
@@ -397,7 +397,7 @@ double &DQud,double &DQls,double &DQss){
 				uy[j0][jx][jy]=mptr->UY[ix+jx][iy+jy];
 				u0[j0][jx][jy]=sqrt(1.0
 					+ux[j0][jx][jy]*ux[j0][jx][jy]+uy[j0][jx][jy]*uy[j0][jx][jy]);
-				eos222[j0][jx][jy].GetEoSFromT_PST(mptr->T[ix+jx][iy+jy]);
+				eos222[j0][jx][jy].GetEoSFromEpsilon_PST(mptr->epsilon[ix+jx][iy+jy]);
 				eos222[j0][jx][jy].GetChiOverS_Claudia();
 			}
 		}
@@ -455,7 +455,7 @@ double &DQls,double &DQss){
 	GetEpsilonBar(ix,iy,epsilon);
 	if((HYPERT && T>Tf) || (HYPEREPSILON && epsilon>epsilon_f)){
 		GetGammaFQ(newmesh->tau,gamma_q,f_l,f_s);
-		eos->GetEoSFromT_PST(T);
+		eos->GetEoSFromEpsilon_PST(epsilon);
 		eos->GetChiOverS_Claudia();
 		DQll=d3x*u0*eos->chill*f_l*f_l;
 		DQud=d3x*u0*eos->chiud*f_l*f_l;

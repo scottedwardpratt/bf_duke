@@ -8,6 +8,7 @@ using namespace std;
 using namespace NMSUPratt;
 
 bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
+	CHBEoS eosread;
 	char message[CLog::CHARLENGTH];
 	double r,x,y,rmax=0.0,ur,tau;
 	//double xbar=0.0,ybar=0.0,norm=0.0;
@@ -87,7 +88,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					hydromesh->GetXY(ix,iy,x,y);
 					//xbar+=x*e; ybar+=y*e; norm+=e;
 					r=sqrt(x*x+y*y);
-					if(r>rmax && t>=Tf)
+					if(r>rmax && e>=epsilon_f)
 						rmax=r;
 					Misc::BoostToCM(u,pi,pitilde);
 					hydromesh->pitildexx[ix][iy]=pitilde[1][1];
@@ -95,8 +96,17 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					hydromesh->pitildeyy[ix][iy]=pitilde[2][2];
 		
 					fgets(dummy,300,fptr_duke);
-					hydromesh->T[ix][iy]=t;
-					hydromesh->epsilon[ix][iy]=e;
+					
+					if(e>0.1){
+						eosread.GetEoSFromEpsilon_PST(e);
+						eosread.GetChiOverS_Claudia();
+						hydromesh->epsilon[ix][iy]=e;
+						hydromesh->T[ix][iy]=eos->T;
+					}
+					else{
+						hydromesh->epsilon[ix][iy]=e;
+						hydromesh->T[ix][iy]=t;
+					}
 					hydromesh->UX[ix][iy]=u[1];
 					hydromesh->UY[ix][iy]=u[2];
 					ur=sqrt(u[1]*u[1]+u[2]*u[2]);
@@ -140,7 +150,10 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 				keepgoing=false;
 				fclose(fptr_duke);
 			}
+			CLog::Info("Highest Epsilon="+to_string(highestEpsilon)+"\n");
+			CLog::Info("Highest T="+to_string(highestT)+"\n");
 		}
+		
 	}
 	for(alpha=0;alpha<4;alpha++){
 		delete pi[alpha];

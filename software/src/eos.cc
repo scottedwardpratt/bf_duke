@@ -338,14 +338,17 @@ void CHBEoS::GetEoSFromEpsilon_PST(double epsilonset){
 		ndata=epsilon_PST.size();
 		P=P_PST[ndata]+0.33*(epsilon_PST[ndata]-epsilon);
 		TT=T_PST[ndata]*pow(epsilon/epsilon_PST[ndata],0.25);
-		s=(P+epsilon)/T;
+		s=(P+epsilon)/TT;
+		T=TT;
 	}
 	else{
 		w0=(epsilon-epsilon_PST[ie0+1])/depsilon;
 		P=w0*P_PST[ie0]+(1.0-w0)*P_PST[ie0+1];
 		TT=w0*T_PST[ie0]+(1.0-w0)*T_PST[ie0+1];
 		s=w0*s_PST[ie0]+(1.0-w0)*s_PST[ie0+1];
+		T=TT;
 	}
+	/*
 	if(fabs(T-0.140)<0.01){
 		double Ph,eh,nh;
 		int nres=reslist->resmap.size();
@@ -355,6 +358,7 @@ void CHBEoS::GetEoSFromEpsilon_PST(double epsilonset){
 		maxweight.resize(nres);
 		MSU_EOS::CalcEoSandTransportCoefficients(TT,reslist,eh,Ph,nh,density,chi,sigma);
 	}
+	*/
 }
 
 void CHBEoS::Print(){
