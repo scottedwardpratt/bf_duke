@@ -63,9 +63,10 @@ void CHydroBalance::HyperFindF(){
 	char message[CLog::CHARLENGTH];
 	int ix,iy;//,a,b;
 	double dFdx,dFdy,dFdt,fugacity_l,fugacity_s,gamma_q;
-	double RMAX=0.0,UMAX=0.0;
+	double RMAX=0.0,UMAX=0.0,TMAX=0.0;
 	Chyper hyper;
 	Chyper *newhyper;
+	int nhyper=0;
 	
 	bool GGFt,GGFx,GGFy;
 	if(!tau0check){
@@ -89,8 +90,12 @@ void CHydroBalance::HyperFindF(){
 					hyper.T0=T0;
 					hyper.epsilon=epsilon0;
 					
-					if(epsilon0<2.0*epsilon_f && GetDOmega(dFdt,dFdx,dFdy,
-					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy)){
+					if(GGFt){
+					//if(epsilon0<2.0*epsilon_f && GetDOmega(dFdt,dFdx,dFdy,
+					//hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy)){
+						GetDOmega(dFdt,dFdx,dFdy,hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy);
+						
+						nhyper+=1;
 						
 						GetGammaFQ(hyper.tau,gamma_q,fugacity_l,fugacity_s);
 						hyper.fugacity_u=hyper.fugacity_d=fugacity_l;
@@ -101,6 +106,8 @@ void CHydroBalance::HyperFindF(){
 						double umag=sqrt(hyper.u[1]*hyper.u[1]+hyper.u[2]*hyper.u[2]);
 						if(umag>UMAX)
 							UMAX=umag;
+						if(hyper.T0>TMAX)
+							TMAX=hyper.T0;
 					
 						newhyper=new Chyper;
 						newhyper->Copy(&hyper);
@@ -120,7 +127,8 @@ void CHydroBalance::HyperFindF(){
 			}
 		}
 	}
-	printf("tau=%g, RMAX=%g, UMAX=%g\n",0.5*(newmesh->tau+mesh->tau),RMAX,UMAX);
+	if(nhyper>0)
+	  printf("nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, TMAX=%g\n",nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,TMAX);
 }
 
 bool CHydroBalance::GetGradF(int ix,int iy,
@@ -192,10 +200,11 @@ double &dEdt,double &dEdx,double &dEdy,bool &GGEt,bool &GGEx,bool &GGEy){
 	double Explus,Exminus,Eyplus,Eyminus,Etplus,Etminus;
 	mesh->GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
 	
-	if(mesh->T[ix][iy]<0.13 && mesh->T[ix+1][iy]<0.13 && mesh->T[ix][iy+1]<0.13 && mesh->T[ix+1][iy+1]<0.13
+	/*if(mesh->T[ix][iy]<0.13 && mesh->T[ix+1][iy]<0.13 && mesh->T[ix][iy+1]<0.13 && mesh->T[ix+1][iy+1]<0.13
 	&& newmesh->T[ix][iy]<0.13 && newmesh->T[ix+1][iy]<0.13 && newmesh->T[ix][iy+1]<0.13 && newmesh->T[ix+1][iy+1]<0.13){
 		return hypercheck;
-	}
+	}*/
+	
 	Etminus=0.25*(mesh->epsilon[ix][iy]+mesh->epsilon[ix][iy+1]
 		+mesh->epsilon[ix+1][iy]+mesh->epsilon[ix+1][iy+1]);
 	Etplus=0.25*(newmesh->epsilon[ix][iy]+newmesh->epsilon[ix][iy+1]
@@ -217,8 +226,11 @@ double &dEdt,double &dEdx,double &dEdy,bool &GGEt,bool &GGEx,bool &GGEy){
 	dEdy=-(Eyplus-Eyminus)/DY;
 	
 	GGEt=GGEx=GGEy=false;
-	if((Etplus-epsilon_f)*(Etminus-epsilon_f)<0.0)
+	if((Etplus-epsilon_f)*(Etminus-epsilon_f)<0.0){
 		GGEt=true;
+		//printf("T=%g,%g,%g,%g,%g,%g,%g,%g\n",mesh->T[ix][iy],mesh->T[ix+1][iy],mesh->T[ix][iy+1],mesh->T[ix+1][iy+1],
+		//newmesh->T[ix][iy],newmesh->T[ix+1][iy],newmesh->T[ix][iy+1],newmesh->T[ix+1][iy+1]);
+	}
 	if((Explus-epsilon_f)*(Exminus-epsilon_f)<0.0)
 		GGEx=true;
 	if((Eyplus-epsilon_f)*(Eyminus-epsilon_f)<0.0)

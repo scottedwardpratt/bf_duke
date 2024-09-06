@@ -102,10 +102,11 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 						eosread.GetChiOverS_Claudia();
 						hydromesh->epsilon[ix][iy]=e;
 						hydromesh->T[ix][iy]=eos->T;
+						printf("eread=%g, Tread=%g, T(epsilon)=%g\n",e,t,hydromesh->T[ix][iy]);
 					}
 					else{
 						hydromesh->epsilon[ix][iy]=e;
-						hydromesh->T[ix][iy]=t;
+						hydromesh->T[ix][iy]=50;
 					}
 					hydromesh->UX[ix][iy]=u[1];
 					hydromesh->UY[ix][iy]=u[2];
@@ -150,8 +151,6 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 				keepgoing=false;
 				fclose(fptr_duke);
 			}
-			CLog::Info("Highest Epsilon="+to_string(highestEpsilon)+"\n");
-			CLog::Info("Highest T="+to_string(highestT)+"\n");
 		}
 		
 	}
