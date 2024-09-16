@@ -102,7 +102,6 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 						eosread.GetChiOverS_Claudia();
 						hydromesh->epsilon[ix][iy]=e;
 						hydromesh->T[ix][iy]=eos->T;
-						printf("eread=%g, Tread=%g, T(epsilon)=%g\n",e,t,hydromesh->T[ix][iy]);
 					}
 					else{
 						hydromesh->epsilon[ix][iy]=e;

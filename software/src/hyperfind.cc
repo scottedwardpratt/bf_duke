@@ -127,8 +127,11 @@ void CHydroBalance::HyperFindF(){
 			}
 		}
 	}
-	if(nhyper>0)
-	  printf("nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, TMAX=%g\n",nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,TMAX);
+	if(nhyper>0){
+		NHYPER+=nhyper;
+	  printf("NHYPER=%d, nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, TMAX=%g\n",
+		NHYPER,nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,TMAX);
+	}
 }
 
 bool CHydroBalance::GetGradF(int ix,int iy,

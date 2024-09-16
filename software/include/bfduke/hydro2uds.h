@@ -26,7 +26,7 @@ namespace NMSUPratt{
 		double highestEpsilon,highestT,biggestU;
 		vector<CHBCharge> hbcharges;
 		unsigned int nhbcharges;
-		int run_number;
+		int run_number, NHYPER;
 		string qualifier;
 		double SIGMA0;  //initial movement of one particle at birth
 		Crandy *randy;

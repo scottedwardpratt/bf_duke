@@ -14,7 +14,7 @@ CHydroBalance::CHydroBalance(){
 };
 
 CHydroBalance::CHydroBalance(int run_number_set){
-	Omega0tot=OmegaXtot=OmegaYtot=netUdotOmega=0.0;
+	Omega0tot=OmegaXtot=OmegaYtot=netUdotOmega=NHYPER=0.0;
 	run_number=run_number_set;
 	string parfilename="model_output/fixed_parameters.txt";
 	parmap.ReadParsFromFile(parfilename);
@@ -186,12 +186,13 @@ double &pitildeyybar){
 
 void CHydroBalance::MakeCharges(){
 	int ix,iy,sign,a,b,itau;
+	double Tcutoff=0.12;
 	double DQll,DQud,DQls,DQss,g1,g2;
 	Eigen::Matrix3d DQ(3,3);
 	CHBCharge *charge1,*charge2;
 	for(ix=1;ix<mesh->NX-1;ix++){
-		for(iy=1;iy<=mesh->NY-1;iy++){
-			if(mesh->T[ix][iy]>Tf || newmesh->T[ix][iy]>Tf){
+		for(iy=1;iy<mesh->NY-1;iy++){
+			if(mesh->T[ix][iy]>Tcutoff || newmesh->T[ix][iy]>Tcutoff){
 				if(tau0check){
 					CalcDQ0(ix,iy,DQll,DQud,DQls,DQss);
 				}

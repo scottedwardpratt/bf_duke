@@ -328,12 +328,10 @@ void CHBEoS::BuildMap(){
 }
 
 void CHBEoS::GetEoSFromEpsilon_PST(double epsilonset){
-	double depsilon=0.02,w0,TT;
+	double depsilon=0.002,w0,TT;
 	int ie0,ndata;
 	epsilon=epsilonset;
 	ie0=lrint(floor(-0.5+epsilon/depsilon));
-	if(ie0<int(epsilon_PST.size()-1)) 
-	printf("epsilon=%g, ie0=%d, T=%g\n",epsilon,ie0,T_PST[ie0]);
 	if(ie0<0)
 		ie0=0;
 	if(ie0>=int(epsilon_PST.size()-1)){
