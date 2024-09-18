@@ -18,8 +18,8 @@ int main(){
 	CparameterMap parmap;
 	parmap.set("MSU_SAMPLER_SFDIRNAME",string("../progdata/resinfo/spectralfunctions"));
 	parmap.set("RESONANCES_INFO_FILE",string("../progdata/resinfo/pdg-SMASH.dat"));
-	int iT,NT=100;
-	double delT=5.0;
+	int iT,NT=200;
+	double delT=1.0;
 	double Th,Ph,epsilonh,sh,densityf,maxweightf,chih,nhadrons,nhadronsf;
 	const double HBARC3=pow(HBARC,3);
 	vector<double> T;
@@ -36,17 +36,66 @@ int main(){
 	for(iT=0;iT<NT;iT++){
 		T[iT]=(iT+1)*delT*0.001;
 	}
-	for(iT=20;iT<40;iT++){
+	for(iT=0;iT<NT;iT++){
 		Th=T[iT];
 		MSU_EOS::CalcEoSandTransportCoefficients(Th,reslist,epsilonarray[iT],Parray[iT],nhadrons,density,chiharray[iT],sigma);
 		//reslist->CalcEoSandChi(Th,Ph,epsilonh,sh,nhadronsf,maxweightf,chih);
 		sh=(Parray[iT]+epsilonarray[iT])/Th;
 		printf("%6.4f: %9.5f %9.5f %9.5f %9.5f\n",Th,epsilonarray[iT],Parray[iT],sh,nhadrons);
-		cout << chiharray[iT] << endl;
+		//cout << chiharray[iT] << endl;
 	}
 	
+	/*
+	// Now read in lattice data
+	
+	FILE *fptr=fopen("../claudia/latticedata/chi_uu.dat","r");
+	printf("----- chi_uu/s --------\n");
+	do{
+		fscanf(fptr,"%lf %lf %lf",&T,&chiread,&error);
+		fgets(dummy,250,fptr);
+		iT=lrint(T);
+		chiarray[iT][0][0]=chiarray[iT][1][1]=chiread*pow(T/HBARC,3);
+		printf("T=%5.1f, s=%g, chi=%g, chiarray=%g, chi/s=%g\n",
+		T,sarray[iT],chi,chiarray[iT][0][0],chiarray[iT][0][0]/sarray[iT]);
+	}while(!feof(fptr) && T<399.9);
+	fclose(fptr);
+	
+	fptr=fopen("../claudia/latticedata/c2ud.cont","r");
+	printf("----- chi_ud/s --------\n");
+	do{
+		fscanf(fptr,"%lf %lf %lf",&T,&chiread,&error);
+		fgets(dummy,250,fptr);
+		iT=lrint(T);
+		chiarray[iT][0][1]=chiarray[iT][1][0]=chiread*pow(T/HBARC,3);
+		printf("%5.1f %g %g\n",T,chiarray[iT][0][1],chiarray[iT][0][1]/sarray[iT]);
+	}while(!feof(fptr) && T<399.9);
+	fclose(fptr);
+	
+	fptr=fopen("../claudia/latticedata/c2us.cont","r");
+	printf("----- chi_us/s --------\n");
+	do{
+		fscanf(fptr,"%lf %lf %lf",&T,&chiread,&error);g
+		fgets(dummy,250,fptr);
+		iT=lrint(T);
+		chiarray[iT][0][2]=chiarray[iT][1][2]=chiarray[iT][2][0]
+			=chiarray[iT][2][1]=chiread*pow(T/HBARC,3);
+		printf("%5.1f %g %g\n",T,chi,chiarray[iT][0][2]/sarray[iT]);
+	}while(!feof(fptr) && T<399.9);
+	fclose(fptr);
+	
+	fptr=fopen("../claudia/latticedata/c2S.cont","r");
+	printf("----- chi_ss/s --------\n");
+	do{
+		fscanf(fptr,"%lf %lf %lf",&T,&chiread,&error);
+		fgets(dummy,250,fptr);
+		iT=lrint(T);
+		chiarray[iT][2][2]=chi*pow(T/HBARC,3);
+		printf("%5.1f %g %g\n",T,chi,chiarray[iT][2][2]/sarray[iT]);
+	}while(!feof(fptr) && T<399.9);
+	fclose(fptr);
 	
 	
+	*/
 	
 	
 	//void CalcEoSandTransportCoefficients(double T,CresList *reslist,double &epsilon,double &P,double &nh,vector<double> &density,Eigen::Matrix<double,3,3> &chi,Eigen::Matrix<double,3,3> &sigma);

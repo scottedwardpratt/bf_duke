@@ -101,11 +101,12 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 						eosread.GetEoSFromEpsilon_PST(e);
 						eosread.GetChiOverS_Claudia();
 						hydromesh->epsilon[ix][iy]=e;
-						hydromesh->T[ix][iy]=eos->T;
+						hydromesh->T[ix][iy]=eosread.T;
+						//printf("epsilon=%8.6f, eos.T=%8.6f =? %8.6f\n",e,eosread.T,t);
 					}
 					else{
 						hydromesh->epsilon[ix][iy]=e;
-						hydromesh->T[ix][iy]=50;
+						hydromesh->T[ix][iy]=0.05;
 					}
 					hydromesh->UX[ix][iy]=u[1];
 					hydromesh->UY[ix][iy]=u[2];

@@ -47,9 +47,9 @@ void CHydroBalance::HyperFindEpsilon(){
 						//printf("%4.2f %g: udotdOmega/tau=%g, u[0]=%g\n",hyper.tau,sqrt(hyper.r[1]*hyper.r[1]+hyper.r[2]*hyper.r[2]),
 						//UdotdOmega/hyper.tau,hyper.u[0]);
 						/*if(iy==NY/2 && hyper.tau>10 && hyper.epsilon<0.35){
-							printf("tau=%g, ix=%d, iy=%d, T0=%g, epsilon=%g, NX=%d, NY=%d\n",
-							hyper.tau,ix,iy,T0,hyper.epsilon,NX,NY);
-							Misc::Pause();
+						printf("tau=%g, ix=%d, iy=%d, T0=%g, epsilon=%g, NX=%d, NY=%d\n",
+						hyper.tau,ix,iy,T0,hyper.epsilon,NX,NY);
+						Misc::Pause();
 						}*/
 						
 					}
@@ -91,8 +91,8 @@ void CHydroBalance::HyperFindF(){
 					hyper.epsilon=epsilon0;
 					
 					if(GGFt){
-					//if(epsilon0<2.0*epsilon_f && GetDOmega(dFdt,dFdx,dFdy,
-					//hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy)){
+						//if(epsilon0<2.0*epsilon_f && GetDOmega(dFdt,dFdx,dFdy,
+						//hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy)){
 						GetDOmega(dFdt,dFdx,dFdy,hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy);
 						
 						nhyper+=1;
@@ -117,9 +117,9 @@ void CHydroBalance::HyperFindF(){
 						//printf("%4.2f %g: udotdOmega/tau=%g, u[0]=%g\n",hyper.tau,sqrt(hyper.r[1]*hyper.r[1]+hyper.r[2]*hyper.r[2]),
 						//UdotdOmega/hyper.tau,hyper.u[0]);
 						/*if(iy==NY/2 && hyper.tau>10 && hyper.epsilon<0.35){
-							printf("tau=%g, ix=%d, iy=%d, T0=%g, epsilon=%g, NX=%d, NY=%d\n",
-							hyper.tau,ix,iy,T0,hyper.epsilon,NX,NY);
-							Misc::Pause();
+						printf("tau=%g, ix=%d, iy=%d, T0=%g, epsilon=%g, NX=%d, NY=%d\n",
+						hyper.tau,ix,iy,T0,hyper.epsilon,NX,NY);
+						Misc::Pause();
 						}*/
 						
 					}
@@ -129,7 +129,7 @@ void CHydroBalance::HyperFindF(){
 	}
 	if(nhyper>0){
 		NHYPER+=nhyper;
-	  printf("NHYPER=%d, nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, TMAX=%g\n",
+		printf("NHYPER=%d, nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, TMAX=%g\n",
 		NHYPER,nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,TMAX);
 	}
 }
@@ -152,48 +152,48 @@ double &dFdt,double &dFdx,double &dFdy,bool &GGFt,bool &GGFx,bool &GGFy){
 
 /*
 void CHydroBalance::HyperFindT(){
-	char message[CLog::CHARLENGTH];
-	int ix,iy,a,b;
-	double dTdx,dTdy,dTdt;
-	Chyper hyper;
-	Chyper *newhyper;
-	bool GGTt,GGTx,GGTy;
-	if(!tau0check){
-		for(ix=1;ix<mesh->NX-1;ix++){
-			for(iy=1;iy<mesh->NY-1;iy++){
-				if(ix<0 || iy<0 || ix==CHBHydroMesh::NX || iy==CHBHydroMesh::NY){
-					snprintf(message,CLog::CHARLENGTH,"CHydroBalance::HyperFindT() -- ix=%d, iy=%d\n",ix,iy);
-					CLog::Info(message);
-				}
-				GetGradT(ix,iy,dTdt,dTdx,dTdy,GGTt,GGTx,GGTy);
-				if(GGTt || GGTx || GGTy){
-					hyper.tau=0.5*(newmesh->tau+mesh->tau);
-					GetXYBar(ix,iy,hyper.r[1],hyper.r[2]);
-					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
-					GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
-					hyper.pitilde[2][2]);
-					double T0,epsilon0;
-					GetTBar(ix,iy,T0);
-					GetEpsilonBar(ix,iy,epsilon0);
-					hyper.T0=T0;
-					hyper.epsilon=epsilon0;
-					if(GetDOmega(dTdt,dTdx,dTdy,
-					hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGTt,GGTx,GGTy)){
-						for(a=0;a<3;a++){
-							for(b=0;b<3;b++){
-								chitothyper(a,b)+=hyper.udotdOmega*chif(a,b);
-							}
-						}
-						newhyper=new Chyper;
-						newhyper->Copy(&hyper);
-						hyperlist.push_back(newhyper);
-						double UdotdOmega=hyper.u[0]*hyper.dOmega[0]-hyper.u[1]*hyper.dOmega[1]-hyper.u[2]*hyper.dOmega[2];
-						netUdotOmega+=UdotdOmega;
-					}
-				}
-			}
-		}
-	}
+char message[CLog::CHARLENGTH];
+int ix,iy,a,b;
+double dTdx,dTdy,dTdt;
+Chyper hyper;
+Chyper *newhyper;
+bool GGTt,GGTx,GGTy;
+if(!tau0check){
+for(ix=1;ix<mesh->NX-1;ix++){
+for(iy=1;iy<mesh->NY-1;iy++){
+if(ix<0 || iy<0 || ix==CHBHydroMesh::NX || iy==CHBHydroMesh::NY){
+snprintf(message,CLog::CHARLENGTH,"CHydroBalance::HyperFindT() -- ix=%d, iy=%d\n",ix,iy);
+CLog::Info(message);
+}
+GetGradT(ix,iy,dTdt,dTdx,dTdy,GGTt,GGTx,GGTy);
+if(GGTt || GGTx || GGTy){
+hyper.tau=0.5*(newmesh->tau+mesh->tau);
+GetXYBar(ix,iy,hyper.r[1],hyper.r[2]);
+GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
+GetPiTildeBar(ix,iy,hyper.pitilde[1][1],hyper.pitilde[1][2],
+hyper.pitilde[2][2]);
+double T0,epsilon0;
+GetTBar(ix,iy,T0);
+GetEpsilonBar(ix,iy,epsilon0);
+hyper.T0=T0;
+hyper.epsilon=epsilon0;
+if(GetDOmega(dTdt,dTdx,dTdy,
+hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGTt,GGTx,GGTy)){
+for(a=0;a<3;a++){
+for(b=0;b<3;b++){
+chitothyper(a,b)+=hyper.udotdOmega*chif(a,b);
+}
+}
+newhyper=new Chyper;
+newhyper->Copy(&hyper);
+hyperlist.push_back(newhyper);
+double UdotdOmega=hyper.u[0]*hyper.dOmega[0]-hyper.u[1]*hyper.dOmega[1]-hyper.u[2]*hyper.dOmega[2];
+netUdotOmega+=UdotdOmega;
+}
+}
+}
+}
+}
 }
 */
 
@@ -205,7 +205,7 @@ double &dEdt,double &dEdx,double &dEdy,bool &GGEt,bool &GGEx,bool &GGEy){
 	
 	/*if(mesh->T[ix][iy]<0.13 && mesh->T[ix+1][iy]<0.13 && mesh->T[ix][iy+1]<0.13 && mesh->T[ix+1][iy+1]<0.13
 	&& newmesh->T[ix][iy]<0.13 && newmesh->T[ix+1][iy]<0.13 && newmesh->T[ix][iy+1]<0.13 && newmesh->T[ix+1][iy+1]<0.13){
-		return hypercheck;
+	return hypercheck;
 	}*/
 	
 	Etminus=0.25*(mesh->epsilon[ix][iy]+mesh->epsilon[ix][iy+1]
@@ -259,6 +259,7 @@ double &dTdt,double &dTdx,double &dTdy,bool &GGTt,bool &GGTx,bool &GGTy){
 	Typlus=0.25*(mesh->T[ix][iy+1]+newmesh->T[ix][iy+1]
 		+mesh->T[ix+1][iy+1]+newmesh->T[ix+1][iy+1]);
 	
+
 	Ttminus=0.25*(mesh->T[ix][iy]+mesh->T[ix][iy+1]
 		+mesh->T[ix+1][iy]+mesh->T[ix+1][iy+1]);
 	Ttplus=0.25*(newmesh->T[ix][iy]+newmesh->T[ix][iy+1]
@@ -302,41 +303,41 @@ double &dOmega0,double &dOmegaX,double &dOmegaY,bool GGFt,bool GGFx,bool GGFy){
 	
 	/*
 	if(fabs(dFdt*DELTAU)>(DX*dFdr)){
-		//if(fabs(dTdt)>dTdr){
-		if(GGFt){
-			dV=tau*DX*DY;
-			dOmega0=-dV*dFdt/fabs(dFdt);
-			dOmegaX=-dV*dFdx/fabs(dFdt);
-			dOmegaY=-dV*dFdy/fabs(dFdt);
-			success=true;
-		Omega0tot+=fabs(dOmega0);
-		OmegaXtot+=fabs(dOmegaX);
-		OmegaYtot+=fabs(dOmegaY);
-		}
+	//if(fabs(dTdt)>dTdr){
+	if(GGFt){
+	dV=tau*DX*DY;
+	dOmega0=-dV*dFdt/fabs(dFdt);
+	dOmegaX=-dV*dFdx/fabs(dFdt);
+	dOmegaY=-dV*dFdy/fabs(dFdt);
+	success=true;
+	Omega0tot+=fabs(dOmega0);
+	OmegaXtot+=fabs(dOmegaX);
+	OmegaYtot+=fabs(dOmegaY);
+	}
 	}
 	else if(fabs(dFdx)>fabs(dFdy)){
-		if(GGFx){
-			dV=tau*DELTAU*DY;
-			dOmega0=-dV*dFdt/fabs(dFdx);
-			dOmegaX=-dV*dFdx/fabs(dFdx);
-			dOmegaY=-dV*dFdy/fabs(dFdx);
-			success=true;
-		Omega0tot+=fabs(dOmega0);
-		OmegaXtot+=fabs(dOmegaX);
-		OmegaYtot+=fabs(dOmegaY);
-		}
+	if(GGFx){
+	dV=tau*DELTAU*DY;
+	dOmega0=-dV*dFdt/fabs(dFdx);
+	dOmegaX=-dV*dFdx/fabs(dFdx);
+	dOmegaY=-dV*dFdy/fabs(dFdx);
+	success=true;
+	Omega0tot+=fabs(dOmega0);
+	OmegaXtot+=fabs(dOmegaX);
+	OmegaYtot+=fabs(dOmegaY);
+	}
 	}
 	else{
-		if(GGFy){
-			dV=tau*DELTAU*DX;
-			dOmega0=-dV*dFdt/fabs(dFdy);
-			dOmegaX=-dV*dFdx/fabs(dFdy);
-			dOmegaY=-dV*dFdy/fabs(dFdy);
-			success=true;
-		Omega0tot+=fabs(dOmega0);
-		OmegaXtot+=fabs(dOmegaX);
-		OmegaYtot+=fabs(dOmegaY);
-		}
+	if(GGFy){
+	dV=tau*DELTAU*DX;
+	dOmega0=-dV*dFdt/fabs(dFdy);
+	dOmegaX=-dV*dFdx/fabs(dFdy);
+	dOmegaY=-dV*dFdy/fabs(dFdy);
+	success=true;
+	Omega0tot+=fabs(dOmega0);
+	OmegaXtot+=fabs(dOmegaX);
+	OmegaYtot+=fabs(dOmegaY);
+	}
 	}
 	*/
 
