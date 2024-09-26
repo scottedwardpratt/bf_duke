@@ -111,130 +111,6 @@ double CHBEoS::GetD(double T){
 	return result;
 }
 
-void CHBEoS::ReadChiData_HSC(){
-	char message[CLog::CHARLENGTH];
-	string dirname=parmap->getS("LATTICEDATA_DIRNAME","../latticedata");
-	string filename;
-	double error,chi0;
-	int idata;
-	const int ndata=7;
-	double chiB[ndata],chiI[ndata],chiQ[ndata],chiSS[ndata],chiLL[ndata],Tarray[ndata];
-	FILE *fptr;
-	filename=dirname+"/chi-B.dat";
-	fptr=fopen(filename.c_str(),"r");
-	for(idata=0;idata<ndata;idata++){
-		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiB[idata],&error);
-	}
-	fclose(fptr);
-	filename=dirname+"/chi-I.dat";
-	fptr=fopen(filename.c_str(),"r");
-	for(idata=0;idata<ndata;idata++){
-		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiI[idata],&error);
-	}
-	fclose(fptr);
-	fclose(fptr);
-	filename=dirname+"/chi-LL.dat";
-	fptr=fopen(filename.c_str(),"r");
-	for(idata=0;idata<ndata;idata++){
-		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiLL[idata],&error);
-	}
-	fclose(fptr);
-	fclose(fptr);
-	filename=dirname+"/chi-Q.dat";
-	fptr=fopen(filename.c_str(),"r");
-	for(idata=0;idata<ndata;idata++){
-		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiQ[idata],&error);
-	}
-	fclose(fptr);
-	fclose(fptr);
-	filename=dirname+"/chi-SS.dat";
-	fptr=fopen(filename.c_str(),"r");
-	for(idata=0;idata<ndata;idata++){
-		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiSS[idata],&error);
-	}
-	fclose(fptr);
-	
-	chill_HSC.resize(ndata);
-	chils_HSC.resize(ndata);
-	chiss_HSC.resize(ndata);
-	chiud_HSC.resize(ndata);
-	for(idata=0;idata<ndata;idata++){
-		chi0=pow(Tarray[idata]/HBARC,3)*(pow(PI,4)/90.0)*(4.0/(2.0*PI*PI))*2.0;
-		chiLL[idata]*=chi0;
-		chiB[idata]*=chi0/3.0;
-		chiSS[idata]*=chi0;
-		chiI[idata]*=0.5*chi0;
-		chiQ[idata]*=2.0*chi0/3.0;
-		chill_HSC[idata]=chiLL[idata];
-		chiss_HSC[idata]=chiSS[idata];
-		chiud_HSC[idata]=chiLL[idata]-2.0*chiI[idata];
-		chils_HSC[idata]=2.25*(chiB[idata]-(2.0/9.0)*chiLL[idata]-(1.0/9.0)*chiSS[idata]-(2.0/9.0)*chiud_HSC[idata]);
-		snprintf(message,CLog::CHARLENGTH,"-------  T=%g --------\n",Tarray[idata]);
-		CLog::Info(message);
-		snprintf(message,CLog::CHARLENGTH,"%8.5f %8.5f %8.5f\n",chill_HSC[idata],chiud_HSC[idata],chils_HSC[idata]);
-		CLog::Info(message);
-		snprintf(message,CLog::CHARLENGTH,"%8.5f %8.5f %8.5f\n",chiud_HSC[idata],chill_HSC[idata],chils_HSC[idata]);
-		CLog::Info(message);
-		snprintf(message,CLog::CHARLENGTH,"%8.5f %8.5f %8.5f\n",chils_HSC[idata],chils_HSC[idata],chiss_HSC[idata]);
-		CLog::Info(message);
-	}
-}
-
-void CHBEoS::ReadChiData_Claudia(){
-	string dirname=parmap->getS("LATTICEDATA_DIRNAME","../latticedata");
-	string filename;
-	int idata;
-	const int ndata=81;
-	char dummy[100];
-	FILE *fptr;
-	// You will read in chi/s, not chi
-	filename=dirname+"/chi.dat";
-	fptr=fopen(filename.c_str(),"r");
-	T_claudia.resize(ndata);
-	chill_overs_claudia.resize(ndata);
-	chils_overs_claudia.resize(ndata);
-	chiss_overs_claudia.resize(ndata);
-	chiud_overs_claudia.resize(ndata);
-	fgets(dummy,100,fptr);
-	for(idata=4;idata<ndata;idata++){
-		fscanf(fptr,"%lf %lf %lf %lf %lf",
-		&T_claudia[idata],&chill_overs_claudia[idata],&chiud_overs_claudia[idata],&chils_overs_claudia[idata],&chiss_overs_claudia[idata]);
-	}
-	fclose(fptr);
-}
-
-void CHBEoS::GetChiOverS_Claudia(){
-	double delT=5.0,Tmax=400.0,w0,w1,Tm=1000.0*T;
-	const int ndata=81;
-	int iT0;
-	if(Tm<20){
-		chill=chill_overs_claudia[5]*Tm*s/20.0;
-		chiud=chiud_overs_claudia[5]*Tm*s/20.0;
-		chils=chils_overs_claudia[5]*Tm*s/20.0;
-		chiss=chiss_overs_claudia[5]*Tm*s/20.0;
-	}
-	else if(Tm>=Tmax){
-		chill=chill_overs_claudia[ndata-1]*s;
-		chiud=chiud_overs_claudia[ndata-1]*s;
-		chils=chils_overs_claudia[ndata-1]*s;
-		chiss=chiss_overs_claudia[ndata-1]*s;
-	}
-	else{
-		iT0=lrint(floor(Tm/delT));
-		if(iT0>=ndata-1){
-			CLog::Fatal("iT0 out of range in CHBEoS::GetChiOverS_Claudia()\n");
-		}
-		w1=(Tm-delT*iT0)/delT;
-		w0=1.0-w1;
-		chill=chill_overs_claudia[iT0]*s*w0+chill_overs_claudia[iT0+1]*s*w1;
-		chiud=chiud_overs_claudia[iT0]*s*w0+chiud_overs_claudia[iT0+1]*s*w1;
-		chils=chils_overs_claudia[iT0]*s*w0+chils_overs_claudia[iT0+1]*s*w1;
-		chiss=chiss_overs_claudia[iT0]*s*w0+chiss_overs_claudia[iT0+1]*s*w1;
-	}
-
-	
-}
-
 void CHBEoS::CalcEoS_PST(){
 	string filename
 		=parmap->getS("EOS_PSTDATA_FILENAME","../eos/EOS_tables/EOS_PST.dat");
@@ -407,7 +283,131 @@ void CHBEoS::GetEoSFromT_PST(double Tset){
 	s=w0*s_PST[ie]+(1.0-w0)*s_PST[ie+1];
 }
 
-void CHBEoS::GetChiOverS(double gamma_q){
+void CHBEoS::ReadChiData_HSC(){
+	char message[CLog::CHARLENGTH];
+	string dirname=parmap->getS("LATTICEDATA_DIRNAME","../latticedata");
+	string filename;
+	double error,chi0;
+	int idata;
+	const int ndata=7;
+	double chiB[ndata],chiI[ndata],chiQ[ndata],chiSS[ndata],chiLL[ndata],Tarray[ndata];
+	FILE *fptr;
+	filename=dirname+"/chi-B.dat";
+	fptr=fopen(filename.c_str(),"r");
+	for(idata=0;idata<ndata;idata++){
+		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiB[idata],&error);
+	}
+	fclose(fptr);
+	filename=dirname+"/chi-I.dat";
+	fptr=fopen(filename.c_str(),"r");
+	for(idata=0;idata<ndata;idata++){
+		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiI[idata],&error);
+	}
+	fclose(fptr);
+	fclose(fptr);
+	filename=dirname+"/chi-LL.dat";
+	fptr=fopen(filename.c_str(),"r");
+	for(idata=0;idata<ndata;idata++){
+		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiLL[idata],&error);
+	}
+	fclose(fptr);
+	fclose(fptr);
+	filename=dirname+"/chi-Q.dat";
+	fptr=fopen(filename.c_str(),"r");
+	for(idata=0;idata<ndata;idata++){
+		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiQ[idata],&error);
+	}
+	fclose(fptr);
+	fclose(fptr);
+	filename=dirname+"/chi-SS.dat";
+	fptr=fopen(filename.c_str(),"r");
+	for(idata=0;idata<ndata;idata++){
+		fscanf(fptr,"%lf %lf %lf",&Tarray[idata],&chiSS[idata],&error);
+	}
+	fclose(fptr);
+	
+	chill_HSC.resize(ndata);
+	chils_HSC.resize(ndata);
+	chiss_HSC.resize(ndata);
+	chiud_HSC.resize(ndata);
+	for(idata=0;idata<ndata;idata++){
+		chi0=pow(Tarray[idata]/HBARC,3)*(pow(PI,4)/90.0)*(4.0/(2.0*PI*PI))*2.0;
+		chiLL[idata]*=chi0;
+		chiB[idata]*=chi0/3.0;
+		chiSS[idata]*=chi0;
+		chiI[idata]*=0.5*chi0;
+		chiQ[idata]*=2.0*chi0/3.0;
+		chill_HSC[idata]=chiLL[idata];
+		chiss_HSC[idata]=chiSS[idata];
+		chiud_HSC[idata]=chiLL[idata]-2.0*chiI[idata];
+		chils_HSC[idata]=2.25*(chiB[idata]-(2.0/9.0)*chiLL[idata]-(1.0/9.0)*chiSS[idata]-(2.0/9.0)*chiud_HSC[idata]);
+		snprintf(message,CLog::CHARLENGTH,"-------  T=%g --------\n",Tarray[idata]);
+		CLog::Info(message);
+		snprintf(message,CLog::CHARLENGTH,"%8.5f %8.5f %8.5f\n",chill_HSC[idata],chiud_HSC[idata],chils_HSC[idata]);
+		CLog::Info(message);
+		snprintf(message,CLog::CHARLENGTH,"%8.5f %8.5f %8.5f\n",chiud_HSC[idata],chill_HSC[idata],chils_HSC[idata]);
+		CLog::Info(message);
+		snprintf(message,CLog::CHARLENGTH,"%8.5f %8.5f %8.5f\n",chils_HSC[idata],chils_HSC[idata],chiss_HSC[idata]);
+		CLog::Info(message);
+	}
+}
+
+void CHBEoS::ReadChiData_Claudia(){
+	string dirname=parmap->getS("LATTICEDATA_DIRNAME","../latticedata");
+	string filename;
+	int idata;
+	const int ndata=81;
+	char dummy[100];
+	FILE *fptr;
+	// You will read in chi/s, not chi
+	filename=dirname+"/chi.dat";
+	fptr=fopen(filename.c_str(),"r");
+	T_claudia.resize(ndata);
+	chill_overs_claudia.resize(ndata);
+	chils_overs_claudia.resize(ndata);
+	chiss_overs_claudia.resize(ndata);
+	chiud_overs_claudia.resize(ndata);
+	fgets(dummy,100,fptr);
+	for(idata=4;idata<ndata;idata++){
+		fscanf(fptr,"%lf %lf %lf %lf %lf",
+		&T_claudia[idata],&chill_overs_claudia[idata],&chiud_overs_claudia[idata],&chils_overs_claudia[idata],&chiss_overs_claudia[idata]);
+	}
+	fclose(fptr);
+}
+
+void CHBEoS::GetChiOverS_Claudia(){
+	double delT=5.0,Tmax=400.0,w0,w1,Tm=1000.0*T;
+	const int ndata=81;
+	int iT0;
+	if(Tm<20){
+		chill=chill_overs_claudia[5]*Tm*s/20.0;
+		chiud=chiud_overs_claudia[5]*Tm*s/20.0;
+		chils=chils_overs_claudia[5]*Tm*s/20.0;
+		chiss=chiss_overs_claudia[5]*Tm*s/20.0;
+	}
+	else if(Tm>=Tmax){
+		chill=chill_overs_claudia[ndata-1]*s;
+		chiud=chiud_overs_claudia[ndata-1]*s;
+		chils=chils_overs_claudia[ndata-1]*s;
+		chiss=chiss_overs_claudia[ndata-1]*s;
+	}
+	else{
+		iT0=lrint(floor(Tm/delT));
+		if(iT0>=ndata-1){
+			CLog::Fatal("iT0 out of range in CHBEoS::GetChiOverS_Claudia()\n");
+		}
+		w1=(Tm-delT*iT0)/delT;
+		w0=1.0-w1;
+		chill=chill_overs_claudia[iT0]*s*w0+chill_overs_claudia[iT0+1]*s*w1;
+		chiud=chiud_overs_claudia[iT0]*s*w0+chiud_overs_claudia[iT0+1]*s*w1;
+		chils=chils_overs_claudia[iT0]*s*w0+chils_overs_claudia[iT0+1]*s*w1;
+		chiss=chiss_overs_claudia[iT0]*s*w0+chiss_overs_claudia[iT0+1]*s*w1;
+	}
+
+	
+}
+
+void CHBEoS::GetChiOverS(double f_u,double f_d,double f_s){
 	GetChiOverS_Claudia();
 	chill*=gamma_q;
 	chiud*=gamma_q;

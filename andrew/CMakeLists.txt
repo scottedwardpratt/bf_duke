@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
-project(andrew CXX)
+project(andrew_hadron CXX)
 set(GITHOME_MSU_PRATT $ENV{GITHOME_MSU_PRATT})
 
 add_custom_target(extern_commonutils COMMAND make WORKING_DIRECTORY ${GITHOME_MSU_PRATT}/commonutils/software)
@@ -19,14 +19,27 @@ find_library(${GITHOME_MSU_PRATT}/commonutils/software/lib msu_commonutils)
 find_library(${GITHOME_MSU_PRATT}/msu_eos/software/lib msu_eos)
 
 ###########################################################
-set(SOURCE_FILES ./andrew.cc)
-SET_SOURCE_FILES_PROPERTIES(./andrew.cc
+set(SOURCE_FILES ./andrew_hadron.cc)
+SET_SOURCE_FILES_PROPERTIES(./andrew_hadron.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
-SET_SOURCE_FILES_PROPERTIES(./andrew.cc
+SET_SOURCE_FILES_PROPERTIES(./andrew_hadron.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
-add_executable(andrew ${SOURCE_FILES})
-add_dependencies(andrew extern_commonutils extern_msu_eos)
-target_link_libraries(andrew ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
+add_executable(andrew_hadron ${SOURCE_FILES})
+add_dependencies(andrew_hadron extern_commonutils extern_msu_eos)
+target_link_libraries(andrew_hadron ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
+${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+)
+
+###########################################################
+set(SOURCE_FILES ./andrew_lattice.cc)
+SET_SOURCE_FILES_PROPERTIES(./andrew_lattice.cc
+	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
+SET_SOURCE_FILES_PROPERTIES(./andrew_lattice.cc
+	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
+add_executable(andrew_lattice ${SOURCE_FILES})
+add_dependencies(andrew_lattice extern_commonutils extern_msu_eos)
+target_link_libraries(andrew_lattice ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
 ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
 ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
 )
