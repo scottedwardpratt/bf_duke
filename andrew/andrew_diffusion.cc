@@ -15,6 +15,42 @@ using namespace NMSUPratt;
 void GetLatticeEoS(vector<double> &Parray,vector<double> &sarray,vector<double> &epsilonarray);
 
 int main(){
+	
+	string dirname=parmap->getS("LATTICEDATA_DIRNAME","../latticedata");
+	string filename=dirname+"latticedata_diffusion/diffusion.txt";
+	char dummy[100];
+	char voldummy[100];
+	int ntaudummy;
+	double errsysdummy,errsysstatdummy,t,d;
+	
+	vector<double> DvsT,TvsT,TvsE;
+	
+	FILE *fptr=fopen(filename.c_str(),"r");
+	fgets(dummy,100,fptr);
+	fscanf(fptr,"%s",voldummy);
+	while(!feof(fptr)){
+		fscanf(fptr,"%lf %d %lf %lf %lf",&t,&ntaudummy,&d,&errsysdummy,&errsysstatdummy);
+		t=t*0.001;
+		d=d*HBARC_GeV/(2.0*PI*t);
+		TvsT.push_back(t);
+		DvsT.push_back(d);
+		fscanf(fptr,"%s",voldummy);
+	}	
+	fclose(fptr);
+	
+	fptr=fopen("eosdata/eos_vs_epsilon.txt","r");
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	CparameterMap parmap;
 	parmap.set("MSU_SAMPLER_SFDIRNAME",string("../progdata/resinfo/spectralfunctions"));
 	parmap.set("RESONANCES_INFO_FILE",string("../progdata/resinfo/pdg-SMASH.dat"));
@@ -33,10 +69,9 @@ int main(){
 		MSU_EOS::CalcEoSandTransportCoefficients(Th,reslist,epsilonh,Ph,
 		nhadronsh,densityh,chih,sigmah,use_pole_mass,fq,fq,fq);
 		sh=(Ph+epsilonh)/Th;
-		//printf("%6.4f: %9.5f %9.5f %9.5f %9.5f\n",Th,epsilonh,Ph,sh,nhadronsh,chih(0,0));
+		printf("%6.4f: %9.5f %9.5f %9.5f %9.5f\n",Th,epsilonh,Ph,sh,nhadronsh);
 		//cout << chiharray[iT] << endl;
 	}
-
 	
 	double epsilon_target,dele=0.005,chiuu,chiud,chius,chiss;
 	int iepsilon,Nepsilon=1000;
@@ -45,7 +80,7 @@ int main(){
 	fprintf(fptr,"# epsilon   T    sdens    chiuu     chiud    chius    chiss\n");
 	for(iepsilon=0;iepsilon<=Nepsilon;iepsilon++){
 		epsilon_target=iepsilon*dele;
-		if(epsilon_target>0.0001){
+		if(iepsilon>0.0001){
 			MSU_EOS::CalcTFromEpsilonFugacity(epsilon_target,fq,fq,fq,reslist,use_pole_mass,Th);
 			MSU_EOS::CalcEoSandTransportCoefficients(Th,reslist,epsilonh,Ph,
 			nhadronsh,densityh,chih,sigmah,use_pole_mass,fq,fq,fq);
@@ -58,11 +93,14 @@ int main(){
 		else{ // For epsilon<0.05, just scale T=50 EoS quantities (hopefully these are not used
 			Th=chiuu=chiud=chius=chiss=nhadronsh=sh=0.000000001;	
 		}
-		printf("%g %g %g\n",epsilon_target,Th,chiuu);
 		fprintf(fptr,"%15.8e %15.8e %15.8e %15.8e %15.8e %15.8e %15.8e\n",
 		epsilon_target,Th,sh,chiuu,chiud,chius,chiss);
 	}
-	fclose(fptr);	
+	fclose(fptr);
+	
+	
+	
+	
 	
 	vector<double> T_vs_F,chiuu_vs_F,chidd_vs_F,chiud_vs_F,chiss_vs_F,chils_vs_F;
 	int iF,NF=100;

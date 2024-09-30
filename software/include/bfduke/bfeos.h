@@ -21,27 +21,21 @@ namespace NMSUPratt{
 		CHBEoS(CparameterMap *parmapset);
 		CHBEoS();
 		void ReadDiffusionData();
-		// get D in fm
-		static double GetD(double T);
-		
-		void ReadEoS_PST();
-		void CalcEoS_PST();
-		void GetEoSFromT_PST(double Tset);
-		void GetEoSFromEpsilon_PST(double epsilonset);
-	
-		void ReadChiData_HSC();
-		void ReadChiData_Claudia();
-		void ReadChiData();
-		void GetChiOverS_Claudia();
-		void GetChiOverS(double f_u,double f_d,double f_s);
-		void ReadEoS_Claudia();
+		static double GetD(double epsilon);
+
+		void ReadEoSData_Andrew();
 		void Print();
 		void PrintChi();
-		void FillOutdDdT();
-	
-		void BuildMap();
 	
 		//private:
+		static int NE;
+		static double depsilon;
+		static vector<double> TvsE,svsE;
+		static vector<double> chillvsE,chiudvsEchilsvsE,chissvsE;
+		static vector<double> twopiTD,Tdiff;
+		static vector<double> twopiTD,Tdiff
+		
+		
 		static vector<double> epsilon_PST,P_PST,s_PST,T_PST;
 		static vector<double> epsilon_claudia,P_claudia,s_claudia,T_claudia;
 		static vector<double> twopiTD,Tdiff;

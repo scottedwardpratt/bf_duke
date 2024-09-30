@@ -26,11 +26,11 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	DiffusionRatio=parmap.getD("BF_DIFFUSION_RATIO",1.0);
 	nhbcharges=0;
 	eos=new CHBEoS(&parmap);
-	eos->ReadEoS_PST();
+	eos->ReadEoS_Andrew();
 	eos->BuildMap();
 	eos->GetEoSFromT_PST(Tf);
 	eos->GetChiOverS_Claudia();
-	eos->FillOutdDdT();
+	//eos->FillOutdDdT();
 	string hyperdef=parmap.getS("HYPER_DEF","TEMPERATURE");
 	if(hyperdef=="TEMPERATURE"){
 		HYPERT=true;

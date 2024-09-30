@@ -15,6 +15,7 @@ vector<double> CHBEoS::twopiTD,CHBEoS::Tdiff;
 vector<double> CHBEoS::chill_overs_claudia,CHBEoS::chiud_overs_claudia,CHBEoS::chils_overs_claudia,CHBEoS::chiss_overs_claudia;
 vector<double> CHBEoS::chill_HSC,CHBEoS::chiud_HSC,CHBEoS::chils_HSC,CHBEoS::chiss_HSC;
 vector<double> CHBEoS::dDdT;
+double CHBEoS::depsilon=0.005;
 mapdi CHBEoS::etmap;
 
 CresList *CHBEoS::reslist=NULL;
@@ -31,22 +32,31 @@ CHBEoS::CHBEoS(CparameterMap *parmapset){
 };
 
 void CHBEoS::ReadDiffusionData(){
-	string dirname=parmap->getS("LATTICEDATA_DIRNAME","../latticedata");
-	string filename=dirname+"/diffusion.dat";
+	string filename=dirname+"latticedata_diffusion/diffusion.txt";
 	char dummy[100];
 	char voldummy[100];
 	int ntaudummy;
 	double errsysdummy,errsysstatdummy,t,td;
 	FILE *fptr=fopen(filename.c_str(),"r");
+	
+	double dele=0.005;
+	const int NE=5000;
+	vector<double> DvsE,TvsE;
+	
 	fgets(dummy,100,fptr);
 	fscanf(fptr,"%s",voldummy);
 	while(!feof(fptr)){
 		fscanf(fptr,"%lf %d %lf %lf %lf",&t,&ntaudummy,&td,&errsysdummy,&errsysstatdummy);
-		Tdiff.push_back(t*0.001);
+		TvsE.push_back(t*0.001);
+		td=
 		twopiTD.push_back(td);
 		fscanf(fptr,"%s",voldummy);
 	}	
 	fclose(fptr);
+	
+	
+	
+	
 }
 
 void CHBEoS::FillOutdDdT(){
@@ -87,7 +97,12 @@ void CHBEoS::FillOutdDdT(){
 	}
 }
 
-double CHBEoS::GetD(double T){
+double CHBEoS::GetDfromE(double epsilon){
+	double T_equil; //.... write code to get temperature at equilibrium
+	return GetDfromT(double T_equil);	
+}
+
+double CHBEoS::GetDfromT(double T){
 	int i0;
 	double result,delT;
 	if(T>=Tdiff[0] && T<=Tdiff[Tdiff.size()-1]){
@@ -354,6 +369,29 @@ void CHBEoS::ReadChiData_HSC(){
 
 void CHBEoS::ReadChiData_Claudia(){
 	string dirname=parmap->getS("LATTICEDATA_DIRNAME","../latticedata");
+	string filename;
+	int idata;
+	const int ndata=81;
+	char dummy[100];
+	FILE *fptr;
+	// You will read in chi/s, not chi
+	filename=dirname+"/chi.dat";
+	fptr=fopen(filename.c_str(),"r");
+	T_claudia.resize(ndata);
+	chill_overs_claudia.resize(ndata);
+	chils_overs_claudia.resize(ndata);
+	chiss_overs_claudia.resize(ndata);
+	chiud_overs_claudia.resize(ndata);
+	fgets(dummy,100,fptr);
+	for(idata=4;idata<ndata;idata++){
+		fscanf(fptr,"%lf %lf %lf %lf %lf",
+		&T_claudia[idata],&chill_overs_claudia[idata],&chiud_overs_claudia[idata],&chils_overs_claudia[idata],&chiss_overs_claudia[idata]);
+	}
+	fclose(fptr);
+}
+
+void CHBEoS::ReadEoSData_Andrew(){
+	string dirname=parmap->getS("EOSDATA_ANDREW_DIRNAME","../eosdata_andrew");
 	string filename;
 	int idata;
 	const int ndata=81;

@@ -196,11 +196,11 @@ int main(){
 
 ///////////////////////////////////////////////
 		// Write lattice vs epsilon
-	fptr=fopen("LatticeVsEpsilon.txt","w");
-	fprintf(fptr,"#epsilon     T           chi_uu          chi_ud             chi_us             chi_ss\n");
+	fptr=fopen("eosdata/eos_lattice_vs_epsilon.txt","w");
+	fprintf(fptr,"#epsilon     T       sdens   chi_uu          chi_ud             chi_us             chi_ss\n");
 	for(iepsilon=0;iepsilon<NE;iepsilon++){
 		epsilon_target=dele*iepsilon;
-		fprintf(fptr,"%15.8e %15.8e %15.8e %15.8e %15.8e %15.8e\n",epsilon_target,Tlattice[iepsilon],
+		fprintf(fptr,"%15.8e %15.8e %15.8e %15.8e %15.8e %15.8e %15.8e\n",epsilon_target,Tlattice[iepsilon],slattice[iepsilon],
 		chilattice_uu[iepsilon],chilattice_ud[iepsilon],chilattice_us[iepsilon],chilattice_ss[iepsilon]);
 		printf("%8.4f %6.4f %8.5f %8.5f %8.5f %8.5f\n",epsilon_target,Tlattice[iepsilon],
 		chilattice_uu[iepsilon]/slattice[iepsilon],chilattice_ud[iepsilon]/slattice[iepsilon],
@@ -213,17 +213,18 @@ int main(){
 
 void GetLatticeEoS(vector<double> &Parray,vector<double> &sarray,vector<double> &epsilonarray){
 	const double h0=0.1396,h1=-0.1800,h2=0.0350,f0=2.76,f1=6.79,f2=-5.29,g1=-0.47,g2=1.04;
-	double dT=1.0,T,poverT4,t,I,cs2,hbarc3=pow(HBARC,-3);
+	double dT=1.0,T,poverT4,t,I,hbarc3=pow(HBARC,-3);
+	//double cs2;
 	const int NT=401;
 	sarray.resize(NT);
 	epsilonarray.resize(NT);
 	Parray.resize(NT);
-	FILE *fptr;
+	//FILE *fptr;
 	int iT;
 	poverT4=0.0;
 	Parray[0]=epsilonarray[0]=sarray[0]=0.0;
-	fptr=fopen("eos_lattice.dat","w");
-	fprintf(fptr,"# T P(GeV/fm^3) epsilon  s(fm^-3) c_s^2\n");
+	//fptr=fopen("eosdata/eos_lattice_vs_epsilon.txt","w");
+	//fprintf(fptr,"# T P(GeV/fm^3) epsilon  s(fm^-3) c_s^2\n");
 	for(iT=0;iT<NT;iT++){
 		T=(iT+0.5)*dT;
 		t=T/200.0;
@@ -235,10 +236,10 @@ void GetLatticeEoS(vector<double> &Parray,vector<double> &sarray,vector<double> 
 		I=pow(T,4.0)*exp(-(h1/t)-h2/(t*t))*( h0+f0*(tanh(f1*t+f2)+1.0)/(1.0+g1*t+g2*t*t) );
 		epsilonarray[iT+1]=I+3.0*Parray[iT+1];
 		//printf("%5.1f s=%g\n",T,sarray[iT]*hbarc3);
-		if(iT>0){
+		/*if(iT>0){
 			cs2=(Parray[iT+1]-Parray[iT-1])/(epsilonarray[iT+1]-epsilonarray[iT-1]);
 			fprintf(fptr,"%5.1f %8.4f %8.4f %8.4f %6.4f\n",iT*dT,Parray[iT]*hbarc3/1000.0,epsilonarray[iT]*hbarc3/1000.0,sarray[iT]*hbarc3,cs2);
-		}
+		}*/
 	}
 	for(iT=0;iT<NT;iT++){
 		T=(iT+0.5)*dT;
@@ -248,6 +249,6 @@ void GetLatticeEoS(vector<double> &Parray,vector<double> &sarray,vector<double> 
 		epsilonarray[iT]=epsilonarray[iT]*hbarc3/1000.0;
 		sarray[iT]=(Parray[iT]+epsilonarray[iT])*1000.0/T;
 	}
-	fclose(fptr);
+	//fclose(fptr);
 
 }
