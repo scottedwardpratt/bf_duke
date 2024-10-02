@@ -27,10 +27,8 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	nhbcharges=0;
 	eos=new CHBEoS(&parmap);
 	eos->ReadEoS_Andrew();
-	eos->BuildMap();
-	eos->GetEoSFromT_PST(Tf);
-	eos->GetChiOverS_Claudia();
-	//eos->FillOutdDdT();
+	eos->ReadDiffusionData_Andrew();
+	eos->ReadChiReductionFactors();
 	string hyperdef=parmap.getS("HYPER_DEF","TEMPERATURE");
 	if(hyperdef=="TEMPERATURE"){
 		HYPERT=true;
