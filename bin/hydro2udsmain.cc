@@ -29,18 +29,15 @@ int main(int argc,char *argv[]){
 			hb.Reset();
 			oscarfile=hb.ReadDuke(hb.mesh);
 		
-			//hb.HyperFindEpsilon();
-			hb.HyperFindF();
+			hb.HyperFind();
 			oscarfile=hb.ReadDuke(hb.newmesh);
-			//hb.HyperFindEpsilon();
-			hb.HyperFindF();
+			hb.HyperFind();
 			hb.MakeCharges();
 			hb.PropagateCharges();
 			do{
 				hb.SwapMeshes();
 				oscarfile=hb.ReadDuke(hb.newmesh);
-				//hb.HyperFindEpsilon();
-				hb.HyperFindF();
+				hb.HyperFind();
 				hb.MakeCharges();
 				hb.PropagateCharges();
 				hb.ScatterCharges();

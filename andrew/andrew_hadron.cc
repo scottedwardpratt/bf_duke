@@ -64,6 +64,8 @@ int main(){
 	}
 	fclose(fptr);	
 	
+	// Now do stuff vs fugacity
+	
 	vector<double> T_vs_F,chiuu_vs_F,chidd_vs_F,chiud_vs_F,chiss_vs_F,chils_vs_F;
 	int iF,NF=100;
 	T_vs_F.resize(NF+1);

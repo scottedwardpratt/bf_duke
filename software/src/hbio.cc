@@ -8,7 +8,6 @@ using namespace std;
 using namespace NMSUPratt;
 
 bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
-	CHBEoS eosread;
 	char message[CLog::CHARLENGTH];
 	double r,x,y,rmax=0.0,ur,tau;
 	//double xbar=0.0,ybar=0.0,norm=0.0;
@@ -96,18 +95,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					hydromesh->pitildeyy[ix][iy]=pitilde[2][2];
 		
 					fgets(dummy,300,fptr_duke);
-					
-					if(e>0.1){
-						eosread.GetEoSFromEpsilon_PST(e);
-						eosread.GetChiOverS_Claudia();
-						hydromesh->epsilon[ix][iy]=e;
-						hydromesh->T[ix][iy]=eosread.T;
-						//printf("epsilon=%8.6f, eos.T=%8.6f =? %8.6f\n",e,eosread.T,t);
-					}
-					else{
-						hydromesh->epsilon[ix][iy]=e;
-						hydromesh->T[ix][iy]=0.05;
-					}
+					hydromesh->epsilon[ix][iy]=e;
 					hydromesh->UX[ix][iy]=u[1];
 					hydromesh->UY[ix][iy]=u[2];
 					ur=sqrt(u[1]*u[1]+u[2]*u[2]);
@@ -120,8 +108,8 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					
 					/*
 					if(iy==NY/2  && tau>10.01 && tau<10.09){
-						printf("tau=%g: %d %d: ux=%g, uy=%g, epsilon=%g, T=%g\n",tau,
-						ix,iy,hydromesh->UX[ix][iy],hydromesh->UY[ix][iy],hydromesh->epsilon[ix][iy],hydromesh->T[ix][iy]);
+					printf("tau=%g: %d %d: ux=%g, uy=%g, epsilon=%g, T=%g\n",tau,
+					ix,iy,hydromesh->UX[ix][iy],hydromesh->UY[ix][iy],hydromesh->epsilon[ix][iy],hydromesh->T[ix][iy]);
 					}*/
 
 				}
@@ -132,26 +120,16 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 		//}
 		//snprintf(message,CLog::CHARLENGTH,"tau=%g, highestT=%g, Tf=%g\n",hydromesh->tau,highestT,Tf);
 		//CLog::Info(message);
-		if(HYPERT){
-			if(!keepgoing && highestT>Tf){
-				CLog::Info("Highest T="+to_string(highestT)+"\n");
-				CLog::Fatal("Must increase HYPER_FREEZEOUT_TEMP, hydro doesn't go long enough to reach this\n");
-			}
-			if(highestT<Tf && hydromesh->tau>1.0){
-				keepgoing=false;
-				fclose(fptr_duke);
-			}
+
+		if(!keepgoing && highestEpsilon>epsilon_f){
+			CLog::Info("Highest Epsilon="+to_string(highestEpsilon)+"\n");
+			CLog::Fatal("Must increase HYPER_FREEZEOUT_EPSILON, hydro doesn't go long enough to reach this\n");
 		}
-		else if(HYPEREPSILON){
-			if(!keepgoing && highestEpsilon>epsilon_f){
-				CLog::Info("Highest Epsilon="+to_string(highestEpsilon)+"\n");
-				CLog::Fatal("Must increase HYPER_FREEZEOUT_EPSILON, hydro doesn't go long enough to reach this\n");
-			}
-			if(highestEpsilon<epsilon_f && hydromesh->tau>1.0){
-				keepgoing=false;
-				fclose(fptr_duke);
-			}
+		if(highestEpsilon<epsilon_f && hydromesh->tau>1.0){
+			keepgoing=false;
+			fclose(fptr_duke);
 		}
+
 		
 	}
 	for(alpha=0;alpha<4;alpha++){

@@ -9,33 +9,31 @@
 using namespace std;
 using namespace NMSUPratt;
 
-vector<double> CHBEoS::epsilon_PST,CHBEoS::P_PST,CHBEoS::s_PST,CHBEoS::T_PST;
-vector<double> CHBEoS::epsilon_claudia,CHBEoS::P_claudia,CHBEoS::s_claudia,CHBEoS::T_claudia;
-vector<double> CHBEoS::twopiTD,CHBEoS::Tdiff;
-vector<double> CHBEoS::chill_overs_claudia,CHBEoS::chiud_overs_claudia,CHBEoS::chils_overs_claudia,CHBEoS::chiss_overs_claudia;
-vector<double> CHBEoS::chill_HSC,CHBEoS::chiud_HSC,CHBEoS::chils_HSC,CHBEoS::chiss_HSC;
-vector<double> CHBEoS::dDdT;
-double CHBEoS::depsilon=0.005;
-mapdi CHBEoS::etmap;
+
+CparameterMap *CHBEoS::parmap=NULL;
+int CHBEoS::NE=0;
+double CHBEoS::depsilon=0.0;
+double CHBEoS::epsilon_h=0.0;
+double CHBEoS::epsilon_qgp=0.0;
+vector<double> CHBEoS::TvsE;
+vector<double> CHBEoS::svsE;
+vector<double> CHBEoS::chillvsE,CHBEoS::chiudvsE,CHBEoS::chilsvsE,CHBEoS::chissvsE;
+vector<double> CHBEoS::DvsE;
+
+int CHBEoS::Nchifactors=0;
+vector<double> CHBEoS::chifactorll,CHBEoS::chifactorud,CHBEoS::chifactorls,CHBEoS::chifactorss,CHBEoS::TnonequilVec;
 
 CHBEoS::CHBEoS(){	
 }
 
-CHBEoS::CHBEoS(CparameterMap *parmapset){
-	parmap=parmapset;
-	ReadDiffusionData();
-	ReadEosData_Andrew();
-	//FillOutdDdT();
-};
-
 void CHBEoS::ReadDiffusionData_Andrew(){
-	string filename=dirname+"eosdata/DvsEpsilon.txt";
+	string filename="eosdata/DvsEpsilon.txt";
 	char dummy[200];
 	double epsilon,t,d;
 	FILE *fptr=fopen(filename.c_str(),"r");	
 	fgets(dummy,100,fptr);
 	while(!feof(fptr)){
-		fscanf(fptr,"%lf %d %lf %lf %lf",&epsilon,&t,&d);
+		fscanf(fptr,"%lf %lf %lf",&epsilon,&t,&d);
 		if(!feof(fptr))
 			DvsE.push_back(d);
 	}	
@@ -45,23 +43,10 @@ void CHBEoS::ReadDiffusionData_Andrew(){
 	//	printf("%8.5f %10.5f\n",0.005*ie,DvsE[ie]);
 	
 	
-}X
-
-double CHBEoS::GetDfromE(double epsilon){
-	int ie0,ie1;
-	double D0,D1,D;
-	ie0=floorl(epsilon/depsilon);
-	ie1=ie0+ie;
-	if(ie1<DvsE.size(){
-		D0=DvsE[ie0]; D1=DvsE[ie1];
-		D=(D0*(ie1*depsilon-epsilon)+D1*(epsilon-ie0*depsilon))/depsilon;
-	}
-	return D;
 }
 
 void CHBEoS::ReadEoSData_Andrew(){
 	double e,t,s,cuu,cud,cus,css;
-	int NE=0;
 	char dummy[100];
 	FILE *fptr;
 	depsilon=0.005;
@@ -78,19 +63,18 @@ void CHBEoS::ReadEoSData_Andrew(){
 		if(!feof(fptr)){
 			TvsE.push_back(t);
 			svsE.push_back(s);
-			chill.push_back(cuu);
-			chiud.push_back(cud);
-			chils.push_back(cus);
-			chiss.push_back(css);
+			chillvsE.push_back(cuu);
+			chiudvsE.push_back(cud);
+			chilsvsE.push_back(cus);
+			chissvsE.push_back(css);
 		}
-	}while !feof(fptr);
+	}while(!feof(fptr));
 	fclose(fptr);
-	NE=TvsS.size();
+	NE=TvsE.size();
 }
 
 void CHBEoS::ReadChiReductionFactors(){
 	double e,t,cfuu,cfud,cfus,cfss;
-	int Nchifactors;
 	char dummy[100];
 	FILE *fptr;
 	fptr=fopen("eosdata/eos_chifactors.txt","r");
@@ -100,32 +84,33 @@ void CHBEoS::ReadChiReductionFactors(){
 	chifactorss.clear();
 	fgets(dummy,100,fptr);
 	do{
-		fscanf(fptr,"%lf %lf %lf",&e,&t,&cfuu,&cfud,&cfus,&cfss);
+		fscanf(fptr,"%lf %lf %lf %lf %lf %lf",&e,&t,&cfuu,&cfud,&cfus,&cfss);
 		if(!feof(fptr)){
-			chifactorll.push_back(cuu);
-			chifactorud.push_back(cud);
-			chifactorls.push_back(cus);
-			chifactorss.push_back(css);
+			chifactorll.push_back(cfuu);
+			chifactorud.push_back(cfud);
+			chifactorls.push_back(cfus);
+			chifactorss.push_back(cfss);
+			TnonequilVec.push_back(t);
 		}
-	}while !feof(fptr);
+	}while(!feof(fptr));
 	fclose(fptr);
 	Nchifactors=chifactorll.size();
 }
 
-void qCHBEoS::GetChiOverS(double f_u,double f_d,double f_s){
+void CHBEoS::SetChi(){
 	int ie0,ie1,if0,if1;
-	double w,f_q,delf,crll,crud,crls,crss,;
+	double w,f_q,delf,crll,crud,crls,crss;
 	ie0=floorl(epsilon/depsilon);
 	ie1=ie0+1;
 	if(ie1>=NE){
 		ie1=NE-1;
 		ie0=ie1-1;
 	}
-	f=(ie1*depsilon-epsilon)/depsilon;
-	chill=w*chillvsE(ie0)+(1.0-w)*chillvsE(ie1);
-	chiud=w*chiudvsE(ie0)+(1.0-w)*chiudvsE(ie1);
-	chils=w*chilsvsE(ie0)+(1.0-w)*chilsvsE(ie1);
-	chiss=w*chissvsE(ie0)+(1.0-w)*chissvsE(ie1);
+	w=(ie1*depsilon-epsilon)/depsilon;
+	chill=w*chillvsE[ie0]+(1.0-w)*chillvsE[ie1];
+	chiud=w*chiudvsE[ie0]+(1.0-w)*chiudvsE[ie1];
+	chils=w*chilsvsE[ie0]+(1.0-w)*chilsvsE[ie1];
+	chiss=w*chissvsE[ie0]+(1.0-w)*chissvsE[ie1];
 	
 	
 	f_q=(f_u+f_d+f_s)/3.0;
@@ -160,3 +145,48 @@ void qCHBEoS::GetChiOverS(double f_u,double f_d,double f_s){
 		chils*=crls;
 	}
 }
+
+void CHBEoS::SetTnonequil(){
+	int if0,if1;
+	double w,f_q,delf;
+
+	f_q=(f_u+f_d+f_s)/3.0;
+	delf=1.0/Nchifactors;
+	if0=floorl(f_q/delf);
+	if1=if0+1;
+	w=(if1*delf-f_q)/delf;
+	Tnonequil=w*TnonequilVec[if0]+(1.0-w)*TnonequilVec[if1];
+}
+
+void CHBEoS::SetTs(){  // T,P and s are equilibrium quantities
+	int ie0,ie1;
+	double w;
+	ie0=floorl(epsilon/depsilon);
+	ie1=ie0+1;
+	if(ie1>=NE){
+		ie1=NE-1;
+		ie0=ie1-1;
+	}
+	w=(ie1*depsilon-epsilon)/depsilon;
+	T=w*TvsE[ie0]+(1.0-w)*TvsE[ie1];
+	s=w*svsE[ie0]+(1.0-w)*svsE[ie1];
+	P=T*s-epsilon;
+}
+
+
+
+double CHBEoS::GetD(double epsilon){
+	unsigned int ie0,ie1;
+	double D0,D1,D;
+	ie0=floorl(epsilon/depsilon);
+	ie1=ie0+1;
+	if(ie1<DvsE.size()){
+		D0=DvsE[ie0]; D1=DvsE[ie1];
+		D=(D0*(ie1*depsilon-epsilon)+D1*(epsilon-ie0*depsilon))/depsilon;
+	}
+	else{
+		D=DvsE[DvsE.size()-1];
+	}
+	return D;
+}
+
