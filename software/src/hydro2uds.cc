@@ -255,7 +255,6 @@ void CHydroBalance::PropagateCharges(){
 		if(!(charge->active) || (charge->active && newmesh->epsilon[ix][iy]<epsilon_f)){
 			emap.insert(pairic(id,charge));
 			hyper=&(charge->hyper);
-			GetTBar(ix,iy,hyper->T0);
 			if(WRITE_TRAJ)
 				charge->addtraj();
 			GetGradEpsilon(ix,iy,dEdt,dEdx,dEdy,GGEt,GGEx,GGEy);
@@ -388,11 +387,10 @@ double &DQud,double &DQls,double &DQss){
 void CHydroBalance::CalcDQ0(int ix,int iy,double &DQll,double &DQud,
 double &DQls,double &DQss){
 	CHBEoS eos;
-	double u0,ux,uy,d3x=DX*DY*newmesh->tau,T,epsilon;
+	double u0,ux,uy,d3x=DX*DY*newmesh->tau,epsilon;
 	double gamma_q,f_l,f_s;
 	GetUxyBar(ix,iy,ux,uy);
 	u0=sqrt(1.0+ux*ux+uy*uy);
-	GetTBar(ix,iy,T);
 	GetEpsilonBar(ix,iy,epsilon);
 	if(epsilon>epsilon_f){
 		GetGammaFQ(newmesh->tau,gamma_q,f_l,f_s);

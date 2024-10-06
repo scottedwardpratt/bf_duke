@@ -14,7 +14,6 @@ find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} ${GITHOME_MSU_PRATT}/commonutils/software/include  ${GITHOME_MSU_PRATT}/msu_eos/software/include ${GITHOME_MSU_PRATT}/msu_sampler/software/include)
 
 link_directories(${GITHOME_MSU_PRATT}/commonutils/software/lib ${GITHOME_MSU_PRATT}/msu_eos/software/lib)
-
 find_library(${GITHOME_MSU_PRATT}/commonutils/software/lib msu_commonutils)
 find_library(${GITHOME_MSU_PRATT}/msu_eos/software/lib msu_eos)
 

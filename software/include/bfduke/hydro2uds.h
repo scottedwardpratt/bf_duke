@@ -48,7 +48,6 @@ namespace NMSUPratt{
 		void HyperFindEpsilon();
 		void GetUxyBar(int ix,int iy,double &uxbar,double &uybar); // ux,uy for cell ix,iy between mesh and newmesh
 		void GetXYBar(int ix,int iy,double &xbar,double &ybar);
-		void GetTBar(int ix,int iy,double &Tbar); // ux,uy for cell ix,iy between mesh and newmesh
 		void GetEpsilonBar(int ix,int iy,double &EpsilonBar); // ux,uy for cell ix,iy between mesh and newmesh
 		void GetPiTildeBar(int ix,int iy,double &pitildexxbar,double &pitildexybar,
 		double &pitildeyybar);
