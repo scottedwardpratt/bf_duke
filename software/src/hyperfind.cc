@@ -11,7 +11,7 @@ void CHydroBalance::HyperFind(){
 	CHBEoS hypereos;
 	char message[CLog::CHARLENGTH];
 	int ix,iy;//,a,b;
-	double dFdx,dFdy,dFdt,fugacity_l,fugacity_s,gamma_q;
+	double dFdx,dFdy,dFdt,f_l,f_s;
 	double RMAX=0.0,UMAX=0.0,EMAX=0.0;
 	Chyper hyper;
 	Chyper *newhyper;
@@ -35,18 +35,24 @@ void CHydroBalance::HyperFind(){
 					double epsilon0;
 					GetEpsilonBar(ix,iy,epsilon0);
 					hypereos.epsilon=epsilon0;
-					hypereos.SetTnonequil();
-					hyper.T0=hypereos.Tnonequil;
-					hyper.epsilon=epsilon0;
+					GetFugacityBar(f_l,f_s);
+					hypereos.f_u=hypereos.f_d=f_l;
+					hypereos.f_s=f_s;
+					
+					
 					
 					if(GGFt){
 						GetDOmega(dFdt,dFdx,dFdy,hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy);
 						
 						nhyper+=1;
 						
-						GetGammaFQ(hyper.tau,gamma_q,fugacity_l,fugacity_s);
-						hyper.fugacity_u=hyper.fugacity_d=fugacity_l;
-						hyper.fugacity_s=fugacity_s;
+						hypereos.SetTnonequil();
+						hyper.T0=hypereos.Tnonequil;
+						hyper.epsilon=epsilon0;
+						hyper.fugacity_u=hypereos.f_u;
+						hyper.fugacity_d=hypereos.f_d;
+						hyper.fugacity_s=hypereos.f_s;
+						
 						double r=sqrt(hyper.r[1]*hyper.r[1]+hyper.r[2]*hyper.r[2]);
 						if(r>RMAX)
 							RMAX=r;
@@ -69,8 +75,8 @@ void CHydroBalance::HyperFind(){
 	}
 	if(nhyper>0){
 		NHYPER+=nhyper;
-		printf("NHYPER=%d, nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, epsilonMAX=%g\n",
-		NHYPER,nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,EMAX);
+		//printf("NHYPER=%d, nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, epsilonMAX=%g\n",
+		//NHYPER,nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,EMAX);
 	}
 }
 

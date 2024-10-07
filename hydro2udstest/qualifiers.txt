@@ -1,4 +1,4 @@
-qualifier alicePbPb_cent0_5_equilibrium
+qualifier alicePbPb_cent0_5_equilibrium_new
 BEAM_INFO ALICE_PBPB
 #B3D_NEVENTSMAX 5
 #

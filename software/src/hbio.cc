@@ -280,12 +280,16 @@ void CHydroBalance::WriteHyper_Duke_2D(){
 	Chyper *hyper;
 	FILE *fptr=fopen(filename.c_str(),"w");
 	//fprintf(fptr,"#Tf=%g\n",Tf);
-	fprintf(fptr,"#   tau        T        f_u      f_d       f_s      x            y           Ux              Uy         dOmega0       dOmegaX       dOmegaY       pi_xx          pi_yy        pi_xy\n");
+	fprintf(fptr,"#   tau        T       epsilon       f_u      f_d       f_s      x            y           Ux              Uy         dOmega0       dOmegaX       dOmegaY       pi_xx          pi_yy        pi_xy\n");
 	list<Chyper *>::iterator it;
 	for(it=hyperlist.begin();it!=hyperlist.end();++it){
 		hyper=*it;
 		fprintf(fptr,"%13.7e %13.7f %13.7f %13.7f %13.7f %13.7f %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e %13.7e\n",
-		hyper->tau,hyper->T0,hyper->epsilon,hyper->fugacity_u,hyper->fugacity_d,hyper->fugacity_s,hyper->r[1],hyper->r[2],hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
+		hyper->tau,hyper->T0,hyper->epsilon,
+		hyper->fugacity_u,hyper->fugacity_d,hyper->fugacity_s,
+		hyper->r[1],hyper->r[2],hyper->u[1],hyper->u[2],
+		hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],
+		hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2]);
 	}
 	snprintf(message,CLog::CHARLENGTH,"Wrote %d hyper-elements\n",int(hyperlist.size()));
 	fclose(fptr);

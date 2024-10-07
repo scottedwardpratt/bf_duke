@@ -134,6 +134,17 @@ void CHydroBalance::GetEpsilonBar(int ix,int iy,double &EpsilonBar){
 		+newmesh->epsilon[ix+1][iy]+newmesh->epsilon[ix][iy+1]);
 }
 
+
+void CHydroBalance::GetFugacityBar(double &f_lBar,double &f_sBar){
+	double oldtau,newtau,oldf_l,newf_l,oldf_s,newf_s,oldgamma,newgamma;
+	oldtau=mesh->tau;
+	newtau=mesh->tau;
+	GetGammaFQ(oldtau,oldgamma,oldf_l,oldf_s);
+	GetGammaFQ(newtau,newgamma,newf_l,newf_s);
+	f_lBar=0.5*(oldf_l+newf_l);
+	f_sBar=0.5*(oldf_s+newf_s);
+}
+
 void CHydroBalance::GetPiTildeBar(int ix,int iy,double &pitildexxbar,double &pitildexybar,
 double &pitildeyybar){
 	pitildexxbar=0.125*(mesh->pitildexx[ix][iy]+mesh->pitildexx[ix+1][iy+1]
@@ -353,7 +364,6 @@ double &DQud,double &DQls,double &DQss){
 		else{
 			s0=0.25;
 			d4x=DELTAU*DX*DY*newmesh->tau;
-			GetGammaFQ(newmesh->tau,gamma_q,f_l,f_s);
 		}
 		for(jx=0;jx<2;jx++){
 			if(jx==0)

@@ -49,6 +49,7 @@ namespace NMSUPratt{
 		void GetUxyBar(int ix,int iy,double &uxbar,double &uybar); // ux,uy for cell ix,iy between mesh and newmesh
 		void GetXYBar(int ix,int iy,double &xbar,double &ybar);
 		void GetEpsilonBar(int ix,int iy,double &EpsilonBar); // ux,uy for cell ix,iy between mesh and newmesh
+		void GetFugacityBar(double &f_lBar,double &f_sBar);
 		void GetPiTildeBar(int ix,int iy,double &pitildexxbar,double &pitildexybar,
 		double &pitildeyybar);
 		bool GetGradEpsilon(int ix,int iy,double &dEdt,double &dEdx,double &dEdy,bool &GGEt,bool &GGEx,bool &GGEy);

@@ -72,15 +72,15 @@ void CHBEoS::ReadEoSData_Andrew(){
 void CHBEoS::ReadChiReductionFactors(){
 	double fq,t,cfuu,cfud,cfus,cfss;
 	double chillvsE,chiudvsE,chilsvsE,chissvsE,sdens;
-	char dummy[100];
+	char dummy[200];
 	FILE *fptr;
 	fptr=fopen("eosdata/eos_chifactors.txt","r");
 	chifactorll.clear();
 	chifactorud.clear();
 	chifactorls.clear();
 	chifactorss.clear();
-	fgets(dummy,100,fptr);
-	do{
+	fgets(dummy,200,fptr);
+	while(!feof(fptr)){
 		fscanf(fptr,"%lf %lf %lf %lf %lf %lf %lf  %lf %lf %lf %lf",&fq,&t,&sdens,
 		&chillvsE,&chiudvsE,&chilsvsE,&chissvsE,&cfuu,&cfud,&cfus,&cfss);
 		if(!feof(fptr)){
@@ -91,7 +91,7 @@ void CHBEoS::ReadChiReductionFactors(){
 			TnonequilVec.push_back(t);
 		}
 		fgets(dummy,100,fptr);
-	}while(!feof(fptr));
+	}
 	fclose(fptr);
 	Nchifactors=chifactorll.size();
 }
@@ -113,7 +113,11 @@ void CHBEoS::SetChi(){
 	
 	
 	f_q=(f_u+f_d+f_s)/3.0;
-	delf=1.0/Nchifactors;
+	if(f_q>1.0){
+		printf("B: ????? f_l=%g, f_u=%g, f_d=%g, f_s=%g\n",f_l,f_u,f_d,f_s);
+		exit(1);
+	}
+	delf=1.0/double(Nchifactors-1);
 	if0=floorl(f_q/delf);
 	if1=if0+1;
 	w=(if1*delf-f_q)/delf;
@@ -152,7 +156,11 @@ void CHBEoS::SetTnonequil(){
 	double w,f_q,delf;
 
 	f_q=(f_u+f_d+f_s)/3.0;
-	delf=1.0/Nchifactors;
+	if(f_q>1.0){
+		printf("????? f_l=%g, f_u=%g, f_d=%g, f_s=%g\n",f_l,f_u,f_d,f_s);
+		exit(1);
+	}
+	delf=1.0/double(Nchifactors-1);
 	if0=floorl(f_q/delf);
 	if1=if0+1;
 	w=(if1*delf-f_q)/delf;
