@@ -21,10 +21,12 @@ int main(int argc, char *argv[]){
 	//CLog::Init(logfilename);
 	CLog::INTERACTIVE=true;
 	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
+	printf("check a\n");
 	CmasterSampler ms(&parmap);
 	CMSU_Boltzmann::mastersampler=&ms;
 	CpartList *pl=new CpartList(&parmap,ms.reslist);
 	ms.partlist=pl;
+	printf("check aa\n");
 	//CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann("run"+to_string(run_number),&parmap,ms.reslist);
 	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,ms.reslist);
 	msuboltz->InitCascade();
