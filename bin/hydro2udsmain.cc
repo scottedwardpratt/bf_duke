@@ -28,7 +28,6 @@ int main(int argc,char *argv[]){
 			hb.Omega0tot=hb.OmegaXtot=hb.OmegaYtot=0.0;
 			hb.Reset();
 			oscarfile=hb.ReadDuke(hb.mesh);
-		
 			hb.HyperFind();
 			oscarfile=hb.ReadDuke(hb.newmesh);
 			hb.HyperFind();
@@ -45,14 +44,14 @@ int main(int argc,char *argv[]){
 					snprintf(message,CLog::CHARLENGTH,"tau=%g, cmap.size=%lu, emap.size=%lu\n",hb.mesh->tau,
 					hb.cmap.size(),hb.emap.size());
 					CLog::Info(message);
-					snprintf(message,CLog::CHARLENGTH,"highestT=%g, highestEpsilon=%g, biggestU=%g\n",hb.highestT,hb.highestEpsilon,hb.biggestU);
+					snprintf(message,CLog::CHARLENGTH,"highestEpsilon=%g, biggestU=%g\n",hb.highestEpsilon,hb.biggestU);
 					CLog::Info(message);
 				}
 			}while(oscarfile);
-			snprintf(message,CLog::CHARLENGTH,"tau=%g, cmap.size=%lu, emap.size=%lu\n",hb.mesh->tau,
+			snprintf(message,CLog::CHARLENGTH,"final tau=%g, cmap.size=%lu, emap.size=%lu\n",hb.mesh->tau,
 			hb.cmap.size(),hb.emap.size());
 			CLog::Info(message);
-			snprintf(message,CLog::CHARLENGTH,"highestT=%g, highestEpsilon=%g, biggestU=%g\n",hb.highestT,hb.highestEpsilon,hb.biggestU);
+			snprintf(message,CLog::CHARLENGTH,"highestEpsilon=%g, biggestU=%g\n",hb.highestEpsilon,hb.biggestU);
 			CLog::Info(message);
 			printf("netUdotOmega=%g, Omega0tot=%g, OmegaXtot=%g, OmegaYtot=%g\n",hb.netUdotOmega,hb.Omega0tot,hb.OmegaXtot,hb.OmegaYtot);
 	

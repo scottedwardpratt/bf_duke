@@ -13,8 +13,8 @@ using namespace NMSUPratt;
 CparameterMap *CHBEoS::parmap=NULL;
 int CHBEoS::NE=0;
 double CHBEoS::depsilon=0.0;
-double CHBEoS::epsilon_h=0.0;
-double CHBEoS::epsilon_qgp=0.0;
+double CHBEoS::epsilon_h=0.36;
+double CHBEoS::epsilon_qgp=0.76;
 vector<double> CHBEoS::TvsE;
 vector<double> CHBEoS::svsE;
 vector<double> CHBEoS::chillvsE,CHBEoS::chiudvsE,CHBEoS::chilsvsE,CHBEoS::chissvsE;
@@ -38,10 +38,6 @@ void CHBEoS::ReadDiffusionData_Andrew(){
 			DvsE.push_back(d);
 	}	
 	fclose(fptr);
-	
-	//for(unsigned int ie=0;ie<DvsE.size();ie++)
-	//	printf("%8.5f %10.5f\n",0.005*ie,DvsE[ie]);
-	
 	
 }
 
@@ -74,7 +70,8 @@ void CHBEoS::ReadEoSData_Andrew(){
 }
 
 void CHBEoS::ReadChiReductionFactors(){
-	double e,t,cfuu,cfud,cfus,cfss;
+	double fq,t,cfuu,cfud,cfus,cfss;
+	double chillvsE,chiudvsE,chilsvsE,chissvsE,sdens;
 	char dummy[100];
 	FILE *fptr;
 	fptr=fopen("eosdata/eos_chifactors.txt","r");
@@ -84,7 +81,8 @@ void CHBEoS::ReadChiReductionFactors(){
 	chifactorss.clear();
 	fgets(dummy,100,fptr);
 	do{
-		fscanf(fptr,"%lf %lf %lf %lf %lf %lf",&e,&t,&cfuu,&cfud,&cfus,&cfss);
+		fscanf(fptr,"%lf %lf %lf %lf %lf %lf %lf  %lf %lf %lf %lf",&fq,&t,&sdens,
+		&chillvsE,&chiudvsE,&chilsvsE,&chissvsE,&cfuu,&cfud,&cfus,&cfss);
 		if(!feof(fptr)){
 			chifactorll.push_back(cfuu);
 			chifactorud.push_back(cfud);
@@ -92,6 +90,7 @@ void CHBEoS::ReadChiReductionFactors(){
 			chifactorss.push_back(cfss);
 			TnonequilVec.push_back(t);
 		}
+		fgets(dummy,100,fptr);
 	}while(!feof(fptr));
 	fclose(fptr);
 	Nchifactors=chifactorll.size();
@@ -122,6 +121,7 @@ void CHBEoS::SetChi(){
 	crud=w*chifactorud[if0]+(1.0-w)*chifactorud[if1];
 	crls=w*chifactorls[if0]+(1.0-w)*chifactorls[if1];
 	crss=w*chifactorss[if0]+(1.0-w)*chifactorss[if1];
+	
 	if(epsilon<epsilon_h){
 		chill*=crll;
 		chiud*=crud;
@@ -131,6 +131,7 @@ void CHBEoS::SetChi(){
 	else if(epsilon<epsilon_qgp){// above epsilon_qgp reduce off-diag chi by hadron value
 		// reduce diagonal by weighted hadron vs qgp value, qgp reducution is f_q
 		w=(epsilon_qgp-epsilon)/(epsilon_qgp-epsilon_h);
+		
 		crll=w*crll+(1.0-w)*f_q;
 		crss=w*crss+(1.0-w)*f_q;
 		chill*=crll;

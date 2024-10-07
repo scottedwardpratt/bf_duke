@@ -23,7 +23,7 @@ namespace NMSUPratt{
 		int NX,NY,ntraj;
 		double NSAMPLE_HYDRO2UDS;
 		double biggestomega;
-		double highestEpsilon,highestT,biggestU;
+		double highestEpsilon,biggestU;
 		vector<CHBCharge> hbcharges;
 		unsigned int nhbcharges;
 		int run_number, NHYPER;
@@ -55,7 +55,7 @@ namespace NMSUPratt{
 		// returns true if cell has hypersurface, if(forcecalc=false) only calculates if on hypersurface
 		bool GetDOmega(double dTdt,double dTdx,double dTdy,double &dOmega0,double &dOmegaX,double &dOmegaY,bool GGTt,bool GGTx,bool GGTy); //Hyper surface element for times between mesh and newmesh
 		bool WRITE_TRAJ;
-		void PropagateCharges();1
+		void PropagateCharges();
 		void ScatterCharges();
 		void CalcDQ(int ix,int iy,double &DQll,double &DQud,double &DQls,double &DQss);
 		void CalcDQ0(int ix,int iy,double &DQll,double &DQud,double &DQls,double &DQss);

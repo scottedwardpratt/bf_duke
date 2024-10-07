@@ -21,7 +21,7 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	parfilename="model_output/run"+to_string(run_number)+"/parameters.txt";
 	parmap.ReadParsFromFile(parfilename);
 	Tf=0.001*parmap.getD("HYPER_FREEZEOUT_TEMP",160.0);
-	epsilon_f=parmap.getD("HYPER_FREEZEOUT_EPSILON",0.4);
+	epsilon_f=parmap.getD("HYPER_FREEZEOUT_EPSILON",0.36);
 	SIGMA0=parmap.getD("BF_SIGMA0",0.5);
 	DiffusionRatio=parmap.getD("BF_DIFFUSION_RATIO",1.0);
 	nhbcharges=0;
@@ -68,12 +68,10 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	YMAX=CHBHydroMesh::YMAX;
 	DX=CHBHydroMesh::DX;
 	DY=CHBHydroMesh::DY;
-	//printf("DX=%g, DY=%g, XMAX=%g, XMIN=%g, NX=%d\n",DX,DY,CHBHydroMesh::XMAX,CHBHydroMesh::XMIN,CHBHydroMesh::NX);
 	
 	CHBHydroMesh::GetDimensions(NX,NY,DX,DY,DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX);
 	WRITE_TRAJ=parmap.getB("HYDRO2UDS_WRITE_TRAJ",false);
 	NSAMPLE_HYDRO2UDS=parmap.getD("HYDRO2UDS_NSAMPLE",1);
-	//printf("NSAMPLE_HYDRO2UDS=%g\n",NSAMPLE_HYDRO2UDS);
 	randy=new Crandy(run_number);
 	mesh=newmesh=oldmesh=NULL;
 	Ncollisions=0;
@@ -271,7 +269,7 @@ void CHydroBalance::PropagateCharges(){
 			charge->active=false;
 			oldit=it;
 			++it;
-			cmap.erase(oldit);	
+			cmap.erase(oldit);
 		}
 		else{
 			++it;
@@ -279,7 +277,6 @@ void CHydroBalance::PropagateCharges(){
 
 		
 	}
-
 	it=cmap.begin();
 	while(it!=cmap.end()){
 		charge=it->second;
@@ -337,10 +334,15 @@ double &DQud,double &DQls,double &DQss){
 				u0[j0][jx][jy]=sqrt(1.0
 					+ux[j0][jx][jy]*ux[j0][jx][jy]+uy[j0][jx][jy]*uy[j0][jx][jy]);
 				eos222[j0][jx][jy].epsilon=mptr->epsilon[ix+jx][iy+jy];
+				GetGammaFQ(mptr->tau,gamma_q,f_l,f_s);
+				eos222[j0][jx][jy].f_u=f_l;
+				eos222[j0][jx][jy].f_d=f_l;
+				eos222[j0][jx][jy].f_s=f_s;
 				eos222[j0][jx][jy].SetChi();
 			}
 		}
 	}
+	
 	DQll=DQud=DQls=DQss=0.0;
 	for(j0=0;j0<2;j0++){
 		if(j0==0){
@@ -364,20 +366,20 @@ double &DQud,double &DQls,double &DQss){
 				else
 					sy=0.25;
 				
-				DQll+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chill*f_l*f_l/DELTAU;
-				DQud+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chiud*f_l*f_l/DELTAU;
-				DQls+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chils*f_l*f_s/DELTAU;
-				DQss+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chiss*f_s*f_s/DELTAU;
+				DQll+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chill/DELTAU;
+				DQud+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chiud/DELTAU;
+				DQls+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chils/DELTAU;
+				DQss+=d4x*s0*u0[j0][jx][jy]*eos222[j0][jx][jy].chiss/DELTAU;
 				
-				DQll+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chill*f_l*f_l/DX;
-				DQud+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chiud*f_l*f_l/DX;
-				DQls+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chils*f_l*f_s/DX;
-				DQss+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chiss*f_s*f_s/DX;
+				DQll+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chill/DX;
+				DQud+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chiud/DX;
+				DQls+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chils/DX;
+				DQss+=d4x*sx*ux[j0][jx][jy]*eos222[j0][jx][jy].chiss/DX;
 				
-				DQll+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chill*f_l*f_l/DY;
-				DQud+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chiud*f_l*f_l/DY;
-				DQls+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chils*f_l*f_s/DY;
-				DQss+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chiss*f_s*f_s/DY;
+				DQll+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chill/DY;
+				DQud+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chiud/DY;
+				DQls+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chils/DY;
+				DQss+=d4x*sy*uy[j0][jx][jy]*eos222[j0][jx][jy].chiss/DY;
 								
 			}
 		}

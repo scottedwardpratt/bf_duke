@@ -38,8 +38,6 @@ namespace NMSUPratt{
 		
 		static int Nchifactors;
 		static vector<double> chifactorll,chifactorud,chifactorls,chifactorss,TnonequilVec;
-
-
 	};
 
 }

@@ -12,7 +12,7 @@ void CHydroBalance::HyperFind(){
 	char message[CLog::CHARLENGTH];
 	int ix,iy;//,a,b;
 	double dFdx,dFdy,dFdt,fugacity_l,fugacity_s,gamma_q;
-	double RMAX=0.0,UMAX=0.0,TMAX=0.0;
+	double RMAX=0.0,UMAX=0.0,EMAX=0.0;
 	Chyper hyper;
 	Chyper *newhyper;
 	int nhyper=0;
@@ -26,7 +26,6 @@ void CHydroBalance::HyperFind(){
 					CLog::Info(message);
 				}
 				if(GetGradEpsilon(ix,iy,dFdt,dFdx,dFdy,GGFt,GGFx,GGFy)){
-					
 					hyper.tau=0.5*(newmesh->tau+mesh->tau);
 					GetXYBar(ix,iy,hyper.r[1],hyper.r[2]);
 					GetUxyBar(ix,iy,hyper.u[1],hyper.u[2]);
@@ -54,8 +53,8 @@ void CHydroBalance::HyperFind(){
 						double umag=sqrt(hyper.u[1]*hyper.u[1]+hyper.u[2]*hyper.u[2]);
 						if(umag>UMAX)
 							UMAX=umag;
-						if(hyper.T0>TMAX)
-							TMAX=hyper.T0;
+						if(hyper.epsilon>EMAX)
+							EMAX=hyper.epsilon;
 					
 						newhyper=new Chyper;
 						newhyper->Copy(&hyper);
@@ -70,8 +69,8 @@ void CHydroBalance::HyperFind(){
 	}
 	if(nhyper>0){
 		NHYPER+=nhyper;
-		printf("NHYPER=%d, nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, TMAX=%g\n",
-		NHYPER,nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,TMAX);
+		printf("NHYPER=%d, nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, epsilonMAX=%g\n",
+		NHYPER,nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,EMAX);
 	}
 }
 

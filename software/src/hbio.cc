@@ -55,7 +55,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 		keepgoing=true;
 		fscanf(fptr_duke,"%lf",&t);
 		if(!feof(fptr_duke)){
-			highestT=biggestU=highestEpsilon=0.0;
+			biggestU=highestEpsilon=0.0;
 			for(iy=0;iy<NY;iy++){
 				for(ix=0;ix<NX;ix++){
 					if(ix!=0 && iy!=0)	
@@ -101,25 +101,14 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					ur=sqrt(u[1]*u[1]+u[2]*u[2]);
 					if(ur>biggestU && t>Tf)
 						biggestU=ur;
-					if(t>highestT)
-						highestT=t;
 					if(e>highestEpsilon)
 						highestEpsilon=e;
-					
-					/*
-					if(iy==NY/2  && tau>10.01 && tau<10.09){
-					printf("tau=%g: %d %d: ux=%g, uy=%g, epsilon=%g, T=%g\n",tau,
-					ix,iy,hydromesh->UX[ix][iy],hydromesh->UY[ix][iy],hydromesh->epsilon[ix][iy],hydromesh->T[ix][iy]);
-					}*/
 
 				}
 			}
 		}
 		else
 			keepgoing=false;
-		//}
-		//snprintf(message,CLog::CHARLENGTH,"tau=%g, highestT=%g, Tf=%g\n",hydromesh->tau,highestT,Tf);
-		//CLog::Info(message);
 
 		if(!keepgoing && highestEpsilon>epsilon_f){
 			CLog::Info("Highest Epsilon="+to_string(highestEpsilon)+"\n");
@@ -144,116 +133,6 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	pitilde=NULL;
 	
 	itauread+=1;	
-	return keepgoing;
-}
-
-bool CHydroBalance::ReadOSCAR(CHBHydroMesh *hydromesh){
-	char message[CLog::CHARLENGTH];
-	double r,x,y,rmax=0.0,highestT,biggestU,ur;
-	//double xbar=0.0,ybar=0.0,norm=0.0;
-	bool keepgoing=true;
-	int olditau,ix,iy,iline,flag,alpha;
-	char dummy[300];
-	double **pi,**pitilde;
-	FourVector u;
-	double e,p,t,vx,vy,pi00,pi01,pi02,pi11,pi12,pi22,pi33,Pi;
-	pi=new double*[4];
-	pitilde=new double*[4];
-	for(alpha=0;alpha<4;alpha++){
-		pi[alpha]=new double[4];
-		pitilde[alpha]=new double[4];
-	}
-	highestT=biggestU=0.0;
-	if(tau0readcheck){
-		oscar_filename="../hydrodata/"+qualifier+"/"+parmap.getS("HYDRODATA_FILENAME","OSCAR2008H.txt");
-		snprintf(message,CLog::CHARLENGTH,"filename=%s\n",oscar_filename.c_str());
-		CLog::Info(message);
-		fptr_oscar=fopen(oscar_filename.c_str(),"r");
-		for(iline=0;iline<14;iline++){
-			fgets(dummy,300,fptr_oscar);
-		}
-	}
-	
-	for(ix=0;ix<NX;ix++)
-		for(iy=0;iy<NY;iy++)
-			hydromesh->T[ix][iy]=0.0;
-	olditau=itauread;
-	hydromesh->tau=TAU0+itauread*DELTAU;
-	if(tau0readcheck)
-		fscanf(fptr_oscar,"%d",&itauread);
-	//if(feof(fptr_oscar)){
-		//keepgoing=false;
-		//fclose(fptr_oscar);
-	//}
-	else{
-		while(itauread==olditau && !feof(fptr_oscar)){
-			fscanf(fptr_oscar,"%d %d %lf %lf %lf %d %lf %lf",&ix,&iy,&e,&p,&t,&flag,&vx,&vy);
-			fscanf(fptr_oscar,"%lf %lf %lf %lf %lf %lf %lf %lf",
-			&pi00,&pi01,&pi02,&pi11,&pi12,&pi22,&pi33,&Pi);
-			pi[0][0]=pi00;
-			pi[0][1]=pi[1][0]=pi01;
-			pi[0][2]=pi[2][0]=pi02;
-			pi[0][3]=pi[3][0]=0.0;
-			pi[1][1]=pi11;
-			pi[1][2]=pi[2][1]=pi12;
-			pi[1][3]=pi[3][1]=0.0;
-			pi[2][2]=pi22;
-			pi[2][3]=pi[3][2]=0.0;
-			pi[3][3]=pi33;
-			
-			u[0]=1.0/sqrt(1.0-vx*vx-vy*vy);
-			u[1]=u[0]*vx;
-			u[2]=u[0]*vy;
-			u[3]=0.0;
-			hydromesh->GetXY(ix,iy,x,y);
-			//xbar+=x*e; ybar+=y*e; norm+=e;
-			r=sqrt(x*x+y*y);
-			if(r>rmax && t>=Tf)
-				rmax=r;
-			Misc::BoostToCM(u,pi,pitilde);
-			hydromesh->pitildexx[ix][iy]=pitilde[1][1];
-			hydromesh->pitildexy[ix][iy]=pitilde[1][2];
-			hydromesh->pitildeyy[ix][iy]=pitilde[2][2];
-		
-			fgets(dummy,300,fptr_oscar);
-			hydromesh->T[ix][iy]=t;
-			hydromesh->UX[ix][iy]=u[1];
-			hydromesh->UY[ix][iy]=u[2];
-			ur=sqrt(u[1]*u[1]+u[2]*u[2]);
-			if(ur>biggestU && t>Tf)
-				biggestU=ur;
-			olditau=itauread;
-			fscanf(fptr_oscar,"%d",&itauread);
-			if(t>highestT)
-				highestT=t;
-		}
-		tau0readcheck=false;
-		if(HYPERT){
-			if(highestT<Tf && feof(fptr_oscar)){
-				keepgoing=false;
-				fclose(fptr_oscar);
-			}
-		}
-		else if(HYPEREPSILON){
-			if(highestEpsilon<epsilon_f && feof(fptr_oscar)){
-				keepgoing=false;
-				fclose(fptr_oscar);
-			}
-		}
-	}
-	if(fabs(lrint(hydromesh->tau)-hydromesh->tau)<0.001){
-		snprintf(message,CLog::CHARLENGTH,"highestT=%g, biggestU=%g\n",highestT,biggestU);
-		CLog::Info(message);
-	}
-	if(!keepgoing)
-		CLog::Info("XXXXXXXXXX almost ready to quit\n");
-	for(alpha=0;alpha<4;alpha++){
-		delete pi[alpha];
-		delete pitilde[alpha];
-	}
-	delete pi;
-	delete pitilde;
-	
 	return keepgoing;
 }
 
