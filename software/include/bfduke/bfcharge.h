@@ -31,7 +31,6 @@ namespace NMSUPratt{
 		void SetV(double ux,double uy);
 		void Print();
 		static CHydroBalance *hb;
-		static CB3D *b3d;
 		CTrajInfo *trajinfo;
 		CHBCharge(){
 			trajinfo=NULL;

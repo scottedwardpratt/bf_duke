@@ -10,7 +10,6 @@ using namespace std;
 using namespace NMSUPratt;
 
 CHydroBalance *CHBCharge::hb=NULL;
-CB3D *CHBCharge::b3d=NULL;
 
 void CHBCharge::Propagate(double newtau){
 	double t0,tf,neweta;

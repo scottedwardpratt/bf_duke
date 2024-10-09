@@ -70,7 +70,7 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	idmax=0;
 	MakeMeshes();
 	
-	hbcharges.resize(10000);
+	hbcharges.resize(20000);
 	nhbcharges=0;
 	
 	source.resize(30);
@@ -170,10 +170,16 @@ void CHydroBalance::MakeCharges(){
 						ransum+=NSAMPLE_HYDRO2UDS*fabs(DQ(a,b));
 						while(ransum>ranthresh){
 							ranthresh+=randy->ran_exp();
-							if(nhbcharges>hbcharges.size()-2)
-								hbcharges.resize(hbcharges.size()+10000);
+							if(nhbcharges>=hbcharges.size()){
+								//hbcharges.resize(hbcharges.size()+10000);
+								CLog::Fatal("hbcharges not big enough\n");
+							}
 							charge1=&hbcharges[nhbcharges];
 							nhbcharges+=1;
+							if(nhbcharges>=hbcharges.size()){
+								//hbcharges.resize(hbcharges.size()+10000);
+								CLog::Fatal("hbcharges not big enough\n");
+							}
 							charge2=&hbcharges[nhbcharges];
 							nhbcharges+=1;
 							mesh->GetXY(ix,iy,charge1->x,charge1->y);
