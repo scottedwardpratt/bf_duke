@@ -31,19 +31,6 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	CHBEoS::ReadDiffusionData_Andrew();
 	CHBEoS::ReadChiReductionFactors();
 	string hyperdef=parmap.getS("HYPER_DEF","TEMPERATURE");
-	if(hyperdef=="TEMPERATURE"){
-		HYPERT=true;
-		HYPEREPSILON=false;
-		CLog::Info("Freezeout T = "+to_string(1000*Tf)+" MeV\n ");
-	}
-	else if(hyperdef=="EPSILON"){
-		HYPERT=false;
-		HYPEREPSILON=true;
-		CLog::Info("Freezeout epsilon = "+to_string(epsilon_f)+" GeV/fm^3\n");
-	}
-	else{
-		CLog::Fatal("parameter HYPERDEF not recognized = "+hyperdef+"\n");
-	}
 	
 	CHBHydroMesh::DELTAU=parmap.getD("HYDRO_MESH_DELTAU",0.05);
 	CHBHydroMesh::TAU0=parmap.getD("HYDRO_MESH_TAU0",0.6);
