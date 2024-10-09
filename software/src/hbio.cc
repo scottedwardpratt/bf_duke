@@ -138,6 +138,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 
 void CHydroBalance::WriteCharges(int ichargefile){
 	double f_l,f_s,gamma_q;
+	CHBEoS hypereos;
 	char message[CLog::CHARLENGTH];
 	string dirname="model_output/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
 	string command="mkdir -p "+dirname;
@@ -156,7 +157,13 @@ void CHydroBalance::WriteCharges(int ichargefile){
 		balanceID=it->first;
 		charge=it->second;
 		hyper=&(charge->hyper);
+		hypereos.epsilon=hyper->epsilon;
 		GetGammaFQ(hyper->tau,gamma_q,f_l,f_s);
+		hypereos.f_u=hypereos.f_d=f_l;
+		hypereos.f_s=f_s;
+		hypereos.SetTnonequil();
+		hyper->T0=hypereos.Tnonequil;
+		
 		fprintf(fptr,"%6d %2d %2d %2d %15.9f %15.9f %15.9f %15.9f %15.9f %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e %15.9e\n",
 		balanceID,charge->q[0],charge->q[1],charge->q[2],charge->weight,charge->tau,charge->eta,
 		charge->x,charge->y,hyper->T0,hyper->u[1],hyper->u[2],hyper->dOmega[0],hyper->dOmega[1],hyper->dOmega[2],hyper->pitilde[1][1],hyper->pitilde[2][2],hyper->pitilde[1][2],f_l,f_l,f_s);

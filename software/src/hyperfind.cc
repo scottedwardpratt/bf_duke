@@ -39,8 +39,6 @@ void CHydroBalance::HyperFind(){
 					hypereos.f_u=hypereos.f_d=f_l;
 					hypereos.f_s=f_s;
 					
-					
-					
 					if(GGFt){
 						GetDOmega(dFdt,dFdx,dFdy,hyper.dOmega[0],hyper.dOmega[1],hyper.dOmega[2],GGFt,GGFx,GGFy);
 						
@@ -75,8 +73,6 @@ void CHydroBalance::HyperFind(){
 	}
 	if(nhyper>0){
 		NHYPER+=nhyper;
-		//printf("NHYPER=%d, nhyper=%d, tau=%g, RMAX=%g, UMAX=%g, epsilonMAX=%g\n",
-		//NHYPER,nhyper,0.5*(newmesh->tau+mesh->tau),RMAX,UMAX,EMAX);
 	}
 }
 

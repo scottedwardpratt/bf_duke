@@ -21,12 +21,10 @@ int main(int argc, char *argv[]){
 	//CLog::Init(logfilename);
 	CLog::INTERACTIVE=true;
 	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
-	printf("check a\n");
 	CmasterSampler ms(&parmap);
 	CMSU_Boltzmann::mastersampler=&ms;
 	CpartList *pl=new CpartList(&parmap,ms.reslist);
 	ms.partlist=pl;
-	printf("check aa\n");
 	//CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann("run"+to_string(run_number),&parmap,ms.reslist);
 	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,ms.reslist);
 	msuboltz->InitCascade();
@@ -71,8 +69,10 @@ int main(int argc, char *argv[]){
 			snprintf(message,CLog::CHARLENGTH,"ievent=%lld nparts=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
 			CLog::Info(message);
 			barray->ProcessPartMap();
-			if(msuboltz->BFCALC && barray->FROM_UDS)
+			if(msuboltz->BFCALC && barray->FROM_UDS){
+				printf("xXXXX processing BF PartMap\n");
 				barray->ProcessBFPartMap();
+			}
 			msuboltz->KillAllParts();
 		}
 		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
 		barray->ConstructBFs();
 		barray->WriteBFs();
 		barray->WriteDenoms();
-		//barray->WriteGammaP();
+		barray->WriteGammaP();
 	}
 
 	CLog::Info("YIPPEE!!!!! We made it all the way through!\n");

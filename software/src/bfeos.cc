@@ -113,9 +113,9 @@ void CHBEoS::SetChi(){
 	
 	
 	f_q=(f_u+f_d+f_s)/3.0;
-	if(f_q>1.0){
-		printf("B: ????? f_l=%g, f_u=%g, f_d=%g, f_s=%g\n",f_l,f_u,f_d,f_s);
-		exit(1);
+	if(f_q>1.000001){
+		CLog::Info("f_q = "+to_string(f_q)+", bigger than unity? setting to unity\n");
+		f_q=1.0;
 	}
 	delf=1.0/double(Nchifactors-1);
 	if0=floorl(f_q/delf);
@@ -156,9 +156,9 @@ void CHBEoS::SetTnonequil(){
 	double w,f_q,delf;
 
 	f_q=(f_u+f_d+f_s)/3.0;
-	if(f_q>1.0){
-		printf("????? f_l=%g, f_u=%g, f_d=%g, f_s=%g\n",f_l,f_u,f_d,f_s);
-		exit(1);
+	if(f_q>1.000001){
+		CLog::Info("f_q = "+to_string(f_q)+", bigger than unity? setting to unity\n");
+		f_q=1.0;
 	}
 	delf=1.0/double(Nchifactors-1);
 	if0=floorl(f_q/delf);
