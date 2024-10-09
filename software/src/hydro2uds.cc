@@ -30,8 +30,7 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	CHBEoS::ReadEoSData_Andrew();
 	CHBEoS::ReadDiffusionData_Andrew();
 	CHBEoS::ReadChiReductionFactors();
-	string hyperdef=parmap.getS("HYPER_DEF","TEMPERATURE");
-	
+ 	
 	CHBHydroMesh::DELTAU=parmap.getD("HYDRO_MESH_DELTAU",0.05);
 	CHBHydroMesh::TAU0=parmap.getD("HYDRO_MESH_TAU0",0.6);
 	CHBHydroMesh::XMIN=parmap.getD("HYDRO_MESH_XMIN",-25.0);
