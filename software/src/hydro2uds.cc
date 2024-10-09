@@ -24,7 +24,6 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	epsilon_f=parmap.getD("HYPER_FREEZEOUT_EPSILON",0.36);
 	SIGMA0=parmap.getD("BF_SIGMA0",0.5);
 	DiffusionRatio=parmap.getD("BF_DIFFUSION_RATIO",1.0);
-	nhbcharges=0;
 	CHBEoS::parmap=&parmap;
 	CHBEoS::ReadEoSData_Andrew();
 	CHBEoS::ReadDiffusionData_Andrew();
@@ -70,7 +69,7 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	idmax=0;
 	MakeMeshes();
 	
-	hbcharges.resize(20000);
+	hbcharges.resize(30000);
 	nhbcharges=0;
 	
 	source.resize(30);
@@ -172,13 +171,13 @@ void CHydroBalance::MakeCharges(){
 							ranthresh+=randy->ran_exp();
 							if(nhbcharges>=hbcharges.size()){
 								//hbcharges.resize(hbcharges.size()+10000);
-								CLog::Fatal("hbcharges not big enough\n");
+								CLog::Fatal("hbcharges not big enough: ="+to_string(nhbcharges)+"\n");
 							}
 							charge1=&hbcharges[nhbcharges];
 							nhbcharges+=1;
 							if(nhbcharges>=hbcharges.size()){
 								//hbcharges.resize(hbcharges.size()+10000);
-								CLog::Fatal("hbcharges not big enough\n");
+								CLog::Fatal("hbcharges not big enough: ="+to_string(nhbcharges)+"\n");
 							}
 							charge2=&hbcharges[nhbcharges];
 							nhbcharges+=1;
@@ -421,6 +420,7 @@ void CHydroBalance::SwapMeshes(){
 
 void CHydroBalance::Reset(){
 	Ncollisions=0;
+	nhbcharges=0;
 	itauread=0;
 	idmax=0;
 	tau0readcheck=tau0check=true;
