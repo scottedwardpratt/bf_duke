@@ -25,7 +25,7 @@ CHydroBalance::CHydroBalance(int run_number_set){
 	SIGMA0=parmap.getD("BF_SIGMA0",0.5);
 	DiffusionRatio=parmap.getD("BF_DIFFUSION_RATIO",1.0);
 	nhbcharges=0;
-	
+	printf("check a\n");
 	CHBEoS::parmap=&parmap;
 	CHBEoS::ReadEoSData_Andrew();
 	CHBEoS::ReadDiffusionData_Andrew();
