@@ -12,7 +12,7 @@ int main(int argc, char *argv[]){
 		exit(-1);
   }
 	CparameterMap parmap;
-	int run_number=atoi(argv[1]);
+	int run_number=atoi(argv[1]),subrun_number=-1;
 	//int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
@@ -20,14 +20,18 @@ int main(int argc, char *argv[]){
 	//sprintf(logfilename,"msuboltz_log.txt");
 	//CLog::Init(logfilename);
 	CLog::INTERACTIVE=true;
-	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
+	printf("check aaa\n");
+	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
 	CmasterSampler ms(&parmap);
 	CMSU_Boltzmann::mastersampler=&ms;
 	CpartList *pl=new CpartList(&parmap,ms.reslist);
 	ms.partlist=pl;
-	//CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann("run"+to_string(run_number),&parmap,ms.reslist);
-	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,ms.reslist);
+
+printf("check aa\n");
+	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,subrun_number,ms.reslist);
+	printf("check a\n");
 	msuboltz->InitCascade();
+	printf("check b\n");
 	CBalanceArrays *barray=msuboltz->balancearrays;
 	barray->FROM_UDS=true;
 	nevents=msuboltz->parmap.getI("MSU_BOLTZMANN_NEVENTSMAX",10);
@@ -37,13 +41,13 @@ int main(int argc, char *argv[]){
 	CQualifiers qualifiers;
 	int iqual;
 	qualifiers.Read("qualifiers.txt");
+	printf("check c\n");
 	for(iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		npartstot=0;
 		nmerge=nscatter=nannihilate=ncancel_annihilate=ndecay=0;
 		msuboltz->SetQualifier(qualifiers.qualifier[iqual]->qualname);
 		qualifiers.SetPars(&(msuboltz->parmap),iqual);
 		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
-
 		for(ievent=0;ievent<nevents;ievent++){
 			printf("--- begin for ievent=%lld\n",ievent);
 			ms.randy->reset(ievent);

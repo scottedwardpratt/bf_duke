@@ -24,7 +24,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 		pitilde[alpha]=new double[4];
 	}
 	if(tau0readcheck){
-		duke_filename="../hydrodata/"+qualifier+"/"+parmap.getS("HYDRODATA_FILENAME","evolution_xyeta.txt");
+		duke_filename="modelruns/run"+to_string(run_number)+"/"+qualifier+"/hydrodata.txt";
 		snprintf(message,CLog::CHARLENGTH,"filename=%s\n",duke_filename.c_str());
 		CLog::Info(message);
 		fptr_duke=fopen(duke_filename.c_str(),"r");
@@ -63,11 +63,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf",&e,&s,&vx,&vy,&vz,&tau,&p);
 					
 					tau=TAU0+itauread*DELTAU;
-					//if(fabs(tau-hydromesh->tau)>0.00001){
-					//CLog::Fatal("reading in tau0="+to_string(tau)+", but hydromesh->tau="+to_string(hydromesh->tau)+"\n");
-					//}
-					//fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf %lf",
-					//&pi00,&pi01,&pi02,&pi11,&pi12,&pi22,&pi33,&Pi);
+					
 					pi00=pi01=pi02=pi11=pi12=pi22=pi33=Pi=0.0;
 					pi[0][0]=pi00;
 					pi[0][1]=pi[1][0]=pi01;
@@ -140,7 +136,7 @@ void CHydroBalance::WriteCharges(int ichargefile){
 	double f_l,f_s,gamma_q;
 	CHBEoS hypereos;
 	char message[CLog::CHARLENGTH];
-	string dirname="model_output/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
+	string dirname="modelruns/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/uds"+to_string(ichargefile)+".txt";
@@ -194,7 +190,7 @@ void CHydroBalance::ClearCharges(){
 void CHydroBalance::WriteSource(){
 	// Note: DTAU for source mesh was 0.5 fm/c
 	int a,b,itau;
-	string dirname="model_output/run"+to_string(run_number)+"/udsdata/"+qualifier;
+	string dirname="modelruns/run"+to_string(run_number)+"/udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/udssource.txt";
@@ -241,7 +237,7 @@ void CHydroBalance::WriteFinalCF(){
 		}
 	}
 	
-	string dirname="model_output/run"+to_string(run_number)+"/udsdata/"+qualifier;
+	string dirname="modelruns/run"+to_string(run_number)+"/udsdata/"+qualifier;
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/cf_uds.txt";
@@ -258,7 +254,7 @@ void CHydroBalance::WriteFinalCF(){
 
 void CHydroBalance::WriteHyper(){
 	char message[CLog::CHARLENGTH];
-	string dirname="model_output/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
+	string dirname="modelruns/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/"+parmap.getS("HYPERDATA_FILENAME","hyper.txt");
@@ -279,7 +275,7 @@ void CHydroBalance::WriteHyper(){
 
 void CHydroBalance::WriteHyper_Duke_2D(){
 	char message[CLog::CHARLENGTH];
-	string dirname="model_output/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
+	string dirname="modelruns/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/"+parmap.getS("HYPERDATA_FILENAME","hyper.txt");

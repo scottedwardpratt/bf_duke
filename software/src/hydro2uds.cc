@@ -16,9 +16,9 @@ CHydroBalance::CHydroBalance(){
 CHydroBalance::CHydroBalance(int run_number_set){
 	Omega0tot=OmegaXtot=OmegaYtot=netUdotOmega=NHYPER=0.0;
 	run_number=run_number_set;
-	string parfilename="model_output/fixed_parameters.txt";
+	string parfilename="modelruns/fixed_parameters.txt";
 	parmap.ReadParsFromFile(parfilename);
-	parfilename="model_output/run"+to_string(run_number)+"/parameters.txt";
+	parfilename="modelruns/run"+to_string(run_number)+"/mod_parameters.txt";
 	parmap.ReadParsFromFile(parfilename);
 	Tf=0.001*parmap.getD("HYPER_FREEZEOUT_TEMP",160.0);
 	epsilon_f=parmap.getD("HYPER_FREEZEOUT_EPSILON",0.36);

@@ -7,26 +7,26 @@ using namespace std;
 using namespace NMSUPratt;
 
 int main(int argc, char *argv[]){
-	if (argc != 4) {
-		CLog::Fatal("Usage: b3d run_number ievent0 ieventf\n");
+	if (argc != 3) {
+		CLog::Fatal("Usage: b3d run_number subrun_number\n");
   }
 	CparameterMap parmap;
-	int run_number=atoi(argv[1]);
-	int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
-	long long int neventstot=1+ieventf-ievent0;
+	int run_number=atoi(argv[1]),subrun_number=atoi(argv[2]);
+	int subrun_number_max=10000;
+	int nevents;
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nparts,npartstot,ievent,ndecay;
 	//char logfilename[100];
 	//sprintf(logfilename,"msuboltz_log.txt");
 	//CLog::Init(logfilename);
 	CLog::INTERACTIVE=true;
-	parmap.ReadParsFromFile("model_output/fixed_parameters.txt");
+	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
+	nevents=parmap.getI("MSU_BOLTZMANN_NEVENTSMAX",1);
 	CmasterSampler ms(&parmap);
 	CMSU_Boltzmann::mastersampler=&ms;
 	CpartList *pl=new CpartList(&parmap,ms.reslist);
 	ms.partlist=pl;
-	//CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann("run"+to_string(run_number),&parmap,ms.reslist);
-	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,ms.reslist);
+	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,subrun_number,ms.reslist);
 	msuboltz->InitCascade();
 	CBalanceArrays *barray;
 	if(msuboltz->BFCALC){
@@ -34,7 +34,6 @@ int main(int argc, char *argv[]){
 		barray->FROM_UDS=false;
 	}
 	//msuboltz->ReadMuTInfo();
-	msuboltz->nevents=0;
 	CQualifiers qualifiers;
 	int iqual;
 	qualifiers.Read("qualifiers.txt");
@@ -45,9 +44,12 @@ int main(int argc, char *argv[]){
 		qualifiers.SetPars(&(msuboltz->parmap),iqual);
 		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 
-		for(ievent=ievent0;ievent<=ieventf;ievent++){
+		for(ievent=0;ievent<nevents;ievent++){
 			printf("--- begin for ievent=%lld\n",ievent);
-			ms.randy->reset(100000*run_number+ievent);
+			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
+			if(subrun_number>subrun_number_max){
+				CLog::Fatal("OH NO!!! subrun_number>subrun_number_max. Increase this in boltzmain.cc");
+			}
 			msuboltz->Reset();
 			nparts=ms.MakeEvent();
 			npartstot+=nparts;
@@ -65,7 +67,7 @@ int main(int argc, char *argv[]){
 			nannihilate+=msuboltz->nannihilate;
 			ncancel_annihilate+=msuboltz->ncancel_annihilate;
 			ndecay+=msuboltz->ndecay;
-			snprintf(message,CLog::CHARLENGTH,"---- nevents=%lld nparts=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
+			snprintf(message,CLog::CHARLENGTH,"---- ievent=%lld nparts=%lld, nparts/event=%g\n",ievent,nparts,double(npartstot)/double(ievent+1));
 			CLog::Info(message);
 			if(msuboltz->BFCALC){
 				barray->ProcessPartMap();
@@ -74,11 +76,11 @@ int main(int argc, char *argv[]){
 			msuboltz->KillAllParts();
 		}
 		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",
-		double(ndecay)/double(neventstot),double(nmerge)/double(neventstot),
-		double(nscatter)/double(neventstot));
+		double(ndecay)/double(ievent+1),double(nmerge)/double(ievent+1),
+		double(nscatter)/double(ievent+1));
 		CLog::Info(message);
 		snprintf(message,CLog::CHARLENGTH,"nannihilate/event=%g, ncancel_annihilate/event=%g\n",
-		double(nannihilate)/double(neventstot),double(ncancel_annihilate)/double(neventstot));
+		double(nannihilate)/double(ievent+1),double(ncancel_annihilate)/double(ievent+1));
 		CLog::Info(message);
 		//msuboltz->WriteMuTInfo();
 		msuboltz->WriteHadronCount();
