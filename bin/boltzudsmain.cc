@@ -31,6 +31,7 @@ int main(int argc, char *argv[]){
 	CBalanceArrays *barray=msuboltz->balancearrays;
 	barray->FROM_UDS=true;
 	nevents=msuboltz->parmap.getI("MSU_BOLTZMANN_NEVENTSMAX",10);
+	
 	//msuboltz->ReadMuTInfo();
 	msuboltz->nevents=0;
 	CQualifiers qualifiers;
@@ -47,14 +48,19 @@ int main(int argc, char *argv[]){
 			printf("--- begin for ievent=%lld\n",ievent);
 			ms.randy->reset(ievent);
 			msuboltz->Reset();
+			printf("check aa\n");
 			nparts=ms.MakeEvent();
+			printf("check a\n");
 			npartstot+=nparts;
 			msuboltz->InputPartList(pl);
 			pl->Clear();
 		
 			if(msuboltz->BFCALC && barray->FROM_UDS){
+				printf("check b\n");
 				msuboltz->ReadCharges(ievent);
+				printf("check c\n");
 				msuboltz->GenHadronsFromCharges(); // Generates inter-correlated parts, with bids = (0,1),(2,3)....
+				printf("check d\n");
 				msuboltz->DeleteCharges();
 			}
 		
