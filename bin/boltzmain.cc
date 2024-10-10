@@ -21,7 +21,7 @@ int main(int argc, char *argv[]){
 	//CLog::Init(logfilename);
 	CLog::INTERACTIVE=true;
 	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
-	nevents=parmap.getI("MSU_BOLTZMANN_NEVENTSMAX",1);
+	nevents=parmap.getI("MSU_BOLTZMANN_NEVENTS_TYPE2",1);
 	CmasterSampler ms(&parmap);
 	CMSU_Boltzmann::mastersampler=&ms;
 	CpartList *pl=new CpartList(&parmap,ms.reslist);
