@@ -13,9 +13,10 @@ CHydroBalance *CHBHydroMesh::hb=NULL;
 CHydroBalance::CHydroBalance(){
 };
 
-CHydroBalance::CHydroBalance(int run_number_set){
+CHydroBalance::CHydroBalance(int run_number_set,int subrun_number_set){
 	Omega0tot=OmegaXtot=OmegaYtot=netUdotOmega=NHYPER=0.0;
 	run_number=run_number_set;
+	subrun_number=subrun_number_set;
 	string parfilename="modelruns/fixed_parameters.txt";
 	parmap.ReadParsFromFile(parfilename);
 	parfilename="modelruns/run"+to_string(run_number)+"/mod_parameters.txt";

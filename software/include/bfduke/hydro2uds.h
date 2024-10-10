@@ -16,6 +16,7 @@ namespace NMSUPratt{
 	class CHydroBalance{
 	public:
 		double Omega0tot,OmegaXtot,OmegaYtot,netUdotOmega;
+		int subrun_number;
 		CHBEoS *eos;
 		double DELTAU,TAU0,XMIN,XMAX,YMIN,YMAX,DX,DY;
 		int NX,NY,ntraj;
@@ -36,7 +37,7 @@ namespace NMSUPratt{
 		double DiffusionRatio;
 		Eigen::Matrix3d chif,chifinv;
 		CHydroBalance();
-		CHydroBalance(int run_number);
+		CHydroBalance(int run_number_set,int subrun_number_set);
 		~CHydroBalance();
 		void SetPars();
 		void MakeMeshes();

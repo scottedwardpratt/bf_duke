@@ -10,14 +10,14 @@ using namespace std;
 using namespace NMSUPratt;
 
 int main(int argc,char *argv[]){
-	if (argc != 2) {
-		printf("Usage: hydro2uds run_number\n");
+	if (argc != 3) {
+		printf("Usage: hydro2uds run_number subrun_number\n");
 		exit(-1);
 	}
 	char message[CLog::CHARLENGTH];
 	bool oscarfile=true;
-	int ievent,nevents,run_number=atoi(argv[1]);
-	CHydroBalance hb(run_number);
+	int ievent,nevents,run_number=atoi(argv[1]),subrun_number=atoi(argv[1]);
+	CHydroBalance hb(run_number,subrun_number);
 	nevents=hb.parmap.getI("HYDRO_NEVENTS",10);
 	CQualifiers qualifiers;
 	qualifiers.Read("qualifiers.txt");

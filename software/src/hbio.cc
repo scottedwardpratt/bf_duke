@@ -136,7 +136,7 @@ void CHydroBalance::WriteCharges(int ichargefile){
 	double f_l,f_s,gamma_q;
 	CHBEoS hypereos;
 	char message[CLog::CHARLENGTH];
-	string dirname="modelruns/run"+to_string(run_number)+"/"+qualifier+"/udsdata";
+	string dirname="modelruns/run"+to_string(run_number)+"/"+qualifier+"/udsdata/subrun"+to_string(subrun_number);
 	string command="mkdir -p "+dirname;
 	system(command.c_str());
 	string filename=dirname+"/uds"+to_string(ichargefile)+".txt";
