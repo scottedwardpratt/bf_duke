@@ -42,16 +42,15 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 			hydromesh->epsilon[ix][iy]=0.0;
 		}
 	}
-	//if(feof(fptr_duke)){
-	//	keepgoing=false;
-	//	fclose(fptr_duke);
-	//}
-	//else{
 	
 	if(feof(fptr_duke)){
 		keepgoing=false;
 	}
 	else{
+		tau=TAU0+itauread*DELTAU;
+		char VEfilename[100];
+		snprintf(VEfilename,100,"VvsEdata/tau=%05.2f.txt",tau);
+		FILE *fptr_crap=fopen(VEfilename,"w");
 		keepgoing=true;
 		fscanf(fptr_duke,"%lf",&t);
 		if(!feof(fptr_duke)){
@@ -60,7 +59,7 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 				for(ix=0;ix<NX;ix++){
 					if(ix!=0 && iy!=0)	
 						fscanf(fptr_duke,"%lf",&t);
-					fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf",&e,&s,&vx,&vy,&vz,&tau,&p);
+					fscanf(fptr_duke,"%lf %lf %lf %lf %lf %lf %lf",&e,&s,&vx,&vy,&vz,&tau,&p);					
 					
 					tau=TAU0+itauread*DELTAU;
 					
@@ -95,13 +94,17 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 					hydromesh->UX[ix][iy]=u[1];
 					hydromesh->UY[ix][iy]=u[2];
 					ur=sqrt(u[1]*u[1]+u[2]*u[2]);
-					if(ur>biggestU && t>Tf)
+					if(e>epsilon_f)
+						fprintf(fptr_crap,"%8.4e %10.3e %10.3e\n",e,sqrt(vx*vx+vy*vy),ur);
+					
+					if(ur>biggestU && e>epsilon_f)
 						biggestU=ur;
 					if(e>highestEpsilon)
 						highestEpsilon=e;
 
 				}
 			}
+			fclose(fptr_crap);
 		}
 		else
 			keepgoing=false;
@@ -114,9 +117,10 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 			keepgoing=false;
 			fclose(fptr_duke);
 		}
-
-		
 	}
+	
+	
+	
 	for(alpha=0;alpha<4;alpha++){
 		delete pi[alpha];
 		pi[alpha]=NULL;
