@@ -6,7 +6,7 @@ case $# in
 	2)
 		run_number=$1
 		subrun_number=$2
-		rm -f logfiles/run${subrun_number}_subrun${subrun_number}.txt
-		../bin/hydro2uds $run_number $subrun_number > logfiles/run${run_number}_subrun${subrun_number}.txt
+		rm -f logfiles/run${run_number}_subrun${subrun_number}.txt
+		../bin/hydro2uds ${run_number} ${subrun_number} > logfiles/run${run_number}_subrun${subrun_number}.txt
 
 esac
