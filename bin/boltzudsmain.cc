@@ -13,6 +13,7 @@ int main(int argc, char *argv[]){
   }
 	CparameterMap parmap;
 	int run_number=atoi(argv[1]),subrun_number=atoi(argv[2]);
+	int subrun_number_max=10000;
 	//int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
@@ -43,7 +44,10 @@ int main(int argc, char *argv[]){
 		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 		for(ievent=0;ievent<nevents;ievent++){
 			printf("--- begin for ievent=%lld\n",ievent);
-			ms.randy->reset(ievent);
+			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
+			if(subrun_number>subrun_number_max){
+				CLog::Fatal("OH NO!!! subrun_number>subrun_number_max. Increase this in boltzmain.cc");
+			}
 			msuboltz->Reset();
 			nparts=ms.MakeEvent();
 			npartstot+=nparts;
