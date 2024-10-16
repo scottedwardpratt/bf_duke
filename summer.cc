@@ -110,7 +110,7 @@ int main(int argc,char *argv[]){
 						fclose(fptr1);
 						nx=delx.size();
 						for(ix=0;ix<nx;ix++){
-							fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix]/double(nx),sigmasum[ix]/double(nx));
+							fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix]/double(Nsubruns),sigmasum[ix]/pow(double(Nsubruns),1.5));
 						}
 					}
 				}
@@ -154,7 +154,7 @@ int main(int argc,char *argv[]){
 					for(ix=0;ix<nx;ix++){
 						fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&sigma);
 						bfsum[ix]+=bf;
-						sigmasum[ix]+=sigma;
+						sigmasum[ix]+=sigma*sigma;
 					}
 				}
 				fclose(fptr2);
@@ -162,7 +162,7 @@ int main(int argc,char *argv[]){
 				fptrsum=fopen(fnsum.c_str(),"w");
 			
 				for(ix=0;ix<nx;ix++){
-					fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix]/double(nx),sigmasum[ix]/double(nx));
+					fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix],sqrt(sigmasum[ix]));
 				}
 			}
 			fclose(fptrsum);
