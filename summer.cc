@@ -18,7 +18,7 @@ int main(int argc,char *argv[]){
 	const int nspecies=10,nbfs=9;
 	bool exists,exists1,exists2;
 	string fn,fn1,fn2,fn1sum,fn2sum,fnsum,dirname,command;
-	int isubrun,Nsubruns,Nsubruns1,Nsubruns2,ibf,ispecies,ix,nx,itype;
+	int isubrun,Nsubruns,Nsubruns1,Nsubruns2,ibf,ispecies,ix,nx,itype,irun;
 	vector<string> subrunfilenames1,subrunfilenames2;
 	FILE *fptr1,*fptr2,*fptrsum;
 	vector<double> delx,bfsum,sigmasum;
@@ -39,131 +39,134 @@ int main(int argc,char *argv[]){
 	string bffilenames[nbfs]={"bf_Byphi.txt","bf_eta.txt","bf_etas.txt","bf_qinv.txt","bf_y1.txt",
 	"bf_Cyphi.txt","bf_eta1.txt","bf_phi.txt","bf_y.txt"};
 	
-	// Get Nsubruns
-	Nsubruns1=0;
-	do{
-		fn="modelruns/run0/alicePbPb_cent0_5/results_itype1/subruns/subrun"+to_string(Nsubruns1)+"/denom.txt";
-		exists=filesystem::exists(fn);
-		if(exists){
-			subrunfilenames1.push_back(fn);
-			Nsubruns1+=1;
-		}
-	}while(exists);
-	if(Nsubruns1>Nsubruns_max)
-		Nsubruns1=Nsubruns_max;
-	Nsubruns2=0;
-	do{
-		fn="modelruns/run0/alicePbPb_cent0_5/results_itype2/subruns/subrun"+to_string(Nsubruns2)+"/denom.txt";
-		exists=filesystem::exists(fn);
-		if(exists){
-			subrunfilenames2.push_back(fn);
-			Nsubruns2+=1;
-		}
-	}while(exists);
-	if(Nsubruns2>Nsubruns_max)
-		Nsubruns2=Nsubruns_max;
-	//
+	for(irun=I;irun<=J;irun++){
 	
-	// Add up type 1 BFs then add type 2 BFs
-	for(itype=1;itype<=2;itype++){
+		// Get Nsubruns
+		Nsubruns1=0;
+		do{
+			fn="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_itype1/subruns/subrun"+to_string(Nsubruns1)+"/denom.txt";
+			exists=filesystem::exists(fn);
+			if(exists){
+				subrunfilenames1.push_back(fn);
+				Nsubruns1+=1;
+			}
+		}while(exists);
+		if(Nsubruns1>Nsubruns_max)
+			Nsubruns1=Nsubruns_max;
+		Nsubruns2=0;
+		do{
+			fn="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_itype2/subruns/subrun"+to_string(Nsubruns2)+"/denom.txt";
+			exists=filesystem::exists(fn);
+			if(exists){
+				subrunfilenames2.push_back(fn);
+				Nsubruns2+=1;
+			}
+		}while(exists);
+		if(Nsubruns2>Nsubruns_max)
+			Nsubruns2=Nsubruns_max;
+		//
+	
+		// Add up type 1 BFs then add type 2 BFs
+		for(itype=1;itype<=2;itype++){
+			for(ispecies=0;ispecies<nspecies;ispecies++){
+				for(ibf=0;ibf<nbfs;ibf++){
+					bfsum.clear();
+					sigmasum.clear();
+					delx.clear();
+					fn1="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_itype"+to_string(itype)+"/subruns/subrun"+to_string(irun)+"/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
+					exists1=filesystem::exists(fn1);
+					if(exists1){
+						dirname="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_itype"+to_string(itype)+"/"+bfspecies[ispecies]+"/";
+						if(!filesystem::exists(dirname)){
+							command="mkdir -p "+dirname;
+							system(command.c_str());
+						}
+						fn1sum="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_itype"+to_string(itype)+"/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
+						fptrsum=fopen(fn1sum.c_str(),"w");
+						if(itype==1)
+							Nsubruns=Nsubruns1;
+						else
+							Nsubruns=Nsubruns2;
+						for(isubrun=0;isubrun<Nsubruns;isubrun++){
+							fn1="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_itype"+to_string(itype)+"/subruns/subrun"+to_string(isubrun)+"/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
+							fptr1=fopen(fn1.c_str(),"r");
+							ix=0;
+							while(!feof(fptr1)){
+								fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&sigma);
+								if(!feof(fptr1)){
+									if(isubrun==0){
+										delx.push_back(dx);
+										bfsum.push_back(bf);
+										sigmasum.push_back(sigma);
+									}
+									else{
+										bfsum[ix]+=bf;
+										sigmasum[ix]+=sigma;
+										ix+=1;
+									}
+								}
+							}
+						}
+						fclose(fptr1);
+						nx=delx.size();
+						for(ix=0;ix<nx;ix++){
+							fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix]/double(nx),sigmasum[ix]/double(nx));
+						}
+					}
+				}
+			}
+		}
+	
+		// Add type 1 to type 2 BFs
 		for(ispecies=0;ispecies<nspecies;ispecies++){
 			for(ibf=0;ibf<nbfs;ibf++){
 				bfsum.clear();
 				sigmasum.clear();
 				delx.clear();
-				fn1="modelruns/run0/alicePbPb_cent0_5/results_itype"+to_string(itype)+"/subruns/subrun0/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
+				fn1="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_itype1/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
+				fn2="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_itype2/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
+				fnsum="modelruns/run"+to_string(irun)+"/"+qualifier+"/results/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
 				exists1=filesystem::exists(fn1);
-				if(exists1){
-					dirname="modelruns/run0/alicePbPb_cent0_5/results_itype"+to_string(itype)+"/"+bfspecies[ispecies]+"/";
+				exists2=filesystem::exists(fn2);
+				if(exists1 && exists2){
+					dirname="modelruns/run"+to_string(irun)+"/"+qualifier+"/results/"+bfspecies[ispecies]+"/";
 					if(!filesystem::exists(dirname)){
 						command="mkdir -p "+dirname;
 						system(command.c_str());
 					}
-					fn1sum="modelruns/run0/alicePbPb_cent0_5/results_itype"+to_string(itype)+"/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
-					fptrsum=fopen(fn1sum.c_str(),"w");
-					if(itype==1)
-						Nsubruns=Nsubruns1;
-					else
-						Nsubruns=Nsubruns2;
-					for(isubrun=0;isubrun<Nsubruns;isubrun++){
-						fn1="modelruns/run0/alicePbPb_cent0_5/results_itype"+to_string(itype)+"/subruns/subrun"+to_string(isubrun)+"/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
-						fptr1=fopen(fn1.c_str(),"r");
-						ix=0;
-						while(!feof(fptr1)){
-							fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&sigma);
-							if(!feof(fptr1)){
-								if(isubrun==0){
-									delx.push_back(dx);
-									bfsum.push_back(bf);
-									sigmasum.push_back(sigma);
-								}
-								else{
-									bfsum[ix]+=bf;
-									sigmasum[ix]+=sigma;
-									ix+=1;
-								}
-							}
+					bfsum.clear();
+					sigmasum.clear();
+					delx.clear();
+				
+					fptr1=fopen(fn1.c_str(),"r");
+					while(!feof(fptr1)){
+						fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&sigma);
+						if(!feof(fptr1)){
+							delx.push_back(dx);
+							bfsum.push_back(bf);
+							sigmasum.push_back(sigma);
 						}
 					}
 					fclose(fptr1);
+				
+					fptr2=fopen(fn2.c_str(),"r");
 					nx=delx.size();
 					for(ix=0;ix<nx;ix++){
-						fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix]/double(nx),sigmasum[ix]/double(nx));
+						fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&sigma);
+						bfsum[ix]+=bf;
+						sigmasum[ix]+=sigma;
 					}
 				}
-			}
-		}
-	}
-	
-	// Add type 1 to type 2 BFs
-	for(ispecies=0;ispecies<nspecies;ispecies++){
-		for(ibf=0;ibf<nbfs;ibf++){
-			bfsum.clear();
-			sigmasum.clear();
-			delx.clear();
-			fn1="modelruns/run0/alicePbPb_cent0_5/results_itype1/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
-			fn2="modelruns/run0/alicePbPb_cent0_5/results_itype2/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
-			fnsum="modelruns/run0/alicePbPb_cent0_5/results/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
-			exists1=filesystem::exists(fn1);
-			exists2=filesystem::exists(fn2);
-			if(exists1 && exists2){
-				dirname="modelruns/run0/alicePbPb_cent0_5/results/"+bfspecies[ispecies]+"/";
-				if(!filesystem::exists(dirname)){
-					command="mkdir -p "+dirname;
-					system(command.c_str());
-				}
-				bfsum.clear();
-				sigmasum.clear();
-				delx.clear();
+				fclose(fptr2);
 				
-				fptr1=fopen(fn1.c_str(),"r");
-				while(!feof(fptr1)){
-					fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&sigma);
-					if(!feof(fptr1)){
-						delx.push_back(dx);
-						bfsum.push_back(bf);
-						sigmasum.push_back(sigma);
-					}
-				}
-				fclose(fptr1);
-				
-				fptr2=fopen(fn2.c_str(),"r");
-				nx=delx.size();
-				for(ix=0;ix<nx;ix++){
-					fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&sigma);
-					bfsum[ix]+=bf;
-					sigmasum[ix]+=sigma;
-				}
-			}
-			fclose(fptr2);
-				
-			fptrsum=fopen(fnsum.c_str(),"w");
+				fptrsum=fopen(fnsum.c_str(),"w");
 			
-			for(ix=0;ix<nx;ix++){
-				fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix]/double(nx),sigmasum[ix]/double(nx));
+				for(ix=0;ix<nx;ix++){
+					fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix]/double(nx),sigmasum[ix]/double(nx));
+				}
 			}
+			fclose(fptrsum);
 		}
-		fclose(fptrsum);
 	}
 	return 0;
 }
