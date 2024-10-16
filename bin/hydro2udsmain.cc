@@ -16,7 +16,7 @@ int main(int argc,char *argv[]){
 	}
 	char message[CLog::CHARLENGTH];
 	bool oscarfile=true;
-	int ievent,nevents,run_number=atoi(argv[1]),subrun_number=atoi(argv[1]);
+	int ievent,nevents,run_number=atoi(argv[1]),subrun_number=atoi(argv[2]);
 	int subrun_number_max=10000;
 	CHydroBalance hb(run_number,subrun_number);
 	nevents=hb.parmap.getI("HYDRO_NEVENTS",10);
