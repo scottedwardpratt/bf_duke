@@ -1,7 +1,7 @@
 #!/bin/bash
 case $# in
 	0|1)
-		echo "Usage: runner_hydro2uds.sh run_number subrun_number // runs from i=ifirst to <=ifinal" >> crap.txt;
+		echo "Usage: runner.sh run_number subrun_number // runs from i=ifirst to <=ifinal" >> crap.txt;
   	exit 1 ;;
 	2)
 		run_number=$1
