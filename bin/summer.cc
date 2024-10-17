@@ -18,7 +18,7 @@ int main(int argc,char *argv[]){
 	const int nspecies=10,nbfs=9;
 	bool exists,exists1,exists2;
 	string fn,fn1,fn2,fn1sum,fn2sum,fnsum,dirname,command;
-	int isubrun,Nsubruns,Nsubruns1,Nsubruns2,ibf,ispecies,ix,nx,itype,irun;
+	int isubrun,Nsubruns,Nsubruns1=0,Nsubruns2=0,ibf,ispecies,ix,nx,itype,irun;
 	vector<string> subrunfilenames1,subrunfilenames2;
 	FILE *fptr1,*fptr2,*fptrsum;
 	vector<double> delx,bfsum,sigmasum;
@@ -78,7 +78,7 @@ int main(int argc,char *argv[]){
 		}
 		//
 	
-		// Add up type 1 BFs then add type 2 BFs
+		// Add up type 2BFs
 		int itype_first=1,itype_last=2;
 		if(dotypes==1)
 			itype_last=1;
@@ -123,8 +123,8 @@ int main(int argc,char *argv[]){
 									}
 								}
 							}
+							fclose(fptr1);
 						}
-						fclose(fptr1);
 						nx=delx.size();
 						for(ix=0;ix<nx;ix++){
 							fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix]/double(Nsubruns),sigmasum[ix]/pow(double(Nsubruns),1.5));
@@ -174,9 +174,10 @@ int main(int argc,char *argv[]){
 							bfsum[ix]+=bf;
 							sigmasum[ix]+=sigma*sigma;
 						}
+						fclose(fptr2);
 					}
-					fclose(fptr2);
 				
+					nx=delx.size();
 					fptrsum=fopen(fnsum.c_str(),"w");
 			
 					for(ix=0;ix<nx;ix++){
