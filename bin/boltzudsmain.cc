@@ -22,6 +22,8 @@ int main(int argc, char *argv[]){
 	//CLog::Init(logfilename);
 	CLog::INTERACTIVE=true;
 	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
+	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
+	CLog::Init(logfilename);
 	CmasterSampler ms(&parmap);
 	CMSU_Boltzmann::mastersampler=&ms;
 	CpartList *pl=new CpartList(&parmap,ms.reslist);

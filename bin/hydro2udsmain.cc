@@ -22,6 +22,8 @@ int main(int argc,char *argv[]){
 	nevents=hb.parmap.getI("HYDRO_NEVENTS",10);
 	CQualifiers qualifiers;
 	qualifiers.Read("qualifiers.txt");
+	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
+	CLog::Init(logfilename);
 	for(int iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		hb.qualifier=qualifiers.qualifier[iqual]->qualname;
 		CLog::Info("--------- BEGIN CALC FOR "+hb.qualifier+" ---------\n");
