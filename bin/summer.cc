@@ -19,7 +19,7 @@ int main(int argc,char *argv[]){
 	int Nsubruns_max=99999999;
 	const int nspecies=10,nbfs=7;
 	bool exists,exists1,exists2;
-	string fn,fn1,fn2,fn1sum,fn2sum,fnsum,dirname,command;
+	string fn,fn1,fn2,fn1sum,fnsum,dirname,command;
 	int isubrun,Nsubruns,Nsubruns1=0,Nsubruns2=0,ibf,ispecies,ix,nx,itype,irun;
 	vector<string> subrunfilenames1,subrunfilenames2;
 	FILE *fptr1,*fptr2,*fptrsum;
@@ -110,8 +110,8 @@ int main(int argc,char *argv[]){
 							command="mkdir -p "+dirname;
 							system(command.c_str());
 						}
-						fn1sum="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_type"+to_string(itype)+"/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
-						fptrsum=fopen(fn1sum.c_str(),"w");
+						fnsum="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_type"+to_string(itype)+"/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
+						fptrsum=fopen(fnsum.c_str(),"w");
 						if(itype==1)
 							Nsubruns=Nsubruns1;
 						else
@@ -137,6 +137,7 @@ int main(int argc,char *argv[]){
 									}
 								}
 								else{
+
 									fscanf(fptr1,"%lf %lf %lf %lf %lf %lf %lf %lf %lf",
 									&dx,&bfqinv,&bfout,&bfside,&bflong,&cfqinv,&cfout,&cfside,&cflong);
 									if(!feof(fptr1)){
@@ -166,6 +167,7 @@ int main(int argc,char *argv[]){
 								}
 							}
 							fclose(fptr1);
+							nx=bfqinvsum.size();
 						}
 						nx=delx.size();
 						for(ix=0;ix<nx;ix++){
@@ -181,6 +183,7 @@ int main(int argc,char *argv[]){
 								cfsidesum[ix]/double(Nsubruns),cflongsum[ix]/double(Nsubruns));
 							}
 						}
+						fclose(fptrsum);
 					}
 				}
 			}
@@ -213,8 +216,8 @@ int main(int argc,char *argv[]){
 						cflongsum.clear();
 						delx.clear();
 			
-						fptr1=fopen(fn1.c_str(),"r");
 						if(bffilenames[ibf]!="bf_qinv.txt"){
+							fptr1=fopen(fn1.c_str(),"r");
 							while(!feof(fptr1)){
 								fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&cf);
 								if(!feof(fptr1)){
@@ -234,61 +237,63 @@ int main(int argc,char *argv[]){
 							}
 							fclose(fptr2);
 						}
-					}
-					else{
-						while(!feof(fptr1)){
-							fscanf(fptr1,"%lf %lf %lf %lf %lf %lf %lf %lf %lf",
-							&dx,&bfqinv,&bfout,&bfside,&bflong,&cfqinv,&cfout,&cfside,&cflong);
-							if(!feof(fptr1)){
-								delx.push_back(dx);
-								bfqinvsum.push_back(bfqinv);
-								bfoutsum.push_back(bfout);
-								bfsidesum.push_back(bfside);
-								bflongsum.push_back(bflong);
-								cfqinvsum.push_back(cfqinv);
-								cfoutsum.push_back(cfout);
-								cfsidesum.push_back(cfside);
-								cflongsum.push_back(cflong);
+						else{
+							fptr1=fopen(fn1.c_str(),"r");
+							while(!feof(fptr1)){
+								fscanf(fptr1,"%lf %lf %lf %lf %lf %lf %lf %lf %lf",
+								&dx,&bfqinv,&bfout,&bfside,&bflong,&cfqinv,&cfout,&cfside,&cflong);
+								if(!feof(fptr1)){
+									delx.push_back(dx);
+									bfqinvsum.push_back(bfqinv);
+									bfoutsum.push_back(bfout);
+									bfsidesum.push_back(bfside);
+									bflongsum.push_back(bflong);
+									cfqinvsum.push_back(cfqinv);
+									cfoutsum.push_back(cfout);
+									cfsidesum.push_back(cfside);
+									cflongsum.push_back(cflong);
+								}
+							}
+							fclose(fptr1);
+		
+							fptr2=fopen(fn2.c_str(),"r");
+							nx=delx.size();
+							for(ix=0;ix<nx;ix++){
+								fscanf(fptr2,"%lf %lf %lf %lf %lf %lf %lf %lf %lf",
+								&dx,&bfqinv,&bfout,&bfside,&bflong,&cfqinv,&cfout,&cfside,&cflong);
+								bfqinvsum[ix]+=bfqinv;
+								bfoutsum[ix]+=bfout;
+								bfsidesum[ix]+=bfside;
+								bflongsum[ix]+=bflong;
+								cfqinvsum[ix]+=cfqinv;
+								cfoutsum[ix]+=cfout;
+								cfsidesum[ix]+=cfside;
+								cflongsum[ix]+=cflong;
+							
+							}
+							fclose(fptr2);
+						}
+
+				
+						nx=delx.size();
+					
+						fptrsum=fopen(fnsum.c_str(),"w");
+						for(ix=0;ix<nx;ix++){
+							if(bffilenames[ibf]!="bf_qinv.txt"){
+								fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix],cfsum[ix]);
+							}
+							else{
+								fprintf(fptrsum,"%7.2f %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e\n",delx[ix],
+								bfqinvsum[ix],bfoutsum[ix],bfsidesum[ix],bflongsum[ix],
+								cfqinvsum[ix],cfoutsum[ix],cfsidesum[ix],cflongsum[ix]);
 							}
 						}
-						fclose(fptr1);
-		
-						fptr2=fopen(fn2.c_str(),"r");
-						nx=delx.size();
-						for(ix=0;ix<nx;ix++){
-							fscanf(fptr1,"%lf %lf %lf %lf %lf %lf %lf %lf %lf",
-							&dx,&bfqinv,&bfout,&bfside,&bflong,&cfqinv,&cfout,&cfside,&cflong);
-							bfqinvsum[ix]+=bfqinv;
-							bfoutsum[ix]+=bfout;
-							bfsidesum[ix]+=bfside;
-							bflongsum[ix]+=bflong;
-							cfqinvsum[ix]+=cfqinv;
-							cfoutsum[ix]+=cfout;
-							cfsidesum[ix]+=cfside;
-							cflongsum[ix]+=cflong;
-							
-						}
-						fclose(fptr2);
+						fclose(fptrsum);
 					}
 				}
-				
-				nx=delx.size();
-				fptrsum=fopen(fnsum.c_str(),"w");
-				for(ix=0;ix<nx;ix++){
-					if(bffilenames[ibf]=="bf_qinv.txt"){
-						fprintf(fptrsum,"%7.2f %11.4e %11.4e\n",delx[ix],bfsum[ix],cfsum[ix]);
-					}
-					else{
-						fprintf(fptrsum,"%7.2f %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e %11.4e\n",delx[ix],
-						bfqinvsum[ix],bfoutsum[ix],bfsidesum[ix],bflongsum[ix],
-						cfqinvsum[ix],cfoutsum[ix],cfsidesum[ix],cflongsum[ix]);
-					}
-				}
-				fclose(fptrsum);
 			}
 		}
 	}
-
 	return 0;
 }
 
