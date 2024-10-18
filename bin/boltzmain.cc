@@ -77,6 +77,8 @@ int main(int argc, char *argv[]){
 				CLog::Info("----- partmap processed\n");
 			}
 			msuboltz->KillAllParts();
+			msuboltz->CheckPartMap();
+			msuboltz->CheckDeadPartMap();
 		}
 		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",
 		double(ndecay)/double(ievent+1),double(nmerge)/double(ievent+1),
