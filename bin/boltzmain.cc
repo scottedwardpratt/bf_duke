@@ -19,8 +19,10 @@ int main(int argc, char *argv[]){
 	//char logfilename[100];
 	//sprintf(logfilename,"msuboltz_log.txt");
 	//CLog::Init(logfilename);
-	CLog::INTERACTIVE=true;
+	CLog::INTERACTIVE=false;
 	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
+	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
+	CLog::Init(logfilename);
 	nevents=parmap.getI("MSU_BOLTZMANN_NEVENTS_TYPE2",1);
 	CmasterSampler ms(&parmap);
 	CMSU_Boltzmann::mastersampler=&ms;
@@ -46,7 +48,7 @@ int main(int argc, char *argv[]){
 
 		for(ievent=0;ievent<nevents;ievent++){
 		//for(ievent=84;ievent<88;ievent++){
-			printf("--- begin for ievent=%lld\n",ievent);
+			CLog::Info("--- begin for ievent="+to_string(ievent)+"\n");
 			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
 			if(subrun_number>subrun_number_max){
 				CLog::Fatal("OH NO!!! subrun_number>subrun_number_max. Increase this in boltzmain.cc");
@@ -57,11 +59,11 @@ int main(int argc, char *argv[]){
 			msuboltz->InputPartList(pl);
 			pl->Clear();
 		
-			printf("---- begin PerformAllActions\n");
+			CLog::Info("---- begin PerformAllActions\n");
 			msuboltz->PerformAllActions();
-			printf("---- actions performed\n");
+			CLog::Info("---- actions performed\n");
 			msuboltz->IncrementHadronCount();
-			printf("Nparts final=%lu\n",msuboltz->PartMap.size());
+			CLog::Info("Nparts final="+to_string(msuboltz->PartMap.size())+"\n");
 		
 			nmerge+=msuboltz->nmerge;
 			nscatter+=msuboltz->nscatter;
@@ -72,7 +74,7 @@ int main(int argc, char *argv[]){
 			CLog::Info(message);
 			if(msuboltz->BFCALC){
 				barray->ProcessPartMap();
-				printf("----- partmap processed\n");
+				CLog::Info("----- partmap processed\n");
 			}
 			msuboltz->KillAllParts();
 		}

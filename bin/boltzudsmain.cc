@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
 		qualifiers.SetPars(&(msuboltz->parmap),iqual);
 		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 		for(ievent=0;ievent<nevents;ievent++){
-			printf("--- begin for ievent=%lld\n",ievent);
+			CLog::Info("--- begin for ievent="+to_string(ievent)+"\n");
 			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
 			if(subrun_number>subrun_number_max){
 				CLog::Fatal("OH NO!!! subrun_number>subrun_number_max. Increase this in boltzmain.cc");
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]){
 			CLog::Info(message);
 			barray->ProcessPartMap();
 			if(msuboltz->BFCALC && barray->FROM_UDS){
-				printf("xXXXX processing BF PartMap\n");
+				CLog::Info("XXXXX processing BF PartMap\n");
 				barray->ProcessBFPartMap();
 			}
 			msuboltz->KillAllParts();

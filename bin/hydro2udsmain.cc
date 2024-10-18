@@ -24,7 +24,7 @@ int main(int argc,char *argv[]){
 	qualifiers.Read("qualifiers.txt");
 	for(int iqual=0;iqual<qualifiers.nqualifiers;iqual++){
 		hb.qualifier=qualifiers.qualifier[iqual]->qualname;
-		printf("--------- BEGIN CALC FOR %s ---------\n",hb.qualifier.c_str());
+		CLog::Info("--------- BEGIN CALC FOR "+hb.qualifier+" ---------\n");
 		for(ievent=0;ievent<nevents;ievent++){
 			hb.Omega0tot=hb.OmegaXtot=hb.OmegaYtot=0.0;
 			hb.Reset();
@@ -55,7 +55,8 @@ int main(int argc,char *argv[]){
 			CLog::Info(message);
 			snprintf(message,CLog::CHARLENGTH,"highestEpsilon=%g, biggestU=%g\n",hb.highestEpsilon,hb.biggestU);
 			CLog::Info(message);
-			printf("netUdotOmega=%g, Omega0tot=%g, OmegaXtot=%g, OmegaYtot=%g\n",hb.netUdotOmega,hb.Omega0tot,hb.OmegaXtot,hb.OmegaYtot);
+			snprintf(message,CLog::CHARLENGTH,"netUdotOmega=%g, Omega0tot=%g, OmegaXtot=%g, OmegaYtot=%g\n",hb.netUdotOmega,hb.Omega0tot,hb.OmegaXtot,hb.OmegaYtot);
+			CLog::Info(message);
 	
 			hb.WriteCharges(ievent);
 			if(run_number==0 && ievent==0)
