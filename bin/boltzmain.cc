@@ -8,7 +8,7 @@ using namespace NMSUPratt;
 
 int main(int argc, char *argv[]){
 	if (argc != 3) {
-		CLog::Fatal("Usage: b3d run_number subrun_number\n");
+		CLog::Fatal("Usage: boltz run_number subrun_number\n");
   }
 	CparameterMap parmap;
 	int run_number=atoi(argv[1]),subrun_number=atoi(argv[2]);
@@ -45,6 +45,7 @@ int main(int argc, char *argv[]){
 		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 
 		for(ievent=0;ievent<nevents;ievent++){
+		//for(ievent=84;ievent<88;ievent++){
 			printf("--- begin for ievent=%lld\n",ievent);
 			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
 			if(subrun_number>subrun_number_max){
