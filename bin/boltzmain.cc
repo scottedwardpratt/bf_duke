@@ -47,7 +47,6 @@ int main(int argc, char *argv[]){
 		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 
 		for(ievent=0;ievent<nevents;ievent++){
-		//for(ievent=84;ievent<88;ievent++){
 			CLog::Info("--- begin for ievent="+to_string(ievent)+"\n");
 			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
 			if(subrun_number>subrun_number_max){
@@ -58,7 +57,6 @@ int main(int argc, char *argv[]){
 			npartstot+=nparts;
 			msuboltz->InputPartList(pl);
 			pl->Clear();
-		
 			CLog::Info("---- begin PerformAllActions\n");
 			msuboltz->PerformAllActions();
 			CLog::Info("---- actions performed\n");
