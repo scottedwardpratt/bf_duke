@@ -18,6 +18,8 @@ int main(int argc,char *argv[]){
 	unsigned int ipt,Nsubruns=0,Nsubruns_max=99999999;
 	bool exists;
 	string dirname,filename,command;
+	char dummy[100];
+	string meanlabel[6];
 	unsigned int isubrun,irun;
 	vector<string> subrunfilenames1,subrunfilenames2;
 	FILE *fptr;
@@ -57,9 +59,8 @@ int main(int argc,char *argv[]){
 	
 	//
 	
-	// Add type 1 BFs, then add type 2 BFs
-		
-		
+	// Sum over subruns
+	
 	spectra_sum.resize(3);
 	v2_sum.resize(3);
 		
@@ -68,11 +69,7 @@ int main(int argc,char *argv[]){
 			spectra_sum[i].clear();
 			v2_sum[i].clear();
 		}
-		spectra_sum.clear();
-		v2_sum.clear();
-		spectra_sum.resize(3);
-		v2_sum.resize(3);
-			
+		
 		for(isubrun=0;isubrun<Nsubruns;isubrun++){
 			dirname="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_spectrav2/subruns/subrun"+to_string(isubrun);
 			filename=dirname+"/spectra.txt";
@@ -97,7 +94,6 @@ int main(int argc,char *argv[]){
 		}
 		for(isubrun=0;isubrun<Nsubruns;isubrun++){
 			dirname="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_spectrav2/subruns/subrun"+to_string(isubrun);
-			filename=dirname+"/v2.txt";
 			fptr=fopen(filename.c_str(),"r");
 			ipt=0;
 			while(!feof(fptr)){
@@ -118,6 +114,43 @@ int main(int argc,char *argv[]){
 			fclose(fptr);
 		}
 		
+		meanpt_sum.clear();
+		meanv2_sum.clear();
+		meanpt_sum.resize(3);
+		meanv2_sum.resize(3);
+		for(isubrun=0;isubrun<Nsubruns;isubrun++){
+			dirname="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_spectrav2/subruns/subrun"+to_string(isubrun);
+			filename=dirname+"/meanpt_meanv2.txt";
+			fptr=fopen(filename.c_str(),"r");
+			
+			fscanf(fptr,"%s %lf",dummy,&pt);
+			meanlabel[0]=dummy;		
+			meanpt_sum[0]=meanpt_sum[0]+pt;
+			fscanf(fptr,"%s %lf",dummy,&pt);
+			meanlabel[1]=dummy;
+			meanpt_sum[1]=meanpt_sum[1]+pt;
+			fscanf(fptr,"%s %lf",dummy,&pt);
+			meanlabel[2]=dummy;
+			meanpt_sum[2]=meanpt_sum[2]+pt;
+			
+			fscanf(fptr,"%s %lf",dummy,&v2pi);
+			meanlabel[3]=dummy;
+			meanv2_sum[0]=meanv2_sum[0]+v2pi;
+			fscanf(fptr,"%s %lf",dummy,&v2K);
+			meanlabel[4]=dummy;
+			meanv2_sum[1]=meanv2_sum[1]+v2K;
+			fscanf(fptr,"%s %lf",dummy,&v2p);
+			meanlabel[5]=dummy;
+			meanv2_sum[2]=meanv2_sum[2]+v2p;
+			
+			fclose(fptr);
+		}
+			
+			
+		
+		// Write summed results
+
+		
 		dirname="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_spectrav2";
 		filename=dirname+"/spectra.txt";
 		fptr=fopen(filename.c_str(),"w");
@@ -137,7 +170,22 @@ int main(int argc,char *argv[]){
 		}
 		fclose(fptr);	
 		
+		dirname="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_spectrav2";
+		filename=dirname+"/meanpt_meanv2.txt";
+		fptr=fopen(filename.c_str(),"w");
+		fprintf(fptr,"%s  %12.5e\n",meanlabel[0].c_str(),meanpt_sum[0]/double(Nsubruns));
+		fprintf(fptr,"%s  %12.5e\n",meanlabel[1].c_str(),meanpt_sum[1]/double(Nsubruns));
+		fprintf(fptr,"%s  %12.5e\n",meanlabel[2].c_str(),meanpt_sum[2]/double(Nsubruns));
+		fprintf(fptr,"%s  %12.5e\n",meanlabel[3].c_str(),meanv2_sum[0]/double(Nsubruns));
+		fprintf(fptr,"%s  %12.5e\n",meanlabel[4].c_str(),meanv2_sum[1]/double(Nsubruns));
+		fprintf(fptr,"%s  %12.5e\n",meanlabel[5].c_str(),meanv2_sum[2]/double(Nsubruns));
+		fclose(fptr);
+		
+		
 	}
+	
+	
+	
 		
 	return 0;
 }
