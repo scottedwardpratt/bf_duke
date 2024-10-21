@@ -29,12 +29,9 @@ int main(int argc, char *argv[]){
 	CpartList *pl=new CpartList(&parmap,ms.reslist);
 	ms.partlist=pl;
 	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,subrun_number,ms.reslist);
+	msuboltz->BFCALC=false;
 	msuboltz->InitCascade();
-	CBalanceArrays *barray;
-	if(msuboltz->BFCALC){
-		barray=msuboltz->balancearrays;
-		barray->FROM_UDS=false;
-	}
+	
 	//msuboltz->ReadMuTInfo();
 	CQualifiers qualifiers;
 	int iqual;
@@ -70,10 +67,6 @@ int main(int argc, char *argv[]){
 			ndecay+=msuboltz->ndecay;
 			snprintf(message,CLog::CHARLENGTH,"---- ievent=%lld nparts=%lld, nparts/event=%g\n",ievent,nparts,double(npartstot)/double(ievent+1));
 			CLog::Info(message);
-			if(msuboltz->BFCALC){
-				barray->ProcessPartMap();
-				CLog::Info("----- partmap processed\n");
-			}
 			msuboltz->KillAllParts();
 			msuboltz->CheckPartMap();
 			msuboltz->CheckDeadPartMap();
@@ -87,12 +80,6 @@ int main(int argc, char *argv[]){
 		CLog::Info(message);
 		//msuboltz->WriteMuTInfo();
 		msuboltz->WriteSpectraV2();
-		if(msuboltz->BFCALC){
-			barray->ConstructBFs();
-			barray->WriteBFs();
-			barray->WriteDenoms();
-			//barray->WriteGammaP();
-		}
 	}
 
 	CLog::Info("YIPPEE!!!!! We made it all the way through!\n");

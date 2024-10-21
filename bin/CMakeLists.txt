@@ -94,26 +94,42 @@ ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
 ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
 )
 ###########################################################
-set(SOURCE_FILES ./besstester.cc)
-SET_SOURCE_FILES_PROPERTIES(besstester.cc
+set(SOURCE_FILES ./spectrav2main.cc)
+SET_SOURCE_FILES_PROPERTIES(spectrav2main.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
-SET_SOURCE_FILES_PROPERTIES(besstester.cc
+SET_SOURCE_FILES_PROPERTIES(spectrav2main.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a)
-SET_SOURCE_FILES_PROPERTIES(besstester.cc
+SET_SOURCE_FILES_PROPERTIES(spectrav2main.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
-SET_SOURCE_FILES_PROPERTIES(besstester.cc
+SET_SOURCE_FILES_PROPERTIES(spectrav2main.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a)
-SET_SOURCE_FILES_PROPERTIES(besstester.cc
+SET_SOURCE_FILES_PROPERTIES(spectrav2main.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a)
-SET_SOURCE_FILES_PROPERTIES(besstester.cc
+SET_SOURCE_FILES_PROPERTIES(spectrav2main.cc
 	PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a)
-add_executable(besstester ${SOURCE_FILES})
-add_dependencies(besstester extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
-target_link_libraries(besstester ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
+add_executable(spectrav2 ${SOURCE_FILES})
+add_dependencies(spectrav2 extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
+target_link_libraries(spectrav2 ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} ${EIGEN3_LIBRARY}
 ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
 ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+)
+###########################################################
+set(SOURCE_FILES ./summer_spectrav2.cc)
+SET_SOURCE_FILES_PROPERTIES(summer_spectrav2.cc PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
+add_executable(summer_spectrav2 ${SOURCE_FILES})
+add_dependencies(summer_spectrav2 extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
+target_link_libraries(summer_spectrav2 
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+)
+###########################################################
+set(SOURCE_FILES ./summer_bf.cc)
+SET_SOURCE_FILES_PROPERTIES(summer_bf.cc PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
+add_executable(summer_bf ${SOURCE_FILES})
+add_dependencies(summer_bf extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
+target_link_libraries(summer_bf 
 ${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
 )
 ###########################################################

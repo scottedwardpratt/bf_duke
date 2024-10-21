@@ -9,9 +9,6 @@
 #include <filesystem>
 #include "msu_commonutils/misc.h"
 
-const double PI=4.0*atan(1.0);
-const double HBARC=197.3269602;
-
 using namespace std;
 using namespace NMSUPratt;
 
