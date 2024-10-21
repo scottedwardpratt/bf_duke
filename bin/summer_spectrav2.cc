@@ -84,7 +84,7 @@ int main(int argc,char *argv[]){
 					if(isubrun==0){
 						spectra_sum[0].push_back(specpi);
 						spectra_sum[1].push_back(specK);
-						spectra_sum[2].push_back(specK);			
+						spectra_sum[2].push_back(specp);			
 					}
 					else{
 						spectra_sum[0][ipt]+=specpi;
@@ -106,7 +106,7 @@ int main(int argc,char *argv[]){
 					if(isubrun==0){
 						v2_sum[0].push_back(v2pi);
 						v2_sum[1].push_back(v2K);
-						v2_sum[2].push_back(v2K);			
+						v2_sum[2].push_back(v2p);			
 					}
 					else{
 						v2_sum[0][ipt]+=v2pi;
