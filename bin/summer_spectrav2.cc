@@ -63,6 +63,7 @@ int main(int argc,char *argv[]){
 	
 	spectra_sum.resize(3);
 	v2_sum.resize(3);
+	
 		
 	for(irun=I;irun<=J;irun++){
 		for(int i=0;i<3;i++){
@@ -89,6 +90,7 @@ int main(int argc,char *argv[]){
 						spectra_sum[2][ipt]+=specp;
 					}
 				}
+				ipt+=1;
 			}
 			fclose(fptr);
 		}
@@ -111,6 +113,7 @@ int main(int argc,char *argv[]){
 						v2_sum[2][ipt]+=v2p;
 					}
 				}
+				ipt+=1;
 			}
 			fclose(fptr);
 		}
