@@ -94,6 +94,7 @@ int main(int argc,char *argv[]){
 		}
 		for(isubrun=0;isubrun<Nsubruns;isubrun++){
 			dirname="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_spectrav2/subruns/subrun"+to_string(isubrun);
+			filename=dirname+"/v2.txt";
 			fptr=fopen(filename.c_str(),"r");
 			ipt=0;
 			while(!feof(fptr)){
