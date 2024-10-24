@@ -7,3 +7,9 @@ bf_vsy_width_pp   0.61623   0.01849 0.0
 bf_vsphi_width_pipi   0.41869   0.01256 0.0
 bf_vsphi_width_KK   0.47552   0.01427 0.0
 bf_vsphi_width_pp   0.57142   0.01714 0.0
+mult_pi 656.69556 32.83478  0.0
+meanpt_pi  0.49605  0.01488  0.0
+mult_K 98.19959  4.90998  0.0
+meanpt_K  0.83850  0.02515  0.0
+mult_p 29.86029  1.49301  0.0
+meanpt_p  1.25906  0.03777  0.0
