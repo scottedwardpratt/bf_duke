@@ -19,8 +19,8 @@ int main(int argc,char *argv[]){
 	
 	// for pions
 	fptrin=fopen("spectra_pi.txt","r");
-	ptmin=0.1;
-	ptmax=1.50;
+	ptmin=0.2;
+	ptmax=2.0;
 	mult=meanpt=0.0;
 	do{
 		fscanf(fptrin,"%lf %lf %lf",&pt1,&pt2,&spectra);
@@ -62,7 +62,7 @@ int main(int argc,char *argv[]){
 	
 	// for protons
 	fptrin=fopen("spectra_p.txt","r");
-	ptmin=0.3;
+	ptmin=0.5;
 	ptmax=2.50;
 	mult=meanpt=0.0;
 	do{

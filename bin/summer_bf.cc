@@ -25,7 +25,7 @@ int main(int argc,char *argv[]){
 	double bfqinv,bfout,bfside,bflong,cfqinv,cfout,cfside,cflong;
 	vector<double> bfqinvsum,bfoutsum,bfsidesum,bflongsum,cfqinvsum,cfoutsum,cfsidesum,cflongsum;
 	if(argc!=4){
-		printf("Usage: summer qualifier I J are going from modelruns/runI to modelruns/runJ\n");
+		printf("Usage: summer_bf qualifier I J are going from modelruns/runI to modelruns/runJ\n");
 		exit(1);
 	}
 	exists=filesystem::exists("modelruns");
@@ -87,7 +87,13 @@ int main(int argc,char *argv[]){
 			itype_first=2;
 		for(itype=itype_first;itype<=itype_last;itype++){
 			for(ispecies=0;ispecies<nspecies;ispecies++){
+				
 				for(ibf=0;ibf<nbfs;ibf++){
+					
+					double norm,width,normbar,widthbar,sigma2norm,sigma2width;
+					normbar=widthbar=sigma2norm=sigma2width=0.0;
+				
+					
 					bfsum.clear();
 					cfsum.clear();
 					bfqinvsum.clear();
@@ -114,6 +120,7 @@ int main(int argc,char *argv[]){
 						else
 							Nsubruns=Nsubruns2;
 						for(isubrun=0;isubrun<Nsubruns;isubrun++){
+							width=norm=0.0;
 							fn1="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_type"+to_string(itype)+"/subruns/subrun"+to_string(isubrun)+"/"+bfspecies[ispecies]+"/"+bffilenames[ibf];
 							fptr1=fopen(fn1.c_str(),"r");
 							ix=0;
@@ -121,6 +128,8 @@ int main(int argc,char *argv[]){
 								if(bffilenames[ibf]!="bf_qinv.txt"){
 									fscanf(fptr1,"%lf %lf %lf",&dx,&bf,&cf);
 									if(!feof(fptr1)){
+										width+=fabs(dx)*bf;
+										norm+=bf;
 										if(isubrun==0){
 											delx.push_back(dx);
 											bfsum.push_back(bf);
@@ -165,6 +174,14 @@ int main(int argc,char *argv[]){
 							}
 							fclose(fptr1);
 							nx=bfqinvsum.size();
+							if(bffilenames[ibf]!="bf_qinv.txt"){
+								width=width/norm;
+								
+								normbar+=fabs(norm);
+								sigma2norm+=norm*norm;
+								widthbar+=fabs(width);
+								sigma2width+=width*width;
+							}
 						}
 						nx=delx.size();
 						for(ix=0;ix<nx;ix++){
@@ -181,6 +198,16 @@ int main(int argc,char *argv[]){
 							}
 						}
 						fclose(fptrsum);
+						if(bffilenames[ibf]!="bf_qinv.txt"){
+							normbar=normbar/double(Nsubruns);
+							widthbar=widthbar/double(Nsubruns);
+							sigma2norm=sigma2norm/double(Nsubruns)-normbar*normbar;
+							sigma2width=sigma2width/double(Nsubruns)-widthbar*widthbar;
+							printf("%s,%s: normbar=%g, widthbar=%g, norm unc percentage=%g, width unc percentage=%g\n",
+							bfspecies[ispecies].c_str(),bffilenames[ibf].c_str(),
+							normbar,widthbar,
+							100.0*sqrt(sigma2norm/double(Nsubruns))/normbar,100.0*sqrt(sigma2width/double(Nsubruns))/widthbar);
+						}
 					}
 				}
 			}
