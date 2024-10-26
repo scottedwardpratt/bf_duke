@@ -122,14 +122,14 @@ bool CHydroBalance::ReadDuke(CHBHydroMesh *hydromesh){
 	
 	
 	for(alpha=0;alpha<4;alpha++){
-		delete pi[alpha];
+		delete [] pi[alpha];
 		pi[alpha]=NULL;
-		delete pitilde[alpha];
+		delete [] pitilde[alpha];
 		pitilde[alpha]=NULL;
 	}
-	delete pi;
+	delete [] pi;
 	pi=NULL;
-	delete pitilde;
+	delete []pitilde;
 	pitilde=NULL;
 	
 	itauread+=1;	
