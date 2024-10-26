@@ -13,13 +13,12 @@ using namespace std;
 using namespace NMSUPratt;
 
 int main(int argc,char *argv[]){
-	int Nsubruns_max=99999999;
 	const int nspecies=3;
 	double unc;
 	bool exists;
 	char dummy[200];
 	string filename,varname;
-	int isubrun,Nsubruns,ispecies,ipt,irun;
+	int Nsubruns,irun;
 	double meanpt_pi,meanpt_K,meanpt_p,meanv2_pi,meanv2_K,meanv2_p; 
 	double pt_pi,pt_K,pt_p,v2_pi,v2_K,v2_p; 
 	FILE *fptrin,*fptrout;
@@ -68,7 +67,8 @@ int main(int argc,char *argv[]){
 						meanv2_K+=v2_K;
 						meanv2_p+=v2_p;
 					}
-				}	
+				}
+				fclose(fptrin);
 			}	
 		}while(exists);
 		meanpt_pi=meanpt_pi/double(Nsubruns);
@@ -77,7 +77,7 @@ int main(int argc,char *argv[]){
 		meanv2_pi=meanv2_pi/double(Nsubruns);
 		meanv2_K=meanv2_K/double(Nsubruns);
 		meanv2_p=meanv2_p/double(Nsubruns);
-		fclose(fptrin);
+		
 		
 		filename="modelruns/run"+to_string(irun)+"/obs.txt";
 		fptrout=fopen(filename.c_str(),"a");
