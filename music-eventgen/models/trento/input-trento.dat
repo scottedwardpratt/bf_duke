@@ -1,0 +1,22 @@
+
+# specify the projectile option twice
+projectile = Pb
+projectile = Pb
+number-events = 1000
+
+# don't print event properties to stdout, save to HDF5
+quiet = true
+output = PbPb.hdf
+
+reduced-thickness = 0.01
+fluctuation = 1
+nucleon-width = 0.5
+cross-section = 6.4
+normalization = 0.94
+
+# leave commented out for min-bias
+b-min = 0
+b-max = 2
+
+grid-max = 25
+grid-step = 0.1002
