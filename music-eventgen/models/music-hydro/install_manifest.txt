@@ -1,0 +1,2 @@
+/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/libmusic.dylib
+/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro
