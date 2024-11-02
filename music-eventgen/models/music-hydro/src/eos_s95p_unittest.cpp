@@ -2,6 +2,7 @@
 
 #include "eos_s95p.h"
 #include "doctest.h"
+#include "doctest/doctest.h"
 
 #include <cassert>
 #include <iostream>

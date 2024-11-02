@@ -2,7 +2,7 @@ message(STATUS "Downloading Catch test header")
 
 file(DOWNLOAD
   "https://raw.github.com/catchorg/Catch2/master/single_include/catch.hpp"
-  "/Users/scottpratt/git/bf_duke/music-eventgen/models/trento/test/catch.hpp"
+  "/home/scott/git/bf_duke/music-eventgen/models/trento/test/catch.hpp"
   TIMEOUT 20
   STATUS status
   TLS_VERIFY ON)

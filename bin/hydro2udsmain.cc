@@ -28,6 +28,7 @@ int main(int argc,char *argv[]){
 		hb.qualifier=qualifiers.qualifier[iqual]->qualname;
 		CLog::Info("--------- BEGIN CALC FOR "+hb.qualifier+" ---------\n");
 		for(ievent=0;ievent<nevents;ievent++){
+			CLog::Info("xxxx begin for ievent= "+to_string(ievent)+"\n");
 			hb.Omega0tot=hb.OmegaXtot=hb.OmegaYtot=0.0;
 			hb.Reset();
 			hb.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
@@ -67,7 +68,7 @@ int main(int argc,char *argv[]){
 		}
 		
 	}
-	
+	CLog::Info("----- FINISHING HAPPILY -----\n");
 	return 0;
 }
 

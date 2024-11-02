@@ -1,6 +1,7 @@
 // Copyright 2018 @ Chun Shen
 #include "eos_idealgas.h"
 #include "doctest.h"
+#include "doctest/doctest.h"
 
 #include <cassert>
 #include <iostream>

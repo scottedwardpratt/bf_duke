@@ -1,6 +1,7 @@
 // Copyright 2018 @ Chun Shen
 
 #include "eos.h"
+#include "doctest/doctest.h"
 #include "doctest.h"
 
 #include <cassert>

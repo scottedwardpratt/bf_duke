@@ -2,6 +2,7 @@
 
 #include "eos_hotQCD.h"
 #include "doctest.h"
+#include "doctest/doctest.h"
 
 #include <cassert>
 #include <iostream>
