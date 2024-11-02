@@ -1,8 +1,8 @@
-# Install script for directory: /Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/src
+# Install script for directory: /home/scott/git/bf_duke/music-eventgen/models/music-hydro/src
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro")
+  set(CMAKE_INSTALL_PREFIX "/home/scott/git/bf_duke/music-eventgen/models/music-hydro")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -27,67 +27,77 @@ if(NOT CMAKE_INSTALL_COMPONENT)
   endif()
 endif()
 
+# Install shared libraries without execute permission?
+if(NOT DEFINED CMAKE_INSTALL_SO_NO_EXE)
+  set(CMAKE_INSTALL_SO_NO_EXE "1")
+endif()
+
 # Is this installation the result of a crosscompile?
 if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-# Set path to fallback-tool for dependency-resolution.
+# Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/usr/bin/objdump")
 endif()
 
-if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(EXISTS "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/libmusic.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/libmusic.so")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/libmusic.so"
+         RPATH "/home/scott/git/bf_duke/music-eventgen/models/music-hydro")
+  endif()
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/libmusic.dylib")
+   "/home/scott/git/bf_duke/music-eventgen/models/music-hydro/libmusic.so")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro" TYPE SHARED_LIBRARY FILES "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/src/libmusic.dylib")
-  if(EXISTS "$ENV{DESTDIR}/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/libmusic.dylib" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/libmusic.dylib")
-    execute_process(COMMAND /usr/bin/install_name_tool
-      -add_rpath "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro"
-      "$ENV{DESTDIR}/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/libmusic.dylib")
+  file(INSTALL DESTINATION "/home/scott/git/bf_duke/music-eventgen/models/music-hydro" TYPE SHARED_LIBRARY FILES "/home/scott/git/bf_duke/music-eventgen/models/music-hydro/src/libmusic.so")
+  if(EXISTS "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/libmusic.so" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/libmusic.so")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/libmusic.so"
+         OLD_RPATH ":::::::::::::::::::::::::::::::::::::::::::::::::::::::::"
+         NEW_RPATH "/home/scott/git/bf_duke/music-eventgen/models/music-hydro")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/usr/bin/strip" -x "$ENV{DESTDIR}/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/libmusic.dylib")
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/libmusic.so")
     endif()
   endif()
 endif()
 
-if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
 endif()
 
-if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/src/CMakeFiles/music.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
-endif()
-
-if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+if("x${CMAKE_INSTALL_COMPONENT}x" STREQUAL "xUnspecifiedx" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(EXISTS "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro"
+         RPATH "/home/scott/git/bf_duke/music-eventgen/models/music-hydro")
+  endif()
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro")
+   "/home/scott/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro" TYPE EXECUTABLE FILES "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/src/MUSIChydro")
-  if(EXISTS "$ENV{DESTDIR}/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro")
-    execute_process(COMMAND /usr/bin/install_name_tool
-      -delete_rpath "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/src"
-      -add_rpath "/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro"
-      "$ENV{DESTDIR}/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro")
+  file(INSTALL DESTINATION "/home/scott/git/bf_duke/music-eventgen/models/music-hydro" TYPE EXECUTABLE FILES "/home/scott/git/bf_duke/music-eventgen/models/music-hydro/src/MUSIChydro")
+  if(EXISTS "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro"
+         OLD_RPATH "/home/scott/git/bf_duke/music-eventgen/models/music-hydro/src:"
+         NEW_RPATH "/home/scott/git/bf_duke/music-eventgen/models/music-hydro")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/usr/bin/strip" -u -r "$ENV{DESTDIR}/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro")
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}/home/scott/git/bf_duke/music-eventgen/models/music-hydro/MUSIChydro")
     endif()
   endif()
-endif()
-
-if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/Users/scottpratt/git/bf_duke/music-eventgen/models/music-hydro/src/CMakeFiles/MUSIChydro.dir/install-cxx-module-bmi-Release.cmake" OPTIONAL)
 endif()
 
