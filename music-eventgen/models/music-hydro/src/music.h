@@ -5,7 +5,6 @@
 #include <memory>
 
 #include "doctest.h"
-#include "doctest/doctest.h"
 #include "util.h"
 #include "cell.h"
 #include "grid.h"
