@@ -16,9 +16,6 @@ set(GSL_ROOT_DIR "/usr/lib/x86_64-linux-gnu/")
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(GSL REQUIRED)
 
-
-message("gsl include: " ${GSL_INCLUDE_DIR} " gsl libs: " ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} "gsl root dir: "  ${GSL_ROOT_DIR} )
-
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} ${GITHOME_MSU_PRATT}/commonutils/software/include  ${GITHOME_MSU_PRATT}/msu_eos/software/include ${GITHOME_MSU_PRATT}/msu_sampler/software/include ${GITHOME_MSU_PRATT}/msu_boltzmann/software/include ${GITHOME_MSU_PRATT}/bf_duke/software/include)
 
