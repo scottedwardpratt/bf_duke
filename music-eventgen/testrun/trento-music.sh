@@ -111,7 +111,7 @@ echo 'deta/dT_high='${eta_highT_slope}
 echo 'trento_norm='${trento_norm}
 echo 'trento_p='${trento_p}
 
-time ../models/music-hydro/MUSIChydro ./PCE_inputfile.dat
+../models/music-hydro/MUSIChydro ./PCE_inputfile.dat
 mkdir -p hydrodata/modelruns/run${run_number}/${qualifier};
 
 mv evolution_xyeta.dat hydrodata/modelruns/run${run_number}/${qualifier}/hydrodata.txt
