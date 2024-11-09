@@ -5,6 +5,7 @@
 #include "bfduke/hydro2uds.h"
 #include "msu_sampler/hyper.h"
 #include "msu_commonutils/qualifier.h"
+#include "msu_commonutils/sf.h"
 
 using namespace std;
 using namespace NMSUPratt;
