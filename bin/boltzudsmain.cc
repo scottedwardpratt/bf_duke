@@ -79,6 +79,7 @@ int main(int argc, char *argv[]){
 				barray->ProcessBFPartMap();
 			}
 			msuboltz->KillAllParts();
+			msuboltz->KillAllActions();
 		}
 		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",
 		double(ndecay)/double(nevents),double(nmerge)/double(nevents),double(nscatter)/double(nevents));
