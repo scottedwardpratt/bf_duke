@@ -11,8 +11,14 @@ add_custom_target(extern_hydro2uds COMMAND make WORKING_DIRECTORY ${GITHOME_MSU_
 set(CMAKE_CXX_FLAGS "-W -Wall -march=native -std=c++17 -O2")
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 
+set(GSL_ROOT_DIR "/usr/lib/x86_64-linux-gnu/")
+
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(GSL REQUIRED)
+
+
+message("gsl include: " ${GSL_INCLUDE_DIR} " gsl libs: " ${GSL_LIBRARY} ${GSL_CBLAS_LIBRARY} "gsl root dir: "  ${GSL_ROOT_DIR} )
+
 find_package(Eigen3 REQUIRED)
 include_directories(SYSTEM ${GSL_INCLUDE_DIR} ${EIGEN3_INCLUDE_DIR} ${GITHOME_MSU_PRATT}/commonutils/software/include  ${GITHOME_MSU_PRATT}/msu_eos/software/include ${GITHOME_MSU_PRATT}/msu_sampler/software/include ${GITHOME_MSU_PRATT}/msu_boltzmann/software/include ${GITHOME_MSU_PRATT}/bf_duke/software/include)
 
@@ -22,7 +28,7 @@ find_library(${GITHOME_MSU_PRATT}/commonutils/software/lib msu_commonutils)
 find_library(${GITHOME_MSU_PRATT}/msu_eos/software/lib msu_eos)
 find_library(${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib msu_boltzmann)
 find_library(${GITHOME_MSU_PRATT}/bf_duke/software/lib hydro2uds)
-find_library(${GITHOME_MSU_PRATT}/msu_sampler/software/lib msu_sampler)
+find_library(${GITHOME_MSU_PRATT}/msu_sampler/software/lib msu_sampler )
 
 ###########################################################
 
@@ -45,7 +51,7 @@ ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
 ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a)
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a GSL::gsl )
 
 ###########################################################
 set(SOURCE_FILES ./boltzmain.cc)
@@ -68,7 +74,7 @@ ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
 ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a GSL::gsl 
 )
 ###########################################################
 set(SOURCE_FILES ./boltzudsmain.cc)
@@ -91,7 +97,7 @@ ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
 ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a GSL::gsl 
 )
 ###########################################################
 set(SOURCE_FILES ./spectrav2main.cc)
@@ -114,7 +120,7 @@ ${GITHOME_MSU_PRATT}/bf_duke/software/lib/libhydro2uds.a
 ${GITHOME_MSU_PRATT}/msu_boltzmann/software/lib/libmsu_boltzmann.a
 ${GITHOME_MSU_PRATT}/msu_sampler/software/lib/libmsu_sampler.a
 ${GITHOME_MSU_PRATT}/msu_eos/software/lib/libmsu_eos.a
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a GSL::gsl 
 )
 ###########################################################
 set(SOURCE_FILES ./summer_spectrav2.cc)
@@ -122,7 +128,7 @@ SET_SOURCE_FILES_PROPERTIES(summer_spectrav2.cc PROPERTIES OBJECT_DEPENDS ${GITH
 add_executable(summer_spectrav2 ${SOURCE_FILES})
 add_dependencies(summer_spectrav2 extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
 target_link_libraries(summer_spectrav2 
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a 
 )
 ###########################################################
 set(SOURCE_FILES ./summer_bf.cc)
@@ -130,6 +136,6 @@ SET_SOURCE_FILES_PROPERTIES(summer_bf.cc PROPERTIES OBJECT_DEPENDS ${GITHOME_MSU
 add_executable(summer_bf ${SOURCE_FILES})
 add_dependencies(summer_bf extern_msu_boltzmann extern_hydro2uds extern_commonutils extern_msu_sampler extern_msu_eos)
 target_link_libraries(summer_bf 
-${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a
+${GITHOME_MSU_PRATT}/commonutils/software/lib/libmsu_commonutils.a GSL::gsl 
 )
 ###########################################################

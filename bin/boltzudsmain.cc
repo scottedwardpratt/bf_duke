@@ -2,6 +2,7 @@
 #include "msu_commonutils/qualifier.h"
 #include "msu_boltzmann/msu_boltzmann.h"
 #include "msu_commonutils/log.h"
+#include "msu_commonutils/sf.h"
 #include <cstring>
 using namespace std;
 using namespace NMSUPratt;
