@@ -62,8 +62,9 @@ int main(int argc, char *argv[]){
 				msuboltz->GenHadronsFromCharges(); // Generates inter-correlated parts, with bids = (0,1),(2,3)....
 				msuboltz->DeleteCharges();
 			}
-		
+			printf("begin PerformAllActions\n");
 			msuboltz->PerformAllActions();
+			printf("All Actions Performed\n");
 			msuboltz->IncrementHadronCount();
 		
 			nmerge+=msuboltz->nmerge;
@@ -71,7 +72,7 @@ int main(int argc, char *argv[]){
 			nannihilate+=msuboltz->nannihilate;
 			ncancel_annihilate+=msuboltz->ncancel_annihilate;
 			ndecay+=msuboltz->ndecay;
-			snprintf(message,CLog::CHARLENGTH,"ievent=%lld nparts=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
+			snprintf(message,CLog::CHARLENGTH,"nevents=%lld <nparts>=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
 			CLog::Info(message);
 			barray->ProcessPartMap();
 			if(msuboltz->BFCALC && barray->FROM_UDS){
@@ -80,6 +81,9 @@ int main(int argc, char *argv[]){
 			}
 			msuboltz->KillAllParts();
 			msuboltz->KillAllActions();
+			printf("Just killed all parts and actions\n");
+			printf("Npartstot=?%lu, Nactionstot=?%lu\n",msuboltz->PartMap.size()+msuboltz->DeadPartMap.size(),
+			msuboltz->ActionMap.size()+msuboltz->DeadActionMap.size());
 		}
 		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",
 		double(ndecay)/double(nevents),double(nmerge)/double(nevents),double(nscatter)/double(nevents));
