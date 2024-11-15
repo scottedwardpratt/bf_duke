@@ -46,7 +46,9 @@ int main(int argc, char *argv[]){
 		qualifiers.SetPars(&(msuboltz->parmap),iqual);
 		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 		for(ievent=0;ievent<nevents;ievent++){
-			CLog::Info("--- begin for ievent="+to_string(ievent)+"\n");
+			CLog::Info("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
+			CLog::Info("--- begin for ievent="+to_string(ievent)+" ---\n");
+			CLog::Info("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
 			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
 			if(subrun_number>subrun_number_max){
 				CLog::Fatal("OH NO!!! subrun_number>subrun_number_max. Increase this in boltzmain.cc");
@@ -81,7 +83,7 @@ int main(int argc, char *argv[]){
 			}
 			msuboltz->KillAllParts();
 			msuboltz->KillAllActions();
-			printf("Just killed all parts and actions\n");
+			printf("Killed all parts and actions\n");
 			printf("Npartstot=?%lu, Nactionstot=?%lu\n",msuboltz->PartMap.size()+msuboltz->DeadPartMap.size(),
 			msuboltz->ActionMap.size()+msuboltz->DeadActionMap.size());
 		}
