@@ -25,12 +25,19 @@ int main(int argc, char *argv[]){
 	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
 	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
 	//CLog::Init(logfilename);
-	CmasterSampler ms(&parmap);
-	CMSU_Boltzmann::mastersampler=&ms;
-	CpartList *pl=new CpartList(&parmap,ms.reslist);
-	ms.partlist=pl;
+	
+	/*
+	CmasterSampler *ms=new CmasterSampler(&parmap);
+	CMSU_Boltzmann::mastersampler=ms;
+	CpartList *pl=new CpartList(&parmap,ms->reslist);
+	pl->Clear();
+	ms->partlist=pl;
+	*/
+	CmasterSampler *ms0=new CmasterSampler(&parmap);
+	CmasterSampler *ms;
 
-	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,subrun_number,ms.reslist);
+	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,subrun_number,ms0->reslist);
+	
 	msuboltz->InitCascade();
 	CBalanceArrays *barray=msuboltz->balancearrays;
 	barray->FROM_UDS=true;
@@ -44,17 +51,26 @@ int main(int argc, char *argv[]){
 		nmerge=nscatter=nannihilate=ncancel_annihilate=ndecay=0;
 		msuboltz->SetQualifier(qualifiers.qualifier[iqual]->qualname);
 		qualifiers.SetPars(&(msuboltz->parmap),iqual);
-		ms.ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
+		//ms->ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 		for(ievent=0;ievent<nevents;ievent++){
+			
+			ms=new CmasterSampler(&parmap);
+			CMSU_Boltzmann::mastersampler=ms;
+			CpartList *pl=new CpartList(&parmap,ms->reslist);
+			pl->Clear();
+			ms->partlist=pl;
+			
+			
+			ms->ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 			CLog::Info("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
 			CLog::Info("--- begin for ievent="+to_string(ievent)+" ---\n");
 			CLog::Info("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
-			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
+			ms->randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
 			if(subrun_number>subrun_number_max){
 				CLog::Fatal("OH NO!!! subrun_number>subrun_number_max. Increase this in boltzmain.cc");
 			}
 			msuboltz->Reset();
-			nparts=ms.MakeEvent();
+			nparts=ms->MakeEvent();
 			npartstot+=nparts;
 			msuboltz->InputPartList(pl);
 			pl->Clear();
@@ -74,7 +90,7 @@ int main(int argc, char *argv[]){
 			nannihilate+=msuboltz->nannihilate;
 			ncancel_annihilate+=msuboltz->ncancel_annihilate;
 			ndecay+=msuboltz->ndecay;
-			snprintf(message,CLog::CHARLENGTH,"nevents=%lld <nparts>=%lld, nparts/event=%g\n",ms.NEVENTS,nparts,double(npartstot)/double(ms.NEVENTS));
+			snprintf(message,CLog::CHARLENGTH,"nevents=%lld <nparts>=%lld, nparts/event=%g\n",ms->NEVENTS,nparts,double(npartstot)/double(ms->NEVENTS));
 			CLog::Info(message);
 			barray->ProcessPartMap();
 			if(msuboltz->BFCALC && barray->FROM_UDS){
@@ -97,6 +113,7 @@ int main(int argc, char *argv[]){
 		barray->WriteBFs();
 		barray->WriteDenoms();
 		barray->WriteGammaP();
+		delete ms;
 	}
 
 	CLog::Info("YIPPEE!!!!! We made it all the way through!\n");
