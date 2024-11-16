@@ -29,9 +29,10 @@ int main(int argc, char *argv[]){
 	
 	CmasterSampler *ms=new CmasterSampler(&parmap);
 	CMSU_Boltzmann::mastersampler=ms;
-	CpartList *pl=new CpartList(&parmap,ms->reslist);
-	pl->Clear();
-	ms->partlist=pl;
+	//CpartList *pl=new CpartList(&parmap,ms->reslist);
+	//CpartList *pl=ms->partlist;
+	//pl->Clear();
+	//ms->partlist=pl;
 	
 	//CmasterSampler *ms0=new CmasterSampler(&parmap);
 	//CmasterSampler *ms;
@@ -51,18 +52,9 @@ int main(int argc, char *argv[]){
 		nmerge=nscatter=nannihilate=ncancel_annihilate=ndecay=0;
 		msuboltz->SetQualifier(qualifiers.qualifier[iqual]->qualname);
 		qualifiers.SetPars(&(msuboltz->parmap),iqual);
-		//ms->ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
+		ms->ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 		for(ievent=0;ievent<nevents;ievent++){
 			
-			/*ms=new CmasterSampler(&parmap);
-			CMSU_Boltzmann::mastersampler=ms;
-			CpartList *pl=new CpartList(&parmap,ms->reslist);
-			pl->Clear();
-			ms->partlist=pl;
-			*/
-			
-			
-			ms->ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 			CLog::Info("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
 			CLog::Info("--- begin for ievent="+to_string(ievent)+" ---\n");
 			CLog::Info("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n");
@@ -71,16 +63,20 @@ int main(int argc, char *argv[]){
 				CLog::Fatal("OH NO!!! subrun_number>subrun_number_max. Increase this in boltzmain.cc");
 			}
 			msuboltz->Reset();
+
 			nparts=ms->MakeEvent();
 			npartstot+=nparts;
-			msuboltz->InputPartList(pl);
-			pl->Clear();
+			printf("before: partlist size=%d\n",ms->partlist->nparts);
+			msuboltz->InputPartList(ms->partlist);
+			printf("after: partlist size=%d\n",ms->partlist->nparts);
+			ms->partlist->Reset();		
 		
+
 			if(msuboltz->BFCALC && barray->FROM_UDS){
-				msuboltz->ReadCharges(ievent);
+				msuboltz->ReadCharges(ievent+1);
 				msuboltz->GenHadronsFromCharges(); // Generates inter-correlated parts, with bids = (0,1),(2,3)....
-				msuboltz->DeleteCharges();
 			}
+
 			printf("begin PerformAllActions\n");
 			msuboltz->PerformAllActions();
 			printf("All Actions Performed\n");

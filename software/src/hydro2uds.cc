@@ -150,7 +150,7 @@ void CHydroBalance::MakeCharges(){
 	int ix,iy,sign,a,b,itau;
 	double Ecutoff=0.01;
 	double DQll,DQud,DQls,DQss,g1,g2;
-	Eigen::Matrix3d DQ(3,3);
+	Eigen::Matrix<double,3,3> DQ;
 	CHBCharge *charge1,*charge2;
 	for(ix=1;ix<mesh->NX-1;ix++){
 		for(iy=1;iy<mesh->NY-1;iy++){

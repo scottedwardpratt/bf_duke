@@ -215,9 +215,11 @@ void CHydroBalance::WriteFinalCF(){
 	int Netabins=parmap.getD("CF_NETABINS",50);
 	double Deta=parmap.getD("CF_DETA",0.1);
 	double eta,Z=NSAMPLE_HYDRO2UDS*Deta;
-	Eigen::Matrix3d *cf=new Eigen::Matrix3d[Netabins];
+	Eigen::Matrix<double,3,3> cf[Netabins];
 	for(ieta=0;ieta<Netabins;ieta++)
-		cf[ieta].setZero(3,3);
+		for(a=0;a<3;a++)
+			for(b=0;b<3;b++)
+				cf[ieta](a,b)=0.0;
 	mapic::iterator it;
 	CHBCharge *charge1,*charge2;
 	it=emap.begin();
@@ -252,8 +254,6 @@ void CHydroBalance::WriteFinalCF(){
 		(0.5+ieta)*Deta,cf[ieta](0,0)/Z,cf[ieta](0,1)/Z,cf[ieta](0,2)/Z,cf[ieta](2,2)/Z);
 	}
 	fclose(fptr);
-	delete [] cf;
-	cf=NULL;
 }
 
 void CHydroBalance::WriteHyper(){
