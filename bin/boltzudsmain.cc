@@ -66,9 +66,7 @@ int main(int argc, char *argv[]){
 
 			nparts=ms->MakeEvent();
 			npartstot+=nparts;
-			printf("before: partlist size=%d\n",ms->partlist->nparts);
 			msuboltz->InputPartList(ms->partlist);
-			printf("after: partlist size=%d\n",ms->partlist->nparts);
 			ms->partlist->Reset();		
 		
 
@@ -77,9 +75,9 @@ int main(int argc, char *argv[]){
 				msuboltz->GenHadronsFromCharges(); // Generates inter-correlated parts, with bids = (0,1),(2,3)....
 			}
 
-			printf("begin PerformAllActions\n");
+			CLog::Info("begin PerformAllActions\n");
 			msuboltz->PerformAllActions();
-			printf("All Actions Performed\n");
+			CLog::Info("All Actions Performed\n");
 			msuboltz->IncrementHadronCount();
 		
 			nmerge+=msuboltz->nmerge;
@@ -94,7 +92,6 @@ int main(int argc, char *argv[]){
 				CLog::Info("XXXXX processing BF PartMap\n");
 				barray->ProcessBFPartMap();
 			}
-			printf("Killed all parts and actions\n");
 			printf("Npartstot=?%lu, Nactionstot=?%lu\n",msuboltz->PartMap.size()+msuboltz->DeadPartMap.size(),
 			msuboltz->ActionMap.size()+msuboltz->DeadActionMap.size());
 		}
