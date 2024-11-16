@@ -26,17 +26,17 @@ int main(int argc, char *argv[]){
 	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
 	//CLog::Init(logfilename);
 	
-	/*
+	
 	CmasterSampler *ms=new CmasterSampler(&parmap);
 	CMSU_Boltzmann::mastersampler=ms;
 	CpartList *pl=new CpartList(&parmap,ms->reslist);
 	pl->Clear();
 	ms->partlist=pl;
-	*/
-	CmasterSampler *ms0=new CmasterSampler(&parmap);
-	CmasterSampler *ms;
+	
+	//CmasterSampler *ms0=new CmasterSampler(&parmap);
+	//CmasterSampler *ms;
 
-	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,subrun_number,ms0->reslist);
+	CMSU_Boltzmann *msuboltz=new CMSU_Boltzmann(run_number,subrun_number,ms->reslist);
 	
 	msuboltz->InitCascade();
 	CBalanceArrays *barray=msuboltz->balancearrays;
@@ -54,11 +54,12 @@ int main(int argc, char *argv[]){
 		//ms->ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
 		for(ievent=0;ievent<nevents;ievent++){
 			
-			ms=new CmasterSampler(&parmap);
+			/*ms=new CmasterSampler(&parmap);
 			CMSU_Boltzmann::mastersampler=ms;
 			CpartList *pl=new CpartList(&parmap,ms->reslist);
 			pl->Clear();
 			ms->partlist=pl;
+			*/
 			
 			
 			ms->ReadHyper_Duke_2D(run_number,qualifiers.qualifier[iqual]->qualname);
