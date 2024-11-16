@@ -81,8 +81,6 @@ int main(int argc, char *argv[]){
 				CLog::Info("XXXXX processing BF PartMap\n");
 				barray->ProcessBFPartMap();
 			}
-			msuboltz->KillAllParts();
-			msuboltz->KillAllActions();
 			printf("Killed all parts and actions\n");
 			printf("Npartstot=?%lu, Nactionstot=?%lu\n",msuboltz->PartMap.size()+msuboltz->DeadPartMap.size(),
 			msuboltz->ActionMap.size()+msuboltz->DeadActionMap.size());

@@ -36,7 +36,7 @@ MSU_BOLTZMANN_DELNACTIONSTOT 100000
 MSU_BOLTZMANN_INPUT_DATAROOT modelruns # reads in CF info from this directory
 MSU_BOLTZMANN_OUTPUT_DATAROOT modelruns # writes OSCAR info file in this directory
 MSU_BOLTZMANN_SIGMADEFAULT 1.0 # all scatterings use this s-wave scatttering (sq fm)
-MSU_BOLTZMANN_SIGMABF 0.0 # scattering cross section for particles carrying type-I charge
+MSU_BOLTZMANN_SIGMABF 2.0 # scattering cross section for particles carrying type-I charge
 MSU_BOLTZMANN_ANNIHILATION_SREDUCTION 1.0
 #parameters for inelastic 2<->2 scatterings
 MSU_BOLTZMANN_INELASTIC false
