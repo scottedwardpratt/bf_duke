@@ -63,8 +63,9 @@ int main(int argc,char *argv[]){
 			CLog::Info(message);
 	
 			hb.WriteCharges(ievent);
-			if(run_number==0 && ievent==0)
+			if(subrun_number==0 && ievent==0){
 				hb.WriteHyper_Duke_2D();
+			}
 			hb.ClearCharges();
 		}
 		

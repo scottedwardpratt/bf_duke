@@ -16,10 +16,8 @@ int main(int argc, char *argv[]){
 	int nevents;
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nparts,npartstot,ievent,ndecay;
-	//char logfilename[100];
-	//sprintf(logfilename,"msuboltz_log.txt");
-	//CLog::Init(logfilename);
-	CLog::INTERACTIVE=false;
+	/string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
+	CLog::Init(logfilename);
 	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
 	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
 	CLog::Init(logfilename);

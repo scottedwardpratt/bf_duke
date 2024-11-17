@@ -18,10 +18,8 @@ int main(int argc, char *argv[]){
 	//int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
-	//char logfilename[100];
-	//sprintf(logfilename,"msuboltz_log.txt");
-	//CLog::Init(logfilename);
-	CLog::INTERACTIVE=true;
+	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
+	CLog::Init(logfilename);
 	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
 	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
 	//CLog::Init(logfilename);
@@ -71,7 +69,7 @@ int main(int argc, char *argv[]){
 		
 
 			if(msuboltz->BFCALC && barray->FROM_UDS){
-				msuboltz->ReadCharges(ievent+1);
+				msuboltz->ReadCharges(ievent);
 				msuboltz->GenHadronsFromCharges(); // Generates inter-correlated parts, with bids = (0,1),(2,3)....
 			}
 
@@ -92,8 +90,9 @@ int main(int argc, char *argv[]){
 				CLog::Info("XXXXX processing BF PartMap\n");
 				barray->ProcessBFPartMap();
 			}
-			printf("Npartstot=?%lu, Nactionstot=?%lu\n",msuboltz->PartMap.size()+msuboltz->DeadPartMap.size(),
+			snprintf(message,CLog::CHARLENGTH,"Npartstot=?%lu, Nactionstot=?%lu\n",msuboltz->PartMap.size()+msuboltz->DeadPartMap.size(),
 			msuboltz->ActionMap.size()+msuboltz->DeadActionMap.size());
+			CLog::Info(message);
 		}
 		snprintf(message,CLog::CHARLENGTH,"ndecay/event=%g, nmerge/event=%g, nscatter/event=%g\n",
 		double(ndecay)/double(nevents),double(nmerge)/double(nevents),double(nscatter)/double(nevents));
