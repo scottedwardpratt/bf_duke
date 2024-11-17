@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
 	//int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
-	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
+	//string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
 	//CLog::Init(logfilename);
 	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
 	
