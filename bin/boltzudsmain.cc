@@ -19,10 +19,8 @@ int main(int argc, char *argv[]){
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
 	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
-	CLog::Init(logfilename);
-	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
-	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
 	//CLog::Init(logfilename);
+	parmap.ReadParsFromFile("modelruns/fixed_parameters.txt");
 	
 	
 	CmasterSampler *ms=new CmasterSampler(&parmap);
