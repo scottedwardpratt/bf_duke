@@ -104,7 +104,7 @@ int main(int argc, char *argv[]){
 		barray->WriteBFs();
 		barray->WriteDenoms();
 		barray->WriteGammaP();
-		delete ms;
+		ms->DeleteHyperElements();
 	}
 
 	CLog::Info("YIPPEE!!!!! We made it all the way through!\n");

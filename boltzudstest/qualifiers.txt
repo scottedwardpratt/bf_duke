@@ -1,15 +1,8 @@
-qualifier alicePbPb_cent0_5
-BEAM_INFO ALICE_PBPB
-#B3D_NEVENTSMAX 5
+#qualifier alicePbPb_cent0_5
 #
-qualifier alice_cent5_10
-BEAM_INFO ALICE_PBPB
-#B3D_NEVENTSMAX 5
+qualifier alicePbPb_cent5_10
 #
-qualifier alice_cent10_15
-BEAM_INFO ALICE_PBPB
-#B3D_NEVENTSMAX 5
+qualifier alicePbPb_cent10_15
 #
-qualifier alice_cent15_20
-BEAM_INFO ALICE_PBPB
-#B3D_NEVENTSMAX 5
+qualifier alicePbPb_cent15_20
+
