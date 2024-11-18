@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
 			nparts=ms.MakeEvent();
 			npartstot+=nparts;
 			msuboltz->InputPartList(pl);
-			pl->Clear();
+			pl->Reset();
 			CLog::Info("---- begin PerformAllActions\n");
 			msuboltz->PerformAllActions();
 			CLog::Info("---- actions performed\n");
@@ -89,6 +89,7 @@ int main(int argc, char *argv[]){
 			barray->WriteDenoms();
 			//barray->WriteGammaP();
 		}
+		ms.DeleteHyperElements();
 	}
 
 	CLog::Info("YIPPEE!!!!! We made it all the way through!\n");
