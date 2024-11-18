@@ -9,7 +9,7 @@ case $# in
 	first_subrun=$2
 	last_subrun=$3
 	for((isub=${first_subrun};isub<=${last_subrun};isub++)) do
-		`runner.sh ${run_number} ${isub}` &
+		runner.sh ${run_number} ${isub}
 	done
 
 esac
