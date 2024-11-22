@@ -7,27 +7,30 @@
 using namespace std;
 using namespace NMSUPratt;
 
-void CHydroBalance::HyperFind(){
-	CHBEoS hypereos;
-	char message[CLog::CHARLENGTH];
-	int ix,iy;//,a,b;
-	double dFdx,dFdy,dFdt,f_l,f_s;
-	double RMAX=0.0,UMAX=0.0,EMAX=0.0;
-	Chyper *hyperptr,*newhyper;
-	Chyper hyper;
-	int nhyper;
+void CHydroBalance::HyperClear(){
+	Chyper *hyperptr;
 	list<Chyper *>::iterator it,itold;
-	
+
 	it=hyperlist.begin();
 	while(it!=hyperlist.end()){
 		itold=it;
 		it++;
 		hyperptr=*itold;
 		delete hyperptr;
-		it=itold;
-		it=it++;
 	}
 	hyperlist.clear();
+	NHYPER=0;
+}
+
+void CHydroBalance::HyperFind(){
+	CHBEoS hypereos;
+	char message[CLog::CHARLENGTH];
+	int ix,iy;//,a,b;
+	double dFdx,dFdy,dFdt,f_l,f_s;
+	double RMAX=0.0,UMAX=0.0,EMAX=0.0;
+	Chyper *newhyper;
+	Chyper hyper;
+	int nhyper;
 	
 	nhyper=0;
 	bool GGFt,GGFx,GGFy;

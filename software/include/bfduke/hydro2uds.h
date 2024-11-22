@@ -43,6 +43,7 @@ namespace NMSUPratt{
 		void MakeMeshes();
 		void SwapMeshes();
 		void MakeCharges();
+		void HyperClear();
 		void HyperFind();
 		void HyperFindEpsilon();
 		void GetUxyBar(int ix,int iy,double &uxbar,double &uybar); // ux,uy for cell ix,iy between mesh and newmesh
