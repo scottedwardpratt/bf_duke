@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
 			}
 			msuboltz->Reset();
 			nparts=ms.MakeEvent();
-			printf("created %lld initial parts\n",nparts);
+			CLog::Info("created "+to_string(nparts)+" initial parts\n");
 			npartstot+=nparts;
 			msuboltz->InputPartList(pl);
 			pl->Reset();
