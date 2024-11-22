@@ -62,7 +62,7 @@ int main(int argc,char *argv[]){
 			snprintf(message,CLog::CHARLENGTH,"netUdotOmega=%g, Omega0tot=%g, OmegaXtot=%g, OmegaYtot=%g\n",hb.netUdotOmega,hb.Omega0tot,hb.OmegaXtot,hb.OmegaYtot);
 			CLog::Info(message);
 	
-			//hb.WriteCharges(ievent);
+			hb.WriteCharges(ievent);
 			if(subrun_number==0 && ievent==0){
 				hb.WriteHyper_Duke_2D();
 			}
