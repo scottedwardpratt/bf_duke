@@ -6,6 +6,7 @@ case $# in
 3)
 	cd ~/git/bf_duke/boltzudstest
 	run_number=$1
+	rm -f logfiles/run${run_number}*.txt
 	first_subrun=$2
 	last_subrun=$3
 	for((isub=${first_subrun};isub<=${last_subrun};isub++)) do
