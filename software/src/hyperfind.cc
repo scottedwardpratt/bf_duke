@@ -22,7 +22,7 @@ void CHydroBalance::HyperFind(){
 	while(it!=hyperlist.end()){
 		itold=it;
 		it++;
-		hyperptr=*it;
+		hyperptr=*itold;
 		delete hyperptr;
 		it=itold;
 		it=it++;
