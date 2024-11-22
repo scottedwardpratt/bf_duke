@@ -1,4 +1,4 @@
 qualifier alicePbPb_cent0_5
 qualifier alicePbPb_cent5_10
-#qualifier alicePbPb_cent10_15
-#qualifier alicePbPb_cent15_20
+qualifier alicePbPb_cent10_15
+qualifier alicePbPb_cent15_20
