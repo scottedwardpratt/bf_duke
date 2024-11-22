@@ -61,6 +61,7 @@ int main(int argc, char *argv[]){
 			msuboltz->Reset();
 
 			nparts=ms->MakeEvent();
+			CLog::Info("Made "+to_string(nparts)+" regular particles (not from charges)\n");
 			npartstot+=nparts;
 			msuboltz->InputPartList(ms->partlist);
 			ms->partlist->Reset();		
