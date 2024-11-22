@@ -12,7 +12,7 @@ using namespace NMSUPratt;
 
 int main(int argc,char *argv[]){
 	if (argc != 3) {
-		CLog::Info("Usage: hydro2uds run_number subrun_number\n");
+		CLog::Fatal("Usage: hydro2uds run_number subrun_number\n");
 		exit(-1);
 	}
 	char message[CLog::CHARLENGTH];

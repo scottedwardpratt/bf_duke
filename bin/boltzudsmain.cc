@@ -9,13 +9,12 @@ using namespace NMSUPratt;
 
 int main(int argc, char *argv[]){
 	if (argc != 3) {
-		CLog::Info("Usage: msuboltz run_number subrun_number\n");
+		CLog::Fatal("Usage: msuboltz run_number subrun_number\n");
 		exit(-1);
   }
 	CparameterMap parmap;
 	int run_number=atoi(argv[1]),subrun_number=atoi(argv[2]);
 	int subrun_number_max=10000;
-	//int ievent0=atoi(argv[2]),ieventf=atoi(argv[3]);
 	char message[CLog::CHARLENGTH];
 	long long int nmerge,nscatter,nannihilate,ncancel_annihilate,nevents,nparts,npartstot,ievent,ndecay;
 	string logfilename="logfiles/run"+to_string(run_number)+"_subrun"+to_string(subrun_number)+".txt";
