@@ -13,10 +13,23 @@ void CHydroBalance::HyperFind(){
 	int ix,iy;//,a,b;
 	double dFdx,dFdy,dFdt,f_l,f_s;
 	double RMAX=0.0,UMAX=0.0,EMAX=0.0;
+	Chyper *hyperptr,*newhyper;
 	Chyper hyper;
-	Chyper *newhyper;
-	int nhyper=0;
+	int nhyper;
+	list<Chyper *>::iterator it,itold;
 	
+	it=hyperlist.begin();
+	while(it!=hyperlist.end()){
+		itold=it;
+		it++;
+		hyperptr=*it;
+		delete hyperptr;
+		it=itold;
+		it=it++;
+	}
+	hyperlist.clear();
+	
+	nhyper=0;
 	bool GGFt,GGFx,GGFy;
 	if(!tau0check){
 		for(ix=1;ix<mesh->NX-1;ix++){
