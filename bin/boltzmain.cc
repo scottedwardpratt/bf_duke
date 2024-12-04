@@ -44,7 +44,8 @@ int main(int argc, char *argv[]){
 
 		for(ievent=0;ievent<nevents;ievent++){
 			CLog::Info("--- begin for ievent="+to_string(ievent)+"\n");
-			ms.randy->reset(nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
+			int idummy=1;
+			ms.randy->reset(idummy*nevents*1000+nevents*subrun_number_max*run_number+nevents*subrun_number+ievent);
 			if(subrun_number>subrun_number_max){
 				CLog::Fatal("OH NO!!! subrun_number>subrun_number_max. Increase this in boltzmain.cc");
 			}
