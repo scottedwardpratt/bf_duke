@@ -46,10 +46,10 @@ int main(int argc,char *argv[]){
 		Nsubruns=0;
 		do{
 			filename="modelruns/run"+to_string(irun)+"/"+qualifier+"/results_spectrav2/subruns/subrun"+to_string(Nsubruns)+"/meanpt_meanv2.txt";
-			printf("filename=%s\n",filename.c_str());
+			//printf("filename=%s\n",filename.c_str());
 			exists=filesystem::exists(filename);
 			if(exists){
-				printf("%s exists\n",filename.c_str());
+				//lsprintf("%s exists\n",filename.c_str());
 				Nsubruns+=1;
 				fptrin=fopen(filename.c_str(),"r");
 				while(!feof(fptrin)){

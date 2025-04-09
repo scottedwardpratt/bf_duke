@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2 FATAL_ERROR)
 set(GITHOME_MSU_PRATT $ENV{GITHOME_MSU_PRATT})
 project(duke_bf CXX)
 
-set(CMAKE_CXX_FLAGS "-W -Wall -march=native -std=c++17 -O2")
+set(CMAKE_CXX_FLAGS "-W -Wall -march=native -std=c++20 -O3")
 message(STATUS "CXX_FLAGS = " ${CMAKE_CXX_FLAGS})
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
