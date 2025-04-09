@@ -107,7 +107,7 @@ int main(int argc,char *argv[]){
 									}
 									if(denom_string=="denom_allcharges_phi90:"){
 										w_allcharges_phi90_1.push_back(dcountread);
-										wc_allcharges_phi90_1.push_back((dcountread*dcountread));
+										wcf_allcharges_phi90_1.push_back((dcountread*dcountread));
 										denomcount_allcharges_phi90_1+=dcountread;
 									}
 									else{
@@ -310,7 +310,7 @@ int main(int argc,char *argv[]){
 									}
 									else if(ispecies==1){
 										subrunweight=w_p_2[isubrun];
-										subcfrunweight=wcf_p_2[isubrun];
+										subruncfweight=wcf_p_2[isubrun];
 									}
 									else if(ispecies==2){
 										subrunweight=w_allcharges_2[isubrun];
@@ -326,7 +326,7 @@ int main(int argc,char *argv[]){
 									}
 									else if(ispecies==5){
 										subrunweight=w_allcharges_phi90_2[isubrun];
-										subruncfweight=w_cfallcharges_phi90_2[isubrun];
+										subruncfweight=wcf_allcharges_phi90_2[isubrun];
 									}
 									else if(ispecies==6){
 										subrunweight=w_K_2[isubrun];
